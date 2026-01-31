@@ -122,8 +122,8 @@ class PlaylistSongsScreen extends StatelessWidget {
       ),
       body: Obx(() {
         final reactiveSongs = controller.getPlaylistSongs(playlist.id);
-        return isTabletLandscape
-            ? _landscapedView(reactiveSongs)
+        return ResponsiveContext(context).isTabletLandscape
+            ? _landscapedView(context, reactiveSongs)
             : _portraidView(reactiveSongs);
         // Column(
         //   children: [
@@ -460,11 +460,11 @@ class PlaylistSongsScreen extends StatelessWidget {
     );
   }
 
-  Widget _landscapedView(List<SongModel> reactiveSongs) {
+  Widget _landscapedView(BuildContext context, List<SongModel> reactiveSongs) {
     return Row(
       children: [
         Container(
-          width: Get.width * 0.3,
+          width: MediaQuery.of(context).size.width * 0.3,
           margin: const EdgeInsets.all(20),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(

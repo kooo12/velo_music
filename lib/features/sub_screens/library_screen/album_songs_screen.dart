@@ -53,7 +53,7 @@ class AlbumSongsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: isTabletLandscape
+      body: ResponsiveContext(context).isTabletLandscape
           ? _landscapedView(firstSong)
           : _portraidView(firstSong),
     );

@@ -21,10 +21,12 @@ class LibraryView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return isTablet ? _buildTabletLayout() : _buildMobileLayout();
+    return ResponsiveContext(context).isTablet
+        ? _buildTabletLayout(context)
+        : _buildMobileLayout(context);
   }
 
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(BuildContext context) {
     return CustomScrollView(
       key: const PageStorageKey('library_scroll'),
       slivers: [
@@ -37,22 +39,22 @@ class LibraryView extends GetView<HomeController> {
                 _buildCategoryItem(
                   icon: Icons.queue_music,
                   title: 'Playlists'.tr,
-                  onTap: () => _showPlaylistsTab(),
+                  onTap: () => _showPlaylistsTab(context),
                 ),
                 _buildCategoryItem(
                   icon: Icons.person,
                   title: 'Artists'.tr,
-                  onTap: () => _showArtistsTab(),
+                  onTap: () => _showArtistsTab(context),
                 ),
                 _buildCategoryItem(
                   icon: Icons.album,
                   title: 'Albums'.tr,
-                  onTap: () => _showAlbumsTab(),
+                  onTap: () => _showAlbumsTab(context),
                 ),
                 _buildCategoryItem(
                   icon: Icons.music_note,
                   title: 'Songs'.tr,
-                  onTap: () => _showAllSongsTab(),
+                  onTap: () => _showAllSongsTab(context),
                 ),
               ],
             ),
@@ -131,7 +133,7 @@ class LibraryView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildTabletLayout() {
+  Widget _buildTabletLayout(BuildContext context) {
     var tabbar = TabBar(
       controller: controller.tabController,
       indicator: BoxDecoration(
@@ -167,10 +169,10 @@ class LibraryView extends GetView<HomeController> {
             child: TabBarView(
               controller: controller.tabController,
               children: [
-                _buildAllSongsTab(),
-                _buildArtistsTab(),
-                _buildAlbumsTab(),
-                _buildPlaylistsTab(),
+                _buildAllSongsTab(context),
+                _buildArtistsTab(context),
+                _buildAlbumsTab(context),
+                _buildPlaylistsTab(context),
               ],
             ),
           ),
@@ -365,26 +367,26 @@ class LibraryView extends GetView<HomeController> {
     );
   }
 
-  void _showPlaylistsTab() {
-    _showPlaylistsFullScreen();
+  void _showPlaylistsTab(BuildContext context) {
+    _showPlaylistsFullScreen(context);
   }
 
-  void _showArtistsTab() {
-    _showArtistsFullScreen();
+  void _showArtistsTab(BuildContext context) {
+    _showArtistsFullScreen(context);
   }
 
-  void _showAlbumsTab() {
-    _showAlbumsFullScreen();
+  void _showAlbumsTab(BuildContext context) {
+    _showAlbumsFullScreen(context);
   }
 
-  void _showAllSongsTab() {
+  void _showAllSongsTab(BuildContext context) {
     _showAllSongsFullScreen();
   }
 
-  void _showPlaylistsFullScreen() {
+  void _showPlaylistsFullScreen(BuildContext context) {
     Get.bottomSheet(
       Container(
-        height: Get.height * 0.9,
+        height: MediaQuery.of(context).size.height * 0.9,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -426,7 +428,7 @@ class LibraryView extends GetView<HomeController> {
               ),
             ),
             Expanded(
-              child: _buildPlaylistsTab(),
+              child: _buildPlaylistsTab(context),
             ),
           ],
         ),
@@ -435,10 +437,10 @@ class LibraryView extends GetView<HomeController> {
     );
   }
 
-  void _showArtistsFullScreen() {
+  void _showArtistsFullScreen(BuildContext context) {
     Get.bottomSheet(
       Container(
-        height: Get.height * 0.9,
+        height: MediaQuery.of(context).size.height * 0.9,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -480,7 +482,7 @@ class LibraryView extends GetView<HomeController> {
               ),
             ),
             Expanded(
-              child: _buildArtistsTab(),
+              child: _buildArtistsTab(context),
             ),
           ],
         ),
@@ -489,10 +491,10 @@ class LibraryView extends GetView<HomeController> {
     );
   }
 
-  void _showAlbumsFullScreen() {
+  void _showAlbumsFullScreen(BuildContext context) {
     Get.bottomSheet(
       Container(
-        height: Get.height * 0.9,
+        height: MediaQuery.of(context).size.height * 0.9,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -534,7 +536,7 @@ class LibraryView extends GetView<HomeController> {
               ),
             ),
             Expanded(
-              child: _buildAlbumsTab(),
+              child: _buildAlbumsTab(context),
             ),
           ],
         ),
@@ -590,7 +592,7 @@ class LibraryView extends GetView<HomeController> {
               ),
             ),
             Expanded(
-              child: _buildAllSongsTab(),
+              child: _buildAllSongsTab(Get.context!),
             ),
           ],
         ),
@@ -599,7 +601,7 @@ class LibraryView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildAllSongsTab() {
+  Widget _buildAllSongsTab(BuildContext context) {
     return Obx(() {
       if (controller.allSongs.isEmpty) {
         return _buildEmptyState(
@@ -1011,7 +1013,7 @@ class LibraryView extends GetView<HomeController> {
             )));
   }
 
-  Widget _buildArtistsTab() {
+  Widget _buildArtistsTab(BuildContext context) {
     return Obx(() {
       final artists = controller.allArtists;
       if (artists.isEmpty) {
@@ -1106,7 +1108,7 @@ class LibraryView extends GetView<HomeController> {
     });
   }
 
-  Widget _buildAlbumsTab() {
+  Widget _buildAlbumsTab(BuildContext context) {
     return Obx(() {
       final albums = controller.allAlbums;
       if (albums.isEmpty) {
@@ -1126,7 +1128,7 @@ class LibraryView extends GetView<HomeController> {
             bottom: 150,
           ),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: isTablet ? 4 : 2,
+            crossAxisCount: ResponsiveContext(context).isTablet ? 4 : 2,
             crossAxisSpacing: 15,
             mainAxisSpacing: 15,
             childAspectRatio: 0.8,
@@ -1257,7 +1259,7 @@ class LibraryView extends GetView<HomeController> {
     });
   }
 
-  Widget _buildPlaylistsTab() {
+  Widget _buildPlaylistsTab(BuildContext context) {
     return Obx(() {
       final allPlaylists = controller.allPlaylists;
 

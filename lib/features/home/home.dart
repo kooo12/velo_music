@@ -43,14 +43,15 @@ class HomeScreen extends GetView<HomeController> {
                 ),
                 child: SafeArea(
                   bottom: false,
-                  child: _buildResponsiveLayout(),
+                  child: _buildResponsiveLayout(context),
                 ),
               ),
-              if (!isTabletLandscape)
+              if (!ResponsiveContext(context).isTabletLandscape)
                 Positioned(
                     bottom: 10,
                     child: SizedBox(
-                        width: Get.width, child: _buildBottomNavigation())),
+                        width: MediaQuery.of(context).size.width,
+                        child: _buildBottomNavigation())),
             ],
           ),
         ),
@@ -58,22 +59,22 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildResponsiveLayout() {
-    if (isTabletLandscape) {
-      return _buildTabletLandscapeLayout();
+  Widget _buildResponsiveLayout(BuildContext context) {
+    if (ResponsiveContext(context).isTabletLandscape) {
+      return _buildTabletLandscapeLayout(context);
     } else {
-      return _buildMobileLayout();
+      return _buildMobileLayout(context);
     }
   }
 
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(BuildContext context) {
     return Stack(
       children: [
         Column(
           children: [
             _buildCustomAppBar(),
             Expanded(
-              child: Obx(() => _buildCurrentView()),
+              child: Obx(() => _buildCurrentView(context)),
             ),
           ],
         ),
@@ -91,7 +92,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildTabletLandscapeLayout() {
+  Widget _buildTabletLandscapeLayout(BuildContext context) {
     return Row(
       children: [
         Padding(
@@ -99,7 +100,7 @@ class HomeScreen extends GetView<HomeController> {
               horizontal: AppSizes.defaultSpace,
               vertical: AppSizes.defaultSpace),
           child: Container(
-            width: Get.width * 0.3,
+            width: MediaQuery.of(context).size.width * 0.3,
             padding: const EdgeInsets.symmetric(
                 horizontal: AppSizes.defaultSpace,
                 vertical: AppSizes.defaultSpace),
@@ -122,36 +123,37 @@ class HomeScreen extends GetView<HomeController> {
           ),
         ),
         Expanded(
-            child: Obx(
-          () => Padding(
-            padding: const EdgeInsets.only(
-              top: AppSizes.defaultSpace,
-              right: AppSizes.defaultSpace,
-            ),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeIn,
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0.05, 0),
-                      end: Offset.zero,
-                    ).animate(CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOut,
-                    )),
-                    child: child,
-                  ),
-                );
-              },
-              key: ValueKey(controller.currentView.value),
-              child: _buildCurrentView(),
+          child: Obx(
+            () => Padding(
+              padding: const EdgeInsets.only(
+                top: AppSizes.defaultSpace,
+                right: AppSizes.defaultSpace,
+              ),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                switchInCurve: Curves.easeOut,
+                switchOutCurve: Curves.easeIn,
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.05, 0),
+                        end: Offset.zero,
+                      ).animate(CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOut,
+                      )),
+                      child: child,
+                    ),
+                  );
+                },
+                key: ValueKey(controller.currentView.value),
+                child: _buildCurrentView(context),
+              ),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -161,10 +163,8 @@ class HomeScreen extends GetView<HomeController> {
       padding: const EdgeInsets.all(20.0),
       child: Row(
         children: [
-          Obx(() {
-            return Image.asset('assets/app_icon.png',
-                fit: BoxFit.cover, width: 60, height: 60);
-          }),
+          Image.asset('assets/app_icon.png',
+              fit: BoxFit.cover, width: 60, height: 60),
           const SizedBox(width: 18),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,7 +276,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildHomeView() {
+  Widget _buildHomeView(BuildContext context) {
     return Obx(() {
       if (!controller.hasPermission) {
         return _buildPermissionView(controller);
@@ -290,7 +290,9 @@ class HomeScreen extends GetView<HomeController> {
         return _buildEmptyStateView(controller);
       }
 
-      return isTablet ? _tabletHomeView() : _mobileHomeView();
+      return ResponsiveContext(context).isTablet
+          ? _tabletHomeView()
+          : _mobileHomeView();
     });
   }
 
@@ -534,7 +536,7 @@ class HomeScreen extends GetView<HomeController> {
     return ProfileView();
   }
 
-  Widget _buildCurrentView() {
+  Widget _buildCurrentView(BuildContext context) {
     int currentIndex = 0;
     switch (controller.currentView.value) {
       case 'search':
@@ -556,7 +558,7 @@ class HomeScreen extends GetView<HomeController> {
       children: [
         Container(
           key: const ValueKey('home'),
-          child: _buildHomeView(),
+          child: _buildHomeView(context),
         ),
         Container(
             key: const ValueKey('search'), child: _buildLibrarySearchView()),
