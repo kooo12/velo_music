@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonus/core/controllers/app_controller.dart';
 import 'package:sonus/core/helper/orientation_helper.dart';
+import 'package:sonus/core/services/audio_service.dart';
 import 'package:sonus/core/services/network_manager.dart';
 import 'package:sonus/core/utils/theme_controller.dart';
 import 'package:sonus/routhing/app_routes.dart';
@@ -24,7 +25,7 @@ class SplashController extends GetxController {
       OrientationHelper.setOrientation(Get.context!);
     });
 
-    _startInitialization();
+    await _startInitialization();
   }
 
   Future<void> _startInitialization() async {
@@ -49,6 +50,8 @@ class SplashController extends GetxController {
   Future<void> _performCriticalStartupTasks() async {
     _startBackgroundTasks();
 
+    await _loadSongsInBackground();
+
     progress.value = 1.0;
     await Future.delayed(const Duration(milliseconds: 300));
     _navigateToHome();
@@ -64,15 +67,37 @@ class SplashController extends GetxController {
     });
   }
 
+  Future<void> _loadSongsInBackground() async {
+    try {
+      if (Get.isRegistered<AudioPlayerService>()) {
+        final audioService = Get.find<AudioPlayerService>();
+
+        final hasPermission = await audioService.checkPermissionStatusOnly();
+
+        if (hasPermission) {
+          debugPrint(
+              'Permission already granted, loading songs in background...');
+          if (Platform.isAndroid) {
+            await audioService.loadSongs(skipPermissionCheck: true);
+          } else if (Platform.isIOS) {
+            await audioService.loadSongsForIOS(skipPermissionCheck: true);
+          }
+          debugPrint(
+              'Songs loaded in background: ${audioService.allSongs.length} songs');
+        } else {
+          debugPrint(
+              'No audio permission granted yet, skipping song loading during startup');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading songs in background: $e');
+    }
+  }
+
   Future<void> _loadUserPreferences() async {
     loadingText.value = 'Loading preferences...';
     try {
       _appCtrl.updateTheme();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      String? lastPlayedSong = prefs.getString('lastPlayedSong');
-
-      debugPrint('Last played song: $lastPlayedSong');
     } catch (e) {
       debugPrint('Error loading preferences: $e');
     }

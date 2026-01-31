@@ -6,18 +6,16 @@ import 'package:get/get.dart';
 
 const APPNAME = "Sonus Music Player";
 
-
 const USERKEY = 'userkey';
 
-
-final screenWidth = MediaQuery.of(Get.context!).size.width;
-final orientation = MediaQuery.of(Get.context!).orientation;
-
 // Determine layouts
-final isTablet = screenWidth >= 768; // Tablet breakpoint
-// final isLandscape = orientation == Orientation.landscape;
-// final isTabletLandscape = isTablet && isLandscape;
-// final isPhoneLandscape = !isTablet && isLandscape;
+double get screenWidth => MediaQuery.of(Get.context!).size.width;
+
+Orientation get orientation => MediaQuery.of(Get.context!).orientation;
+bool get isLandscape => orientation == Orientation.landscape;
+
+bool get isTablet => screenWidth >= 768;
+bool get isTabletLandscape => isTablet && isLandscape;
 
 // Notifications
 const CHANNELKEY = 'basic_channel';
