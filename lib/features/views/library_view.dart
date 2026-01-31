@@ -1263,6 +1263,8 @@ class LibraryView extends GetView<HomeController> {
     return Obx(() {
       final allPlaylists = controller.allPlaylists;
 
+      // print(allPlaylists);
+
       return Column(
         children: [
           Container(

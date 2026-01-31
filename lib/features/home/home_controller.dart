@@ -256,7 +256,7 @@ class HomeController extends GetxController
     changeView(view);
     if (title == 'All Songs') {
       tabController.index = 0;
-    } else if (title == 'Recently Played') {
+    } else if (title == 'Playlists') {
       tabController.index = 3;
     } else if (title == 'All Artists') {
       tabController.index = 1;

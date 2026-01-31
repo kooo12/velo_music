@@ -106,9 +106,9 @@ class SeekableProgressBar extends StatelessWidget {
             trackHeight: 3,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-            activeTrackColor: AppColors.musicPrimary,
+            activeTrackColor: AppColors.musicSecondary,
             inactiveTrackColor: Colors.white.withOpacity(0.2),
-            thumbColor: AppColors.musicPrimary,
+            thumbColor: AppColors.musicAccent,
             overlayColor: AppColors.musicPrimary.withOpacity(0.25),
           ),
           child: Slider(
@@ -160,9 +160,9 @@ class SeekableProgressBar extends StatelessWidget {
             trackHeight: 3,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-            activeTrackColor: AppColors.musicPrimary,
+            activeTrackColor: AppColors.musicSecondary,
             inactiveTrackColor: Colors.white.withOpacity(0.2),
-            thumbColor: AppColors.musicPrimary,
+            thumbColor: AppColors.musicAccent,
             overlayColor: AppColors.musicPrimary.withOpacity(0.25),
           ),
           child: Slider(

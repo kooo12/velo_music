@@ -43,21 +43,21 @@ class AppColors {
   static const Color tickOrange = Color(0xFFF86943);
 
   // Music Player Colors
-  static const Color musicPrimary = Color(0xFF6C63FF);
-  static const Color musicSecondary = Color(0xFF4ECDC4);
-  static const Color musicAccent = Color(0xFFFF6B6B);
-  static const Color musicDark = Color(0xFF2D3436);
-  static const Color musicLight = Color(0xFFF8F9FA);
-  static const Color musicGradientStart = Color(0xFF667eea);
-  static const Color musicGradientEnd = Color(0xFF764ba2);
+  static const Color musicPrimary = Color(0xFF0F1035); // Deep Navy
+  static const Color musicSecondary = Color(0xFF365486); // Sapphire Blue
+  static const Color musicAccent = Color(0xFF7FC7D9); // Mist Blue
+  static const Color musicDark = Color(0xFF0F1035);
+  static const Color musicLight = Color(0xFFF1F5F9);
+  static const Color musicGradientStart = Color(0xFF0F1035);
+  static const Color musicGradientEnd = Color(0xFF365486);
   static const Color musicCard = Color(0xFFFFFFFF);
-  static const Color musicCardDark = Color(0xFF34495E);
-  static const Color musicText = Color(0xFF2D3436);
-  static const Color musicTextLight = Color(0xFF636E72);
-  static const Color musicBackground = Color(0xFFF8F9FA);
-  static const Color musicBackgroundDark = Color(0xFF2D3436);
-  static const Color musicDiscoveryStart = Color(0xFF4ECDC4);
-  static const Color musicDiscoveryEnd = Color(0xFF38B2AC);
+  static const Color musicCardDark = Color(0xFF0F1035);
+  static const Color musicText = Color(0xFFFFFFFF);
+  static const Color musicTextLight = Color(0xFF7FC7D9);
+  static const Color musicBackground = Color(0xFFF1F5F9);
+  static const Color musicBackgroundDark = Color(0xFF020617);
+  static const Color musicDiscoveryStart = Color(0xFF365486);
+  static const Color musicDiscoveryEnd = Color(0xFF7FC7D9);
 
   static List<Color> primaryGradientColors = [
     musicGradientStart,
