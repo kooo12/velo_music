@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sonus/core/controllers/app_controller.dart';
@@ -59,6 +60,7 @@ class SplashController extends GetxController {
 
   Future<void> _startBackgroundTasks() async {
     Future.wait([
+      _initializeNotifications(),
       _loadUserPreferences(),
     ]).catchError((e, stackTrace) {
       debugPrint('Background task error: $e');
@@ -91,6 +93,66 @@ class SplashController extends GetxController {
       }
     } catch (e) {
       debugPrint('Error loading songs in background: $e');
+    }
+  }
+
+  Future<void> _initializeNotifications() async {
+    loadingText.value = 'Setting up notifications...';
+    try {
+      await AwesomeNotifications().initialize(
+        null,
+        [
+          NotificationChannel(
+            channelKey: 'basic_channel',
+            channelName: 'Basic notifications',
+            channelDescription: 'Notification channel for basic tests',
+            defaultColor: const Color(0xFF9D50DD),
+            ledColor: Colors.white,
+            importance: NotificationImportance.High,
+          ),
+          NotificationChannel(
+            channelKey: 'music_channel',
+            channelName: 'Music Player',
+            channelDescription:
+                'Notification channel for music player controls',
+            defaultColor: const Color(0xFF9D50DD),
+            ledColor: Colors.white,
+            importance: NotificationImportance.High,
+            playSound: false,
+            enableVibration: false,
+          ),
+          NotificationChannel(
+            channelKey: 'sleep_timer',
+            channelName: 'Sleep Timer',
+            channelDescription: 'Notification channel for sleep timer alerts',
+            defaultColor: const Color(0xFF9D50DD),
+            ledColor: Colors.white,
+            importance: NotificationImportance.High,
+            playSound: true,
+            enableVibration: true,
+          ),
+        ],
+      );
+      // NotificationSettings settings = await messaging.requestPermission(
+      //   alert: true,
+      //   announcement: false,
+      //   badge: true,
+      //   carPlay: false,
+      //   criticalAlert: false,
+      //   provisional: false,
+      //   sound: true,
+      // );
+
+      // if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      //   debugPrint('User granted permission');
+      //   // Get FCM token
+      //   String? token = await messaging.getToken();
+      //   debugPrint('FCM Token: $token');
+      // } else {
+      //   debugPrint('User declined or has not accepted permission');
+      // }
+    } catch (e) {
+      debugPrint('Error initializing notifications: $e');
     }
   }
 

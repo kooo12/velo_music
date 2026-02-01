@@ -6,10 +6,14 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/constants.dart';
 import 'package:sonus/core/constants/sizes.dart';
+import 'package:sonus/core/models/song_model.dart';
 import 'package:sonus/core/utils/theme_controller.dart';
 import 'package:sonus/features/home/home_controller.dart';
+import 'package:sonus/features/home/widgets/sleep_timer_card.dart';
+import 'package:sonus/features/home/widgets/tablet_sleep_timer_card.dart';
 import 'package:sonus/features/views/library_view.dart';
 import 'package:sonus/features/views/profile_view.dart';
+import 'package:sonus/widgets/cached_album_artwork.dart';
 import 'package:sonus/widgets/loading_widget.dart';
 
 import '../sub_screens/player_screens/mini_player.dart';
@@ -300,17 +304,24 @@ class HomeScreen extends GetView<HomeController> {
     return SingleChildScrollView(
       key: const PageStorageKey('home_scroll'),
       padding: const EdgeInsets.only(left: AppSizes.defaultSpace),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            decoration: BoxDecoration(border: Border.all()),
-            child: const Center(
-              child: Text('Sleep Timer'),
-            ),
-          ),
-        ],
+      child: RepaintBoundary(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            buildSleepTimerCard(controller),
+            const SizedBox(height: 20),
+            if (controller.recentlyPlayed.isNotEmpty) ...[
+              _buildSectionTitle('Recently Played'.tr,
+                  onTap: () =>
+                      controller.showPlaylistSongs(controller.allPlaylists[1]),
+                  showPlay: true,
+                  songlist: controller.recentlyPlayed),
+              const SizedBox(height: 15),
+              _buildRecentlyPlayed(controller),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -324,13 +335,7 @@ class HomeScreen extends GetView<HomeController> {
         children: [
           Row(
             children: [
-              Expanded(
-                  child: Container(
-                decoration: BoxDecoration(border: Border.all()),
-                child: const Center(
-                  child: Text('Sleep Timer'),
-                ),
-              )),
+              Expanded(child: buildTabletSleepTimerCard(controller)),
               const SizedBox(width: 10),
               Expanded(
                   child: Container(
@@ -341,6 +346,17 @@ class HomeScreen extends GetView<HomeController> {
               )),
             ],
           ),
+          const SizedBox(height: 16),
+          if (controller.recentlyPlayed.isNotEmpty) ...[
+            _buildSectionTitle('Recently Played'.tr,
+                onTap: () =>
+                    controller.titleTapAction('library', 'Recently Played'),
+                showPlay: true,
+                songlist: controller.recentlyPlayed),
+            const SizedBox(height: 15),
+            _buildRecentlyPlayed(controller),
+            const SizedBox(height: 10),
+          ],
         ],
       ),
     );
@@ -477,6 +493,144 @@ class HomeScreen extends GetView<HomeController> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title,
+      {VoidCallback? onTap,
+      bool showShuffle = false,
+      bool showPlay = false,
+      bool showMore = false,
+      List<SongModel>? songlist}) {
+    final controller = Get.find<HomeController>();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Row(children: [
+          if (showShuffle)
+            IconButton(
+              onPressed: () => controller.shuffleAllSongs(songlist ?? []),
+              icon: const Icon(
+                Iconsax.shuffle,
+                color: Colors.white70,
+                size: 18,
+              ),
+            ),
+          if (showPlay)
+            IconButton(
+              onPressed: () => controller.playAllSongs(songlist ?? []),
+              icon: const Icon(
+                Iconsax.play,
+                color: Colors.white70,
+                size: 18,
+              ),
+            ),
+          if (showMore)
+            TextButton(
+                onPressed: () {
+                  controller.changeView('library');
+                  controller.tabController.index = 3;
+                },
+                child: Text(
+                  'Show all'.tr,
+                  style: const TextStyle(color: Colors.white70),
+                )),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildRecentlyPlayed(HomeController controller) {
+    return SizedBox(
+      height: 180,
+      child: Obx(() => ListView.builder(
+            scrollDirection: Axis.horizontal,
+            cacheExtent: 200,
+            itemCount: controller.recentlyPlayed.length.clamp(0, 10),
+            itemBuilder: (context, index) {
+              final song = controller.recentlyPlayed[index];
+              return _buildSongCard(
+                  controller.recentlyPlayed, song, controller);
+            },
+          )),
+    );
+  }
+
+  Widget _buildSongCard(
+      List<SongModel> songList, SongModel song, HomeController controller) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        debugPrint('Song card tapped: ${song.title} (id: ${song.id})');
+        controller.playSong(songList, song);
+      },
+      child: Container(
+        key: ValueKey('song_card_${song.id}'),
+        width: 140,
+        margin: const EdgeInsets.only(right: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RepaintBoundary(
+              child: Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  // boxShadow: const [
+                  //   BoxShadow(
+                  //     color: Colors.black26,
+                  //     blurRadius: 8, // Reduced from 10
+                  //     offset: Offset(0, 3), // Reduced from 5
+                  //   ),
+                  // ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: CachedAlbumArtwork(
+                    key: ValueKey('artwork_${song.id}'),
+                    songId: song.id,
+                    width: double.infinity,
+                    height: double.infinity,
+                    borderRadius: 15,
+                    highQuality: true,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              song.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              song.artist,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 12,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

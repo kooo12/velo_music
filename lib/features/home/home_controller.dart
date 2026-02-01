@@ -9,8 +9,11 @@ import 'package:sonus/core/models/playlist_model.dart';
 import 'package:sonus/core/models/song_model.dart';
 import 'package:sonus/core/services/audio_service.dart';
 import 'package:sonus/core/services/playlist_service.dart';
+import 'package:sonus/core/services/sleep_timer_service.dart';
 import 'package:sonus/core/utils/theme_controller.dart';
 import 'package:sonus/routhing/app_routes.dart';
+
+import '../../core/helper/sleep_timer_dialog.dart';
 
 enum RepeatMode { off, all, one }
 
@@ -21,6 +24,7 @@ class HomeController extends GetxController
   // Services
   late final AudioPlayerService audioService;
   late final PlaylistService _playlistService;
+  late final SleepTimerService _sleepTimerService;
 
   // Scroll controllers
   late final ScrollController allSongsScrollController;
@@ -76,6 +80,11 @@ class HomeController extends GetxController
     _playlistService.currentPlayList = value;
   }
 
+  SleepTimerService get sleepTimerService => _sleepTimerService;
+  bool get isSleepTimerActive => _sleepTimerService.isActive;
+  String get sleepTimerFormattedTime => _sleepTimerService.formattedTime;
+  double get sleepTimerProgress => _sleepTimerService.progress;
+
   @override
   void onInit() async {
     _initializeServices();
@@ -105,6 +114,14 @@ class HomeController extends GetxController
     } catch (e) {
       _playlistService = Get.put(PlaylistService(), permanent: true);
       debugPrint('HomeController: Created new PlaylistService instance');
+    }
+
+    try {
+      _sleepTimerService = Get.find<SleepTimerService>();
+      debugPrint('HomeController: Found existing SleepTimerService instance');
+    } catch (e) {
+      _sleepTimerService = Get.put(SleepTimerService(), permanent: true);
+      debugPrint('HomeController: Created new SleepTimerService instance');
     }
   }
 
@@ -263,6 +280,16 @@ class HomeController extends GetxController
     } else if (title == 'All Albums') {
       tabController.index = 2;
     }
+  }
+
+  void showPlaylistSongs(PlaylistModel playlist) {
+    final playlistSongs = getPlaylistSongs(playlist.id);
+
+    Get.toNamed(Routes.PLAYLISTSONGSCREEN, arguments: {
+      'playlist': playlist,
+      'playlistSongs': playlistSongs,
+      'controller': this,
+    });
   }
 
   Future<void> requestPermissions() async {
@@ -434,6 +461,29 @@ class HomeController extends GetxController
     }
 
     return artwork;
+  }
+
+  void startSleepTimer(int minutes) {
+    _sleepTimerService.startTimer(minutes);
+  }
+
+  void restartSleepTimer() {
+    _sleepTimerService.startTimer(_sleepTimerService.lastSelectedMinutes);
+  }
+
+  void stopSleepTimer() {
+    _sleepTimerService.stopTimer();
+  }
+
+  void addTimeToSleepTimer(int minutes) {
+    _sleepTimerService.addTime(minutes);
+  }
+
+  void showSleepTimerDialog() {
+    Get.dialog(
+      SleepTimerDialog(),
+      barrierDismissible: true,
+    );
   }
 
   @override
