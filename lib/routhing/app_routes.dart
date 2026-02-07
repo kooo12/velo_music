@@ -10,4 +10,7 @@ abstract class Routes {
   static const ALBUMSONGSCREEN = '/albumsongscreen';
   static const PLAYLISTSONGSCREEN = '/playlistsongscreen';
   static const ADDSONGTOPLAYLISTSCREEN = '/addsongtoplaylistscreen';
+
+  static const NOTIFICATIONSREQUESTPAGE = '/notificationsrequestpage';
+  static const NOTIFICATIONSETTINGS = '/notificationsettings';
 }

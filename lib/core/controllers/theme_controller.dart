@@ -125,5 +125,7 @@ class ThemeController extends GetxController {
       Get.changeThemeMode(ThemeMode.light);
     }
     _isDarkMode.value = status;
+    print(status);
+    print('isDark ${_isDarkMode.value}');
   }
 }

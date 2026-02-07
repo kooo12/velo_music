@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/constants.dart';
 import 'package:sonus/core/models/song_model.dart';
-import 'package:sonus/core/utils/theme_controller.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/features/home/home_controller.dart';
 import 'package:sonus/features/sub_screens/player_screens/half_screen_player.dart';
 import 'package:sonus/widgets/playlist_dialog/add_to_playlist_dialog.dart';

@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import 'package:sonus/core/bindings/home_binding.dart';
 import 'package:sonus/core/bindings/splash_binding.dart';
+import 'package:sonus/features/notifications/notification_request_page.dart';
 import 'package:sonus/core/models/playlist_model.dart';
 import 'package:sonus/core/models/song_model.dart';
 import 'package:sonus/features/home/home.dart';
 import 'package:sonus/features/home/home_controller.dart';
+import 'package:sonus/features/notifications/notification_settings_page.dart';
 import 'package:sonus/features/splash/splash.dart';
 import 'package:sonus/features/sub_screens/library_screen/add_songs_to_playlist_screen.dart';
 import 'package:sonus/features/sub_screens/library_screen/album_songs_screen.dart';
@@ -122,5 +124,17 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
     ),
+
+    GetPage(
+      name: Routes.NOTIFICATIONSREQUESTPAGE,
+      page: () => const NotificationRequestPage(),
+      opaque: false,
+      transition: Transition.downToUp,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+        name: Routes.NOTIFICATIONSETTINGS,
+        page: () => NotificationSettingsPage(),
+        transition: Transition.rightToLeft),
   ];
 }

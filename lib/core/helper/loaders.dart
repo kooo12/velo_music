@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/sizes.dart';
-import 'package:sonus/core/utils/theme_controller.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 
 class AppLoader {
   static void openSavingLoading(String text, {bool dismissible = false}) {

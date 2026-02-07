@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonus/core/services/audio_service.dart';
+import 'package:sonus/core/services/notification_settings_service.dart';
 
 class SleepTimerService extends GetxService {
   final audioService = Get.find<AudioPlayerService>();
+  final settingsService = Get.find<NotificationSettingsService>();
 
   Timer? _timer;
   Timer? _notificationUpdateTimer;
@@ -96,8 +98,9 @@ class SleepTimerService extends GetxService {
       audioService.audioPlayer.pause();
       debugPrint('Music stopped by sleep timer');
 
-      // Check here
-      _showSleepTimerNotification();
+      if (settingsService.sleepTimerNotifications.value) {
+        _showSleepTimerNotification();
+      }
     } catch (e) {
       debugPrint('Error stopping music: $e');
     }
@@ -107,7 +110,10 @@ class SleepTimerService extends GetxService {
 
   Future<void> _showSleepTimerNotification() async {
     try {
-      // Check here
+      if (!settingsService.sleepTimerNotifications.value) {
+        debugPrint('Sleep timer notifications disabled, skipping notification');
+        return;
+      }
 
       final notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
@@ -188,7 +194,11 @@ class SleepTimerService extends GetxService {
 
   Future<void> _showSleepTimerCountdownNotification() async {
     try {
-      // Check here
+      if (!settingsService.sleepTimerNotifications.value) {
+        debugPrint(
+            'Sleep timer notifications disabled, skipping countdown notification');
+        return;
+      }
 
       final minutes = _remainingSeconds.value ~/ 60;
       final seconds = _remainingSeconds.value % 60;

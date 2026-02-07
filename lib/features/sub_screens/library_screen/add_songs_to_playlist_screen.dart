@@ -4,7 +4,7 @@ import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/helper/loaders.dart';
 import 'package:sonus/core/models/playlist_model.dart';
 import 'package:sonus/core/models/song_model.dart';
-import 'package:sonus/core/utils/theme_controller.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/features/home/home_controller.dart';
 import 'package:sonus/widgets/cached_album_artwork.dart';
 import 'package:sonus/widgets/loading_widget.dart';

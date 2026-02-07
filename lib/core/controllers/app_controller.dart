@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sonus/core/repository/appstate_repository.dart';
-import 'package:sonus/core/utils/theme_controller.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 
 class AppController extends GetxController {
   //Initialised properties  --------------------------------------

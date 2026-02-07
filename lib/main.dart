@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sonus/core/bindings/app_binding.dart';
-import 'package:sonus/core/utils/theme_controller.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
+import 'package:sonus/core/translations/app_translations.dart';
 import 'package:sonus/features/splash/splash.dart';
 import 'package:sonus/routhing/app_pages.dart';
 import 'package:sonus/routhing/app_routes.dart';
@@ -100,6 +101,9 @@ class MyApp extends StatelessWidget {
         getPages: AppPages.pages,
         darkTheme: themeController.darkTheme,
         home: const SplashScreen(),
+        locale: AppTranslation.locale,
+        fallbackLocale: AppTranslation.fallbackLocale,
+        translations: AppTranslation(),
       ),
     );
   }

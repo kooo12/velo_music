@@ -8,9 +8,10 @@ import 'package:sonus/core/helper/loaders.dart';
 import 'package:sonus/core/models/playlist_model.dart';
 import 'package:sonus/core/models/song_model.dart';
 import 'package:sonus/core/services/audio_service.dart';
+import 'package:sonus/core/services/fcm_service.dart';
 import 'package:sonus/core/services/playlist_service.dart';
 import 'package:sonus/core/services/sleep_timer_service.dart';
-import 'package:sonus/core/utils/theme_controller.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/routhing/app_routes.dart';
 
 import '../../core/helper/sleep_timer_dialog.dart';
@@ -20,6 +21,7 @@ enum RepeatMode { off, all, one }
 class HomeController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final themeCtrl = Get.find<ThemeController>();
+  final fcmService = Get.find<FCMService>();
 
   // Services
   late final AudioPlayerService audioService;
@@ -123,6 +125,10 @@ class HomeController extends GetxController
       _sleepTimerService = Get.put(SleepTimerService(), permanent: true);
       debugPrint('HomeController: Created new SleepTimerService instance');
     }
+
+    Future.delayed(const Duration(seconds: 10), () {
+      fcmService.shouldShowNotiRequest();
+    });
   }
 
   // Music player controls

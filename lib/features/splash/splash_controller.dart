@@ -7,7 +7,7 @@ import 'package:sonus/core/controllers/app_controller.dart';
 import 'package:sonus/core/helper/orientation_helper.dart';
 import 'package:sonus/core/services/audio_service.dart';
 import 'package:sonus/core/services/network_manager.dart';
-import 'package:sonus/core/utils/theme_controller.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/routhing/app_routes.dart';
 
 class SplashController extends GetxController {
