@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/constants.dart';
 import 'package:sonus/core/constants/sizes.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/core/helper/glass_dialog.dart';
 import 'package:sonus/core/helper/loaders.dart';
 import 'package:sonus/core/models/playlist_model.dart';
@@ -29,8 +30,9 @@ class PlaylistSongsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeCtrl = Get.find<ThemeController>();
     return Scaffold(
-      backgroundColor: _getBackgroundColor(),
+      backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

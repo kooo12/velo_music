@@ -29,7 +29,7 @@ class ArtistSongsScreen extends StatelessWidget {
     final firstSong = songs.isNotEmpty ? songs.first : null;
 
     return Scaffold(
-      backgroundColor: _getArtistBackgroundColor(),
+      backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

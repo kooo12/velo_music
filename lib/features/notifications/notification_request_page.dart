@@ -23,9 +23,7 @@ class NotificationRequestPage extends GetView<HomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: themeCtrl.isDarkMode
-                      ? AppColors.darkGradientColors
-                      : AppColors.primaryGradientColors,
+                  colors: themeCtrl.currentAppTheme.value.gradientColors,
                 ),
               ),
             ),

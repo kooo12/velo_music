@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/controllers/app_controller.dart';
 import 'package:sonus/features/splash/splash_controller.dart';
 import 'package:sonus/widgets/loading_widget.dart';
@@ -20,13 +19,7 @@ class SplashScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: controller.themeCtrl.isDarkMode
-                ? AppColors.darkGradientColors
-                : [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withOpacity(0.8),
-                    Theme.of(context).colorScheme.secondary,
-                  ],
+            colors: controller.themeCtrl.currentAppTheme.value.gradientColors,
           ),
         ),
         child: SafeArea(

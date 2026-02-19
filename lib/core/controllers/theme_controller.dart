@@ -7,8 +7,11 @@ import 'package:sonus/core/constants/checkbox_theme.dart';
 import 'package:sonus/core/constants/chip_theme.dart';
 import 'package:sonus/core/constants/elevated_button_theme.dart';
 import 'package:sonus/core/constants/text_field_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sonus/core/models/app_theme.dart';
 
 class ThemeController extends GetxController {
+  static const String _themeKey = 'selected_theme_id';
   final _activeThemeIndex = 0.obs;
 
   final ThemeData appThemeData = ThemeData(
@@ -105,27 +108,120 @@ class ThemeController extends GetxController {
 
   get isDarkMode => _isDarkMode.value;
 
+  final RxList<AppTheme> appThemes = <AppTheme>[].obs;
+  late Rx<AppTheme> currentAppTheme;
+
   @override
   void onInit() {
     super.onInit();
     _themes = [appThemeData];
+    _populateThemes();
   }
 
-  applyNextTheme() {
-    (_activeThemeIndex.value + 1) < _themes.length
-        ? _activeThemeIndex.value++
-        : _activeThemeIndex.value = 0;
-    Get.changeTheme(activeTheme);
+  void _populateThemes() {
+    appThemes.value = [
+      AppTheme(
+        id: 'ocean_blue',
+        name: 'Ocean Blue'.tr,
+        gradientColors: AppColors.oceanBlueGradient,
+        isDark: false,
+        themeData: appThemeData,
+      ),
+      AppTheme(
+        id: 'dark_night',
+        name: 'Dark Night'.tr,
+        gradientColors: AppColors.darkNightGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+      AppTheme(
+        id: 'purple_haze',
+        name: 'Purple Haze'.tr,
+        gradientColors: AppColors.purpleHazeGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+      AppTheme(
+        id: 'sunset_vibes',
+        name: 'Sunset Vibes'.tr,
+        gradientColors: AppColors.sunsetVibesGradient,
+        isDark: false,
+        themeData: appThemeData,
+      ),
+      AppTheme(
+        id: 'forest_mist',
+        name: 'Forest Mist'.tr,
+        gradientColors: AppColors.forestMistGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+      AppTheme(
+        id: 'royal_gold',
+        name: 'Royal Gold'.tr,
+        gradientColors: AppColors.royalGoldGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+      AppTheme(
+        id: 'crimson_tide',
+        name: 'Crimson Tide'.tr,
+        gradientColors: AppColors.crimsonTideGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+    ];
+    currentAppTheme = appThemes[0].obs;
+  }
+
+  void cycleTheme() {
+    int currentIndex = appThemes.indexOf(currentAppTheme.value);
+    int nextIndex = (currentIndex + 1) % appThemes.length;
+    setTheme(appThemes[nextIndex]);
+  }
+
+  void setTheme(AppTheme theme, {bool save = true}) {
+    currentAppTheme.value = theme;
+    Get.changeTheme(theme.themeData);
+    _isDarkMode.value = theme.isDark;
+
+    if (save) {
+      _saveTheme(theme.id);
+    }
+  }
+
+  Future<void> loadTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedThemeId = prefs.getString(_themeKey);
+
+      if (savedThemeId != null && appThemes.isNotEmpty) {
+        final savedTheme = appThemes.firstWhere(
+          (t) => t.id == savedThemeId,
+          orElse: () => appThemes[0],
+        );
+        setTheme(savedTheme, save: false);
+        debugPrint('ThemeController loaded theme: ${savedTheme.name}');
+      }
+    } catch (e) {
+      debugPrint('Error loading theme in ThemeController: $e');
+    }
+  }
+
+  Future<void> _saveTheme(String themeId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_themeKey, themeId);
+      debugPrint('Successfully saving theme: $themeId');
+    } catch (e) {
+      debugPrint('Error saving theme: $e');
+    }
   }
 
   setDarkMode(bool status) {
-    if (status) {
-      Get.changeThemeMode(ThemeMode.dark);
-    } else {
-      Get.changeThemeMode(ThemeMode.light);
-    }
-    _isDarkMode.value = status;
-    print(status);
-    print('isDark ${_isDarkMode.value}');
+    final theme = appThemes.firstWhere(
+      (t) => t.isDark == status,
+      orElse: () => appThemes[0],
+    );
+    setTheme(theme);
   }
 }

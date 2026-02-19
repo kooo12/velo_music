@@ -18,8 +18,8 @@ class AppBinding implements Binding {
     Get.put(LanguageController(), permanent: true);
     Get.put(AudioPlayerService(), permanent: true);
     Get.put(FCMService(), permanent: true);
-    Get.put(NotificationHandlerService(), permanent: true);
     Get.put(NotificationSettingsService(), permanent: true);
+    Get.put(NotificationHandlerService(), permanent: true);
     Get.put(NotificationSettingsController(), permanent: true);
 
     return [];

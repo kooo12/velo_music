@@ -16,9 +16,7 @@ class NotificationSettingsPage extends StatelessWidget {
     final controller = Get.find<NotificationSettingsController>();
 
     return Scaffold(
-      backgroundColor: themeCtrl.isDarkMode
-          ? AppColors.musicBackgroundDark
-          : AppColors.musicGradientStart,
+      backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -237,68 +235,11 @@ class NotificationSettingsPage extends StatelessWidget {
             Switch(
               value: isEnabled ? value.value : false,
               onChanged: isEnabled ? onChanged : null,
-              activeColor: AppColors.musicSecondary,
+              activeColor: themeCtrl.currentAppTheme.value.gradientColors.last,
               inactiveThumbColor: Colors.white54,
               inactiveTrackColor: Colors.white24,
             ),
           ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildActionTile({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required VoidCallback onTap,
-    RxBool? enabled,
-  }) {
-    return Obx(() {
-      final isEnabled = enabled?.value ?? true;
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: GestureDetector(
-          onTap: isEnabled ? onTap : null,
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                color: isEnabled ? Colors.white70 : Colors.white38,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style:
-                          themeCtrl.activeTheme.textTheme.bodyLarge!.copyWith(
-                        color: isEnabled ? Colors.white : Colors.white54,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style:
-                          themeCtrl.activeTheme.textTheme.bodyMedium!.copyWith(
-                        color: isEnabled ? Colors.white70 : Colors.white38,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: isEnabled ? Colors.white54 : Colors.white38,
-                size: 16,
-              ),
-            ],
-          ),
         ),
       );
     });

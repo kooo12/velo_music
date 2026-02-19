@@ -117,6 +117,7 @@ class AppLoader {
 
   static customToast({required String message}) {
     final ctx = Get.context!;
+    final themeCtrl = Get.find<ThemeController>();
     ScaffoldMessenger.of(ctx).showSnackBar(
       SnackBar(
         elevation: 0,
@@ -132,13 +133,10 @@ class AppLoader {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.musicPrimary,
-                AppColors.musicSecondary,
-              ],
+              colors: themeCtrl.currentAppTheme.value.gradientColors,
             ),
             boxShadow: [
               BoxShadow(

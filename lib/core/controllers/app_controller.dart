@@ -18,6 +18,9 @@ class AppController extends GetxController {
   onInit() async {
     debugPrint("App controller init...");
     await getVersion();
+
+    await themeCtrl.loadTheme();
+
     super.onInit();
     setup().catchError((e, stackTrace) {
       debugPrint('AppController setup error: $e');
@@ -42,16 +45,8 @@ class AppController extends GetxController {
 
   Future<void> setup() async {
     await repository.fetchProperty();
+
     await increaseRuntime();
-  }
-
-  Future<void> updateTheme() async {
-    var darkMode = (repository.getProperty("darkmode") ?? false);
-    if (darkMode) {
-      themeCtrl.setDarkMode(true);
-    }
-
-    return;
   }
 
   Future<void> increaseRuntime() async {

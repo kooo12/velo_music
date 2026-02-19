@@ -13,6 +13,7 @@ import 'package:sonus/core/services/playlist_service.dart';
 import 'package:sonus/core/services/sleep_timer_service.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/routhing/app_routes.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/helper/sleep_timer_dialog.dart';
 
@@ -90,6 +91,7 @@ class HomeController extends GetxController
   @override
   void onInit() async {
     _initializeServices();
+
     _tabController = TabController(length: 4, vsync: this);
 
     allSongsScrollController = ScrollController();
@@ -98,6 +100,7 @@ class HomeController extends GetxController
     playlistsScrollController = ScrollController();
     searchTextController = TextEditingController();
     _loadRecentSearches();
+
     super.onInit();
   }
 
@@ -490,6 +493,14 @@ class HomeController extends GetxController
       SleepTimerDialog(),
       barrierDismissible: true,
     );
+  }
+
+  Future<void> launchWeb(Uri url) async {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override

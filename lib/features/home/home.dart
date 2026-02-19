@@ -35,19 +35,19 @@ class HomeScreen extends GetView<HomeController> {
           resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: themeCtrl.isDarkMode
-                        ? AppColors.darkGradientColors
-                        : AppColors.primaryGradientColors,
+              Obx(
+                () => Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: themeCtrl.currentAppTheme.value.gradientColors,
+                    ),
                   ),
-                ),
-                child: SafeArea(
-                  bottom: false,
-                  child: _buildResponsiveLayout(context),
+                  child: SafeArea(
+                    bottom: false,
+                    child: _buildResponsiveLayout(context),
+                  ),
                 ),
               ),
               if (!ResponsiveContext(context).isTabletLandscape)

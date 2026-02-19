@@ -391,9 +391,7 @@ class LibraryView extends GetView<HomeController> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: controller.themeCtrl.isDarkMode
-                ? AppColors.darkGradientColors
-                : AppColors.primaryGradientColors,
+            colors: controller.themeCtrl.currentAppTheme.value.gradientColors,
           ),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
@@ -445,9 +443,7 @@ class LibraryView extends GetView<HomeController> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: controller.themeCtrl.isDarkMode
-                ? AppColors.darkGradientColors
-                : AppColors.primaryGradientColors,
+            colors: controller.themeCtrl.currentAppTheme.value.gradientColors,
           ),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
@@ -499,9 +495,7 @@ class LibraryView extends GetView<HomeController> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: controller.themeCtrl.isDarkMode
-                ? AppColors.darkGradientColors
-                : AppColors.primaryGradientColors,
+            colors: controller.themeCtrl.currentAppTheme.value.gradientColors,
           ),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
@@ -555,9 +549,7 @@ class LibraryView extends GetView<HomeController> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: controller.themeCtrl.isDarkMode
-                ? AppColors.darkGradientColors
-                : AppColors.primaryGradientColors,
+            colors: controller.themeCtrl.currentAppTheme.value.gradientColors,
           ),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),

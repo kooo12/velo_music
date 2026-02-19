@@ -27,7 +27,7 @@ class AddSongsToPlaylistScreen extends StatelessWidget {
         _AddSongsController(controller: controller, playlist: playlist));
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

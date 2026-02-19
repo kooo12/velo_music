@@ -77,6 +77,7 @@ class ProfileView extends GetView<HomeController> {
                       '${controller.allSongs.length}',
                       Icons.music_note,
                       AppColors.white,
+                      AppColors.white,
                     ),
                   ),
                   const SizedBox(width: 15),
@@ -85,7 +86,8 @@ class ProfileView extends GetView<HomeController> {
                       'Playlists'.tr,
                       '${controller.userPlaylists.length}',
                       Icons.queue_music,
-                      AppColors.musicSecondary,
+                      AppColors.musicAccent,
+                      AppColors.musicAccent,
                     ),
                   ),
                 ],
@@ -95,11 +97,11 @@ class ProfileView extends GetView<HomeController> {
                 children: [
                   Expanded(
                     child: _buildStatItem(
-                      'Liked Songs'.tr,
-                      '${controller.likedSongs.length}',
-                      Icons.favorite,
-                      AppColors.musicAccent,
-                    ),
+                        'Liked Songs'.tr,
+                        '${controller.likedSongs.length}',
+                        Icons.favorite,
+                        AppColors.musicAccent,
+                        Colors.redAccent),
                   ),
                   const SizedBox(width: 15),
                   Expanded(
@@ -107,7 +109,8 @@ class ProfileView extends GetView<HomeController> {
                       'Artists'.tr,
                       '${controller.allArtists.length}',
                       Icons.person,
-                      AppColors.musicSecondary,
+                      AppColors.white,
+                      AppColors.white,
                     ),
                   ),
                 ],
@@ -133,9 +136,9 @@ class ProfileView extends GetView<HomeController> {
                     ),
                   ),
                   icon: const Icon(Icons.refresh, color: Colors.white),
-                  label: const Text(
-                    'Refresh Library',
-                    style: TextStyle(color: Colors.white),
+                  label: Text(
+                    'Refresh Library'.tr,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -145,7 +148,7 @@ class ProfileView extends GetView<HomeController> {
   }
 
   Widget _buildStatItem(
-      String label, String value, IconData icon, Color color) {
+      String label, String value, IconData icon, Color color, Color iconColor) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -154,7 +157,7 @@ class ProfileView extends GetView<HomeController> {
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
+          Icon(icon, color: iconColor, size: 24),
           const SizedBox(height: 8),
           Text(
             value,
@@ -200,14 +203,6 @@ class ProfileView extends GetView<HomeController> {
               ),
             ),
           ),
-          _buildSettingItem(
-            'Notifications'.tr,
-            'Manage notification preferences'.tr,
-            Icons.notifications,
-            onTap: () {
-              Get.toNamed(Routes.NOTIFICATIONSETTINGS);
-            },
-          ),
           Obx(() => _buildSettingItem(
                 'Language'.tr,
                 'Switch language preferences to change English / မြန်မာ'.tr,
@@ -231,7 +226,8 @@ class ProfileView extends GetView<HomeController> {
                           languageCtrl.changeLanguage('English');
                         }
                       },
-                      activeColor: AppColors.musicSecondary,
+                      activeColor:
+                          themeCtrl.currentAppTheme.value.gradientColors.first,
                       inactiveThumbColor: Colors.white,
                       activeTrackColor: Colors.white.withOpacity(0.2),
                       inactiveTrackColor: Colors.white.withOpacity(0.3),
@@ -246,22 +242,21 @@ class ProfileView extends GetView<HomeController> {
                   ],
                 ),
               )),
-          Obx(
-            () => _buildSettingItem(
-              'Color Mode'.tr,
-              'Switch between primary and grey mode'.tr,
-              Iconsax.sun_1_copy,
-              trailing: Switch(
-                value: themeCtrl.isDarkMode,
-                onChanged: (value) {
-                  languageCtrl.changeMode(value);
-                },
-                activeColor: AppColors.musicSecondary,
-                inactiveThumbColor: Colors.white,
-                activeTrackColor: Colors.white.withOpacity(0.2),
-                inactiveTrackColor: Colors.white.withOpacity(0.3),
-              ),
-            ),
+          _buildSettingItem(
+            'Notifications'.tr,
+            'Manage notification preferences'.tr,
+            Icons.notifications,
+            onTap: () {
+              Get.toNamed(Routes.NOTIFICATIONSETTINGS);
+            },
+          ),
+          _buildSettingItem(
+            'Theme'.tr,
+            'Choose your desired theme'.tr,
+            Iconsax.sun_1_copy,
+            onTap: () {
+              Get.toNamed(Routes.THEME);
+            },
           ),
         ],
       ),
@@ -282,7 +277,7 @@ class ProfileView extends GetView<HomeController> {
           color: AppColors.musicSecondary.withOpacity(0.2),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: AppColors.musicSecondary),
+        child: Icon(icon, color: AppColors.white),
       ),
       title: Text(
         title,
@@ -321,9 +316,9 @@ class ProfileView extends GetView<HomeController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'About',
-            style: TextStyle(
+          Text(
+            'About'.tr,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -331,11 +326,32 @@ class ProfileView extends GetView<HomeController> {
           ),
           const SizedBox(height: 15),
           _buildAboutItem(
-            'Version',
+            'Version'.tr,
             appCtrl.version?.value.isNotEmpty == true
                 ? 'v${appCtrl.version!.value} (Build ${appCtrl.buildNumber!.value})'
                 : '1.0.0',
             Icons.info_outline,
+          ),
+          _buildAboutItem(
+            'Privacy Policy'.tr,
+            'View our privacy policy'.tr,
+            Icons.privacy_tip,
+            onTap: () => Get.toNamed(Routes.PRIVACY),
+          ),
+          _buildAboutItem(
+            'Terms of Service'.tr,
+            'View terms and conditions'.tr,
+            Icons.description,
+            onTap: () => Get.toNamed(Routes.TERMS),
+          ),
+          _buildAboutItem(
+            'Feedback'.tr,
+            'Share your feedback and suggestions'.tr,
+            Icons.feedback,
+            onTap: () => controller.launchWeb(
+              Uri.parse(
+                  'https://docs.google.com/forms/d/e/1FAIpQLSeomxUmZBcReLAUMAv8SPDlzrpxUbJmD2fpDWl28vmzCNadfA/viewform?usp=dialog'),
+            ),
           ),
         ],
       ),

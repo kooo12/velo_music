@@ -46,17 +46,6 @@ void main() {
       expect(prefs.getString('language'), testLang);
     });
 
-    test('changeMode should call ThemeController and persist', () async {
-      when(() => mockThemeController.setDarkMode(any())).thenReturn(null);
-
-      await languageController.changeMode(true);
-
-      verify(() => mockThemeController.setDarkMode(true)).called(1);
-
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool('greyMode'), true);
-    });
-
     test('nextLanguage should cycle forward', () async {
       expect(languageController.currentLangIndex.value, 0);
 

@@ -12,6 +12,9 @@ import 'package:sonus/features/sub_screens/library_screen/add_songs_to_playlist_
 import 'package:sonus/features/sub_screens/library_screen/album_songs_screen.dart';
 import 'package:sonus/features/sub_screens/library_screen/artist_songs_screen.dart';
 import 'package:sonus/features/sub_screens/library_screen/playlist_songs_screen.dart';
+import 'package:sonus/features/terms_and_privacy/privacy_view.dart';
+import 'package:sonus/features/terms_and_privacy/terms_view.dart';
+import 'package:sonus/features/themes/theme_view.dart';
 import 'package:sonus/routhing/app_routes.dart';
 import 'package:sonus/features/sub_screens/player_screens/full_screen_player.dart';
 import 'package:sonus/features/sub_screens/player_screens/full_screen_player_landscape.dart';
@@ -135,6 +138,19 @@ class AppPages {
     GetPage(
         name: Routes.NOTIFICATIONSETTINGS,
         page: () => NotificationSettingsPage(),
+        transition: Transition.rightToLeft),
+
+    GetPage(
+        name: Routes.PRIVACY,
+        page: () => const PrivacyView(),
+        transition: Transition.rightToLeft),
+    GetPage(
+        name: Routes.TERMS,
+        page: () => const TermsView(),
+        transition: Transition.rightToLeft),
+    GetPage(
+        name: Routes.THEME,
+        page: () => const ThemeView(),
         transition: Transition.rightToLeft),
   ];
 }

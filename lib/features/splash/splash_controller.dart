@@ -61,7 +61,6 @@ class SplashController extends GetxController {
   Future<void> _startBackgroundTasks() async {
     Future.wait([
       _initializeNotifications(),
-      _loadUserPreferences(),
     ]).catchError((e, stackTrace) {
       debugPrint('Background task error: $e');
       debugPrint('Stack trace: $stackTrace');
@@ -153,15 +152,6 @@ class SplashController extends GetxController {
       // }
     } catch (e) {
       debugPrint('Error initializing notifications: $e');
-    }
-  }
-
-  Future<void> _loadUserPreferences() async {
-    loadingText.value = 'Loading preferences...';
-    try {
-      _appCtrl.updateTheme();
-    } catch (e) {
-      debugPrint('Error loading preferences: $e');
     }
   }
 

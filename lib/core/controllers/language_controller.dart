@@ -1,12 +1,9 @@
 import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/core/translations/app_translations.dart';
 
 class LanguageController extends GetxController {
-  final ThemeController _themeCtrl = Get.find<ThemeController>();
-
   SharedPreferences? _prefs;
   final RxString _appVersion = ''.obs;
 
@@ -35,7 +32,6 @@ class LanguageController extends GetxController {
     }
 
     await _loadLanguagePreference();
-    await loadMode();
     _isLoading.value = false;
   }
 
@@ -54,10 +50,6 @@ class LanguageController extends GetxController {
     }
   }
 
-  Future<void> loadMode() async {
-    _themeCtrl.setDarkMode(_prefs?.getBool("greyMode") ?? false);
-  }
-
   Future<void> changeLanguage(String language) async {
     int index = AppTranslation.langs.indexOf(language);
     if (index != -1 && index != _currentLangIndex.value) {
@@ -66,11 +58,6 @@ class LanguageController extends GetxController {
       Get.updateLocale(locale);
       await _prefs?.setString("language", language);
     }
-  }
-
-  Future<void> changeMode(bool value) async {
-    _themeCtrl.setDarkMode(value);
-    await _prefs?.setBool("greyMode", value);
   }
 
   void previousLanguage() {

@@ -1,7 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:sonus/core/constants/app_colors.dart';
+import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/features/home/home_controller.dart';
 import 'package:sonus/features/queue/queue_controller.dart';
 import 'package:sonus/widgets/cached_album_artwork.dart';
@@ -15,21 +17,41 @@ class FullScreenPlayerLandscape extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final q = Get.put(QueueController());
+    final themeCtrl = Get.find<ThemeController>();
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Container(color: Colors.black.withOpacity(0.6)),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withOpacity(0.85),
-                  Colors.black.withOpacity(0.95),
-                ],
+          Obx(() {
+            final song = controller.currentSong;
+            return song == null
+                ? const SizedBox.shrink()
+                : CachedAlbumArtwork(
+                    key: ValueKey('bg_artwork_landscape_${song.id}'),
+                    songId: song.id,
+                    width: double.infinity,
+                    height: double.infinity,
+                    highQuality: false,
+                  );
+          }),
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+              child: Container(color: Colors.transparent),
+            ),
+          ),
+          Obx(
+            () => Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: themeCtrl.currentAppTheme.value.gradientColors
+                      .map((c) => c.withOpacity(0.45))
+                      .toList(),
+                ),
               ),
             ),
           ),
@@ -280,7 +302,6 @@ class FullScreenPlayerLandscape extends StatelessWidget {
 
                     // const SizedBox(height: 16),
 
-                    // // Bottom actions
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.center,
                     //   children: [
@@ -399,6 +420,7 @@ class _PlayPauseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeCtrl = Get.find<ThemeController>();
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -409,10 +431,10 @@ class _PlayPauseButton extends StatelessWidget {
         child: Ink(
           width: 68,
           height: 68,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-                colors: [AppColors.musicPrimary, AppColors.musicSecondary]),
+                colors: themeCtrl.currentAppTheme.value.gradientColors),
           ),
           child: Icon(
             isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,

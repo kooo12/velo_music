@@ -59,15 +59,55 @@ class AppColors {
   static const Color musicDiscoveryStart = Color(0xFF365486);
   static const Color musicDiscoveryEnd = Color(0xFF7FC7D9);
 
-  static List<Color> primaryGradientColors = [
-    musicGradientStart,
-    musicGradientEnd,
+  // Theme
+  static const Color oceanBlueStart = musicGradientStart;
+  static const Color oceanBlueEnd = musicGradientEnd;
+  static const List<Color> oceanBlueGradient = [
+    oceanBlueStart,
+    oceanBlueEnd,
   ];
-
-  static List<Color> darkGradientColors = [
+  static const List<Color> darkNightGradient = [
     darkerGrey,
     darknessGrey,
     darknessGrey,
     dark
   ];
+  static const Color purpleHazeStart = Color(0xFF667eea);
+  static const Color purpleHazeEnd = Color(0xFF764ba2);
+  static const List<Color> purpleHazeGradient = [
+    purpleHazeStart,
+    purpleHazeEnd,
+  ];
+
+  static const Color sunsetVibesStart = Color(0xFFC04848);
+  static const Color sunsetVibesEnd = Color(0xFF480048);
+  static const List<Color> sunsetVibesGradient = [
+    sunsetVibesStart,
+    sunsetVibesEnd,
+  ];
+
+  static const Color forestMistStart = Color(0xFF134E5E);
+  static const Color forestMistEnd = Color(0xFF2E4E3E);
+  static const List<Color> forestMistGradient = [
+    forestMistStart,
+    forestMistEnd,
+  ];
+
+  static const Color royalGoldStart = Color(0xFF3E5151);
+  static const Color royalGoldEnd = Color(0xFF967E76);
+
+  static const List<Color> royalGoldGradient = [
+    royalGoldStart,
+    royalGoldEnd,
+  ];
+
+  static const Color crimsonTideStart = Color(0xFF642B73);
+  static const Color crimsonTideEnd = Color(0xFF511029);
+  static const List<Color> crimsonTideGradient = [
+    crimsonTideStart,
+    crimsonTideEnd,
+  ];
+
+  static List<Color> primaryGradientColors = oceanBlueGradient;
+  static List<Color> darkGradientColors = darkNightGradient;
 }
