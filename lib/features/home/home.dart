@@ -337,39 +337,38 @@ class HomeScreen extends GetView<HomeController> {
               const SizedBox(height: 10),
               const SmartRecommendationsWidget(),
               const SizedBox(height: 16),
-              _buildSectionTitle('Made for You'.tr),
-              const SizedBox(height: 15),
-              _buildMadeForYou(),
-              const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.only(right: AppSizes.defaultSpace),
-                child: MusicDiscoveryWidget(isCompact: true),
-              ),
-              const SizedBox(height: 16),
-              if (controller.userPlaylists.isNotEmpty) ...[
-                _buildSectionTitle(
-                  'Your Playlists'.tr,
-                  showMore: true,
-                  onTap: () =>
-                      controller.titleTapAction('library', 'Recently Played'),
-                ),
-                const SizedBox(height: 15),
-                Padding(
-                  padding: const EdgeInsets.only(right: AppSizes.defaultSpace),
-                  child: _buildPlaylists(controller),
-                ),
-                const SizedBox(height: 10),
-              ],
-              _buildSectionTitle('Songs'.tr,
-                  onTap: () =>
-                      controller.titleTapAction('library', 'All Songs'),
-                  showShuffle: true,
-                  showPlay: true,
-                  songlist: controller.allSongs),
-              const SizedBox(height: 15),
-              _buildAllSongsPreview(controller),
-              const SizedBox(height: 170),
             ],
+            _buildSectionTitle('Made for You'.tr),
+            const SizedBox(height: 15),
+            _buildMadeForYou(),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.only(right: AppSizes.defaultSpace),
+              child: MusicDiscoveryWidget(isCompact: true),
+            ),
+            const SizedBox(height: 16),
+            if (controller.userPlaylists.isNotEmpty) ...[
+              _buildSectionTitle(
+                'Your Playlists'.tr,
+                showMore: true,
+                onTap: () =>
+                    controller.titleTapAction('library', 'Recently Played'),
+              ),
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.only(right: AppSizes.defaultSpace),
+                child: _buildPlaylists(controller),
+              ),
+              const SizedBox(height: 10),
+            ],
+            _buildSectionTitle('Songs'.tr,
+                onTap: () => controller.titleTapAction('library', 'All Songs'),
+                showShuffle: true,
+                showPlay: true,
+                songlist: controller.allSongs),
+            const SizedBox(height: 15),
+            _buildAllSongsPreview(controller),
+            const SizedBox(height: 170),
           ],
         ),
       ),
@@ -408,34 +407,34 @@ class HomeScreen extends GetView<HomeController> {
               padding: EdgeInsets.only(right: AppSizes.defaultSpace),
               child: SmartRecommendationsWidget(),
             ),
-            const SizedBox(height: 16),
-            _buildSectionTitle('Made for You'.tr),
-            const SizedBox(height: 15),
-            _buildMadeForYou(),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.only(right: AppSizes.defaultSpace),
-              child: MusicDiscoveryWidget(),
-            ),
-            const SizedBox(height: 16),
-            if (controller.userPlaylists.isNotEmpty) ...[
-              _buildSectionTitle('Your Playlists'.tr, showMore: true),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.only(right: AppSizes.defaultSpace),
-                child: _buildPlaylists(controller),
-              ),
-              const SizedBox(height: 10),
-            ],
-            _buildSectionTitle('All Songs'.tr,
-                onTap: () => controller.titleTapAction('library', 'All Songs'),
-                showShuffle: true,
-                showPlay: true,
-                songlist: controller.allSongs),
-            const SizedBox(height: 15),
-            _buildAllSongsPreview(controller),
-            const SizedBox(height: 170),
           ],
+          const SizedBox(height: 16),
+          _buildSectionTitle('Made for You'.tr),
+          const SizedBox(height: 15),
+          _buildMadeForYou(),
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.only(right: AppSizes.defaultSpace),
+            child: MusicDiscoveryWidget(),
+          ),
+          const SizedBox(height: 16),
+          if (controller.userPlaylists.isNotEmpty) ...[
+            _buildSectionTitle('Your Playlists'.tr, showMore: true),
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.only(right: AppSizes.defaultSpace),
+              child: _buildPlaylists(controller),
+            ),
+            const SizedBox(height: 10),
+          ],
+          _buildSectionTitle('All Songs'.tr,
+              onTap: () => controller.titleTapAction('library', 'All Songs'),
+              showShuffle: true,
+              showPlay: true,
+              songlist: controller.allSongs),
+          const SizedBox(height: 15),
+          _buildAllSongsPreview(controller),
+          const SizedBox(height: 170),
         ],
       ),
     );
@@ -637,16 +636,32 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildRecentlyPlayed(HomeController controller) {
     return SizedBox(
       height: 180,
-      child: Obx(() => ListView.builder(
-            scrollDirection: Axis.horizontal,
-            cacheExtent: 200,
-            itemCount: controller.recentlyPlayed.length.clamp(0, 10),
-            itemBuilder: (context, index) {
+      child: Obx(() {
+        final songCount = controller.recentlyPlayed.length;
+        final displayCount = songCount.clamp(0, 10);
+        final showSeeAll = songCount > 10;
+        final itemCount = showSeeAll ? displayCount + 1 : displayCount;
+
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          cacheExtent: 200,
+          itemCount: itemCount,
+          itemBuilder: (context, index) {
+            if (index < displayCount) {
               final song = controller.recentlyPlayed[index];
               return _buildSongCard(
                   controller.recentlyPlayed, song, controller);
-            },
-          )),
+            } else {
+              return _buildSeeAllCard(
+                  onTap: () {
+                    controller.showPlaylistSongs(controller.allPlaylists[1]);
+                  },
+                  subTitle: 'Recently Played',
+                  iconData: Iconsax.clock_copy);
+            }
+          },
+        );
+      }),
     );
   }
 
@@ -674,7 +689,7 @@ class HomeScreen extends GetView<HomeController> {
                   //   BoxShadow(
                   //     color: Colors.black26,
                   //     blurRadius: 8, // Reduced from 10
-                  //     offset: Offset(0, 3), // Reduced from 5
+                  //     offset: Offset(0, 3),
                   //   ),
                   // ],
                 ),
@@ -937,15 +952,84 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildAllSongsPreview(HomeController controller) {
     return SizedBox(
       height: 180,
-      child: Obx(() => ListView.builder(
-            scrollDirection: Axis.horizontal,
-            cacheExtent: 200,
-            itemCount: controller.allSongs.length.clamp(0, 10),
-            itemBuilder: (context, index) {
+      child: Obx(() {
+        final songCount = controller.allSongs.length;
+        final displayCount = songCount.clamp(0, 10);
+        final showSeeAll = songCount > 10;
+        final itemCount = showSeeAll ? displayCount + 1 : displayCount;
+
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          cacheExtent: 200,
+          itemCount: itemCount,
+          itemBuilder: (context, index) {
+            if (index < displayCount) {
               final song = controller.allSongs[index];
               return _buildSongCard(controller.allSongs, song, controller);
-            },
-          )),
+            } else {
+              return _buildSeeAllCard(
+                  onTap: () {
+                    controller.changeView('library');
+                    controller.tabController.index = 0;
+                  },
+                  iconData: Iconsax.music);
+            }
+          },
+        );
+      }),
+    );
+  }
+
+  Widget _buildSeeAllCard(
+      {VoidCallback? onTap,
+      String subTitle = 'Your Library',
+      IconData iconData = Iconsax.play}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 140,
+        margin: const EdgeInsets.only(right: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
+              child: Center(
+                child: Icon(
+                  iconData,
+                  color: Colors.white70,
+                  size: 32,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'See All',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              subTitle,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 12,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

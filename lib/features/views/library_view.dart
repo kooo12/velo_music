@@ -614,7 +614,7 @@ class LibraryView extends GetView<HomeController> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       controller.playAllSongs(controller.allSongs);
-                      Get.close();
+                      // Get.close();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white.withOpacity(0.2),
@@ -643,7 +643,7 @@ class LibraryView extends GetView<HomeController> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       controller.shuffleAllSongs(controller.allSongs);
-                      Get.close();
+                      // Get.close();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white.withOpacity(0.2),

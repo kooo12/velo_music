@@ -8,6 +8,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sonus/core/models/song_model.dart' as models;
+import 'package:sonus/core/services/storage_service.dart';
 
 enum RepeatModeAS { off, all, one }
 
@@ -401,8 +402,17 @@ class AudioPlayerService extends GetxService {
 
       debugPrint('Found ${allSongs.length} total audio files');
 
+      final scanFolders = await Get.find<StorageService>().loadScanFolders();
+      bool filterByFolders = scanFolders.isNotEmpty;
+
       final musicSongs = allSongs
           .where((song) => _isValidMusicFile(song))
+          .where((song) {
+            if (!filterByFolders) {
+              return true;
+            }
+            return scanFolders.any((f) => song.data.startsWith(f));
+          })
           .map((song) => models.SongModel(
                 id: song.id,
                 title: song.title,

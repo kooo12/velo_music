@@ -258,6 +258,15 @@ class ProfileView extends GetView<HomeController> {
               Get.toNamed(Routes.THEME);
             },
           ),
+          if (Platform.isAndroid)
+            _buildSettingItem(
+              'Storage'.tr,
+              'Manage music folder locations'.tr,
+              Icons.storage,
+              onTap: () {
+                Get.toNamed(Routes.STORAGEMANAGERPAGE);
+              },
+            ),
         ],
       ),
     );

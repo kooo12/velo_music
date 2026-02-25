@@ -13,6 +13,7 @@ abstract class Routes {
 
   static const NOTIFICATIONSREQUESTPAGE = '/notificationsrequestpage';
   static const NOTIFICATIONSETTINGS = '/notificationsettings';
+  static const STORAGEMANAGERPAGE = '/storagemanagerpage';
 
   static const PRIVACY = '/privacy';
   static const TERMS = '/terms';

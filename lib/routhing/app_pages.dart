@@ -8,6 +8,7 @@ import 'package:sonus/features/home/home.dart';
 import 'package:sonus/features/home/home_controller.dart';
 import 'package:sonus/features/notifications/notification_settings_page.dart';
 import 'package:sonus/features/splash/splash.dart';
+import 'package:sonus/features/storage_manager/storage_manager_page.dart';
 import 'package:sonus/features/sub_screens/library_screen/add_songs_to_playlist_screen.dart';
 import 'package:sonus/features/sub_screens/library_screen/album_songs_screen.dart';
 import 'package:sonus/features/sub_screens/library_screen/artist_songs_screen.dart';
@@ -139,6 +140,14 @@ class AppPages {
         name: Routes.NOTIFICATIONSETTINGS,
         page: () => NotificationSettingsPage(),
         transition: Transition.rightToLeft),
+
+    GetPage(
+      name: Routes.STORAGEMANAGERPAGE,
+      page: () => const StorageManagerPage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 250),
+      opaque: false,
+    ),
 
     GetPage(
         name: Routes.PRIVACY,

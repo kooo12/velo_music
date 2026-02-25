@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/sizes.dart';
 import 'package:sonus/core/controllers/language_controller.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
@@ -33,18 +32,20 @@ class SmartRecommendationsWidget extends GetView<HomeController> {
 
   Widget _buildCompactRecommendations(
       List<Map<String, dynamic>> recommendations, HomeController controller) {
+    final themeCtrl = Get.find<ThemeController>();
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6C63FF), Color(0xFF4A4AFF)],
+        gradient: LinearGradient(
+          colors: themeCtrl.currentAppTheme.value.gradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6C63FF).withOpacity(0.3),
+            color: themeCtrl.currentAppTheme.value.gradientColors.first
+                .withOpacity(0.7),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -89,21 +90,15 @@ class SmartRecommendationsWidget extends GetView<HomeController> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: themeCtrl.isDarkMode
-              ? AppColors.darkGradientColors
-              : [
-                  const Color(0xFF6C63FF).withOpacity(0.6),
-                  const Color(0xFF4A4AFF)
-                ],
+          colors: themeCtrl.currentAppTheme.value.gradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: themeCtrl.isDarkMode
-                ? AppColors.darkerGrey
-                : const Color(0xFF6C63FF).withOpacity(0.7),
+            color: themeCtrl.currentAppTheme.value.gradientColors.first
+                .withOpacity(0.7),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
