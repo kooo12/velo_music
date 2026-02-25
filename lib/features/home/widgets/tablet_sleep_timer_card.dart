@@ -16,7 +16,7 @@ Widget buildTabletSleepTimerCard(HomeController controller) {
     return GestureDetector(
       onTap: () => controller.showSleepTimerDialog(),
       child: Container(
-        height: 200,
+        // height: 200,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isActive

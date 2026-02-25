@@ -4,6 +4,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/sizes.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
+import 'package:sonus/core/constants/constants.dart';
 
 class AppLoader {
   static void openSavingLoading(String text, {bool dismissible = false}) {
@@ -126,8 +127,8 @@ class AppLoader {
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(
           bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-          left: 20,
-          right: 20,
+          left: ResponsiveContext(ctx).isTabletLandscape ? 200 : 20,
+          right: ResponsiveContext(ctx).isTabletLandscape ? 200 : 20,
         ),
         content: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

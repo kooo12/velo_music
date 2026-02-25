@@ -147,31 +147,10 @@ class LandscapeMiniPlayer extends StatelessWidget {
                     ),
                   ]),
                   const SizedBox(height: 6),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          controller.formatTime(controller.currentPosition),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const Expanded(
-                          child:
-                              SeekableProgressBar(style: ProgressBarStyle.mini),
-                        ),
-                        Text(
-                          controller.formatTime(controller.totalDuration),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Expanded(
+                      child: SeekableProgressBar(style: ProgressBarStyle.mini),
                     ),
                   ),
                 ],

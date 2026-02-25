@@ -6,15 +6,23 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/constants.dart';
 import 'package:sonus/core/constants/sizes.dart';
+import 'package:sonus/core/helper/glass_dialog.dart';
+import 'package:sonus/core/helper/loaders.dart';
+import 'package:sonus/core/models/playlist_model.dart';
 import 'package:sonus/core/models/song_model.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/features/home/home_controller.dart';
+import 'package:sonus/features/home/widgets/music_discovery_widget.dart';
+import 'package:sonus/features/home/widgets/music_mood_widget.dart';
 import 'package:sonus/features/home/widgets/sleep_timer_card.dart';
+import 'package:sonus/features/home/widgets/smart_recommendations_widget.dart';
 import 'package:sonus/features/home/widgets/tablet_sleep_timer_card.dart';
+import 'package:sonus/features/sub_screens/player_screens/landscape_mini_player.dart';
 import 'package:sonus/features/views/library_view.dart';
 import 'package:sonus/features/views/setting_view.dart';
 import 'package:sonus/widgets/cached_album_artwork.dart';
 import 'package:sonus/widgets/loading_widget.dart';
+import 'package:sonus/widgets/playlist_dialog/edit_playlist_dialog.dart';
 
 import '../sub_screens/player_screens/mini_player.dart';
 import '../views/search_view.dart';
@@ -122,6 +130,11 @@ class HomeScreen extends GetView<HomeController> {
                 Expanded(
                   child: _buildTabletLandscapeNavigation(),
                 ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: const LandscapeMiniPlayer(),
+                ),
               ],
             ),
           ),
@@ -179,7 +192,7 @@ class HomeScreen extends GetView<HomeController> {
                 'Good ${_getGreeting()}',
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 16,
+                  fontSize: 20,
                 ),
               ),
             ],
@@ -194,7 +207,7 @@ class HomeScreen extends GetView<HomeController> {
       {'icon': Iconsax.home, 'label': 'Home', 'view': 'home'},
       {'icon': Iconsax.search_normal, 'label': 'Search', 'view': 'search'},
       {'icon': Iconsax.music_library_2, 'label': 'Library', 'view': 'library'},
-      {'icon': Iconsax.profile_circle, 'label': 'Profile', 'view': 'profile'},
+      {'icon': Iconsax.setting, 'label': 'Settings', 'view': 'settings'},
     ];
 
     return Column(
@@ -269,7 +282,7 @@ class HomeScreen extends GetView<HomeController> {
                   'Good ${_getGreeting()}'.tr,
                   style: const TextStyle(
                     color: Colors.white70,
-                    fontSize: 16,
+                    fontSize: 20,
                   ),
                 ),
               ],
@@ -310,7 +323,9 @@ class HomeScreen extends GetView<HomeController> {
           mainAxisSize: MainAxisSize.max,
           children: [
             buildSleepTimerCard(controller),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            const MusicMoodWidget(),
+            const SizedBox(height: 16),
             if (controller.recentlyPlayed.isNotEmpty) ...[
               _buildSectionTitle('Recently Played'.tr,
                   onTap: () =>
@@ -319,6 +334,41 @@ class HomeScreen extends GetView<HomeController> {
                   songlist: controller.recentlyPlayed),
               const SizedBox(height: 15),
               _buildRecentlyPlayed(controller),
+              const SizedBox(height: 10),
+              const SmartRecommendationsWidget(),
+              const SizedBox(height: 16),
+              _buildSectionTitle('Made for You'.tr),
+              const SizedBox(height: 15),
+              _buildMadeForYou(),
+              const SizedBox(height: 20),
+              const Padding(
+                padding: EdgeInsets.only(right: AppSizes.defaultSpace),
+                child: MusicDiscoveryWidget(isCompact: true),
+              ),
+              const SizedBox(height: 16),
+              if (controller.userPlaylists.isNotEmpty) ...[
+                _buildSectionTitle(
+                  'Your Playlists'.tr,
+                  showMore: true,
+                  onTap: () =>
+                      controller.titleTapAction('library', 'Recently Played'),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.only(right: AppSizes.defaultSpace),
+                  child: _buildPlaylists(controller),
+                ),
+                const SizedBox(height: 10),
+              ],
+              _buildSectionTitle('Songs'.tr,
+                  onTap: () =>
+                      controller.titleTapAction('library', 'All Songs'),
+                  showShuffle: true,
+                  showPlay: true,
+                  songlist: controller.allSongs),
+              const SizedBox(height: 15),
+              _buildAllSongsPreview(controller),
+              const SizedBox(height: 170),
             ],
           ],
         ),
@@ -334,16 +384,14 @@ class HomeScreen extends GetView<HomeController> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: buildTabletSleepTimerCard(controller)),
               const SizedBox(width: 10),
-              Expanded(
-                  child: Container(
-                decoration: BoxDecoration(border: Border.all()),
-                child: const Center(
-                  child: Text('widget'),
-                ),
-              )),
+              const Expanded(
+                child: MusicMoodWidget(),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -356,6 +404,37 @@ class HomeScreen extends GetView<HomeController> {
             const SizedBox(height: 15),
             _buildRecentlyPlayed(controller),
             const SizedBox(height: 10),
+            const Padding(
+              padding: EdgeInsets.only(right: AppSizes.defaultSpace),
+              child: SmartRecommendationsWidget(),
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle('Made for You'.tr),
+            const SizedBox(height: 15),
+            _buildMadeForYou(),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.only(right: AppSizes.defaultSpace),
+              child: MusicDiscoveryWidget(),
+            ),
+            const SizedBox(height: 16),
+            if (controller.userPlaylists.isNotEmpty) ...[
+              _buildSectionTitle('Your Playlists'.tr, showMore: true),
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.only(right: AppSizes.defaultSpace),
+                child: _buildPlaylists(controller),
+              ),
+              const SizedBox(height: 10),
+            ],
+            _buildSectionTitle('All Songs'.tr,
+                onTap: () => controller.titleTapAction('library', 'All Songs'),
+                showShuffle: true,
+                showPlay: true,
+                songlist: controller.allSongs),
+            const SizedBox(height: 15),
+            _buildAllSongsPreview(controller),
+            const SizedBox(height: 170),
           ],
         ],
       ),
@@ -676,6 +755,414 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
+  Widget _buildMadeForYou() {
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        cacheExtent: 200,
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          final dailyMix =
+              controller.playlistService.generateDailyMix(controller.allSongs);
+          final weeklyMix =
+              controller.playlistService.generateWeeklyMix(controller.allSongs);
+          final releaseRadar = _createReleaseRadar(controller);
+
+          final madeForYouData = [
+            {
+              'title': 'Daily Mix'.tr,
+              'subtitle':
+                  'Updated ${controller.playlistService.getDailyMixLastGenerated()}',
+              'colors': [const Color(0xFF6C63FF), const Color(0xFF4A4AFF)],
+              'songCount': '${dailyMix.length} songs',
+            },
+            {
+              'title': 'Discover Weekly'.tr,
+              'subtitle':
+                  'Updated ${controller.playlistService.getWeeklyMixLastGenerated()}',
+              'colors': [const Color(0xFFFF6B6B), const Color(0xFFE53E3E)],
+              'songCount': '${weeklyMix.length} songs',
+            },
+            {
+              'title': 'Release Radar'.tr,
+              'subtitle': 'Made for You'.tr,
+              'colors': [const Color(0xFF4ECDC4), const Color(0xFF38B2AC)],
+              'songCount': '${releaseRadar.length} songs',
+            },
+          ];
+
+          final data = madeForYouData[index];
+
+          return RepaintBoundary(
+              child: GestureDetector(
+            onTap: () {
+              _handleMadeForYouTap(controller, index);
+            },
+            child: Container(
+              width: 160,
+              margin: const EdgeInsets.only(right: 15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: (data['colors'] as List<Color>)[0],
+                boxShadow: [
+                  BoxShadow(
+                    color: (data['colors'] as List<Color>)[0].withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data['title'] as String,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          data['subtitle'] as String,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          data['songCount'] as String,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.7),
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ));
+        },
+      ),
+    );
+  }
+
+  void _handleMadeForYouTap(HomeController controller, int index) {
+    List<SongModel> personalizedSongs = [];
+
+    switch (index) {
+      case 0:
+        personalizedSongs = _createDailyMix(controller);
+        break;
+      case 1:
+        personalizedSongs = _createDiscoverWeekly(controller);
+        break;
+      case 2:
+        personalizedSongs = _createReleaseRadar(controller);
+        break;
+    }
+
+    if (personalizedSongs.isNotEmpty) {
+      controller.shuffleAllSongs(personalizedSongs);
+    }
+  }
+
+  List<SongModel> _createDailyMix(HomeController controller) {
+    return controller.playlistService.generateDailyMix(controller.allSongs);
+  }
+
+  List<SongModel> _createDiscoverWeekly(HomeController controller) {
+    return controller.playlistService.generateWeeklyMix(controller.allSongs);
+  }
+
+  List<SongModel> _createReleaseRadar(HomeController controller) {
+    final List<SongModel> radar = [];
+    final allSongs = List<SongModel>.from(controller.allSongs);
+
+    final Map<String, List<SongModel>> songsByArtist = {};
+    for (final song in allSongs) {
+      songsByArtist[song.artist] = songsByArtist[song.artist] ?? [];
+      songsByArtist[song.artist]!.add(song);
+    }
+
+    for (final artist in songsByArtist.keys) {
+      if (radar.length >= 20) break;
+      final artistSongs = songsByArtist[artist]!;
+      artistSongs.shuffle();
+      radar.addAll(artistSongs.take(2));
+    }
+    if (radar.length < 20) {
+      final remaining = 20 - radar.length;
+      final availableSongs = allSongs
+          .where((song) => !radar.any((radarSong) => radarSong.id == song.id))
+          .toList();
+      availableSongs.shuffle();
+      radar.addAll(availableSongs.take(remaining));
+    }
+
+    return radar.take(20).toList();
+  }
+
+  Widget _buildAllSongsPreview(HomeController controller) {
+    return SizedBox(
+      height: 180,
+      child: Obx(() => ListView.builder(
+            scrollDirection: Axis.horizontal,
+            cacheExtent: 200,
+            itemCount: controller.allSongs.length.clamp(0, 10),
+            itemBuilder: (context, index) {
+              final song = controller.allSongs[index];
+              return _buildSongCard(controller.allSongs, song, controller);
+            },
+          )),
+    );
+  }
+
+  Widget _buildPlaylists(HomeController controller) {
+    return Obx(() => Column(
+          children: controller.userPlaylists
+              .take(3)
+              .map((playlist) => _buildPlaylistItem(playlist, controller))
+              .toList(),
+        ));
+  }
+
+  Widget _buildPlaylistItem(PlaylistModel playlist, HomeController controller) {
+    return GestureDetector(
+      onTap: () => _showPlaylistSongs(playlist),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: const LinearGradient(
+                  colors: [AppColors.musicPrimary, AppColors.musicSecondary],
+                ),
+              ),
+              child: const Icon(Icons.queue_music, color: Colors.white),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    playlist.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '${playlist.songCount} songs • ${playlist.formattedTotalDuration}',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Builder(
+                builder: (context) => Theme(
+                      data: Theme.of(context).copyWith(
+                        splashColor: AppColors.musicPrimary.withOpacity(0.22),
+                        highlightColor:
+                            AppColors.musicPrimary.withOpacity(0.12),
+                        hoverColor: AppColors.musicPrimary.withOpacity(0.08),
+                        popupMenuTheme: const PopupMenuThemeData(
+                          surfaceTintColor: Colors.transparent,
+                        ),
+                      ),
+                      child: PopupMenuButton<String>(
+                        onSelected: (value) =>
+                            _handlePlaylistMenuAction(value, playlist),
+                        icon: Icon(
+                          Icons.more_vert,
+                          color: Colors.white.withOpacity(0.7),
+                        ),
+                        elevation: 0,
+                        color: AppColors.darkGrey.withOpacity(0.25),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          side: BorderSide(
+                              color: Colors.white.withOpacity(0.18), width: 1),
+                        ),
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.edit,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Edit Playlist',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete,
+                                  size: 20,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Delete Playlist',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPlaylistSongs(PlaylistModel playlist) {
+    final controller = Get.find<HomeController>();
+
+    controller.showPlaylistSongs(playlist);
+  }
+
+  void _handlePlaylistMenuAction(String action, PlaylistModel playlist) {
+    switch (action) {
+      case 'edit':
+        _showEditPlaylistDialog(playlist);
+        break;
+      case 'delete':
+        _showDeletePlaylistDialog(playlist);
+        break;
+    }
+  }
+
+  void _showEditPlaylistDialog(PlaylistModel playlist) {
+    final controller = Get.find<HomeController>();
+    Get.dialog(
+      EditPlaylistDialog(
+        playlist: playlist,
+        onUpdatePlaylist: (name, description, color) async {
+          try {
+            await controller.updatePlaylistDetails(
+              playlistId: playlist.id,
+              name: name,
+              description: description,
+              colorHex: color,
+            );
+            AppLoader.customToast(message: 'Playlist updated successfully!');
+            // Get.snackbar(
+            //   'Success',
+            //   'Playlist updated successfully!',
+            //   backgroundColor: AppColors.musicPrimary.withOpacity(0.8),
+            //   colorText: Colors.white,
+            // );
+          } catch (e) {
+            AppLoader.customToast(message: 'Failed to update playlist: $e');
+            // Get.snackbar(
+            //   'Error',
+            //   'Failed to update playlist: $e',
+            //   backgroundColor: Colors.red.withOpacity(0.8),
+            //   colorText: Colors.white,
+            // );
+          }
+        },
+      ),
+      barrierDismissible: true,
+      barrierColor: Colors.black54,
+    );
+  }
+
+  void _showDeletePlaylistDialog(PlaylistModel playlist) {
+    final controller = Get.find<HomeController>();
+    Get.dialog(
+      GlassAlertDialog(
+        backgroundColor: AppColors.darkGrey.withOpacity(0.3),
+        textColor: Colors.white,
+        title: const Text('Delete Playlist'),
+        content: Text(
+          'Are you sure you want to delete "${playlist.name}"? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(Get.context!),
+            child:
+                const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                await controller.deletePlaylist(playlist.id);
+                Navigator.pop(Get.context!);
+                AppLoader.customToast(
+                    message: 'Playlist deleted successfully!');
+              } catch (e) {
+                AppLoader.customToast(message: 'Failed to delete playlist: $e');
+              }
+            },
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildLibrarySearchView() {
     return const SearchView(
       key: Key('LibraeyView'),
@@ -699,7 +1186,7 @@ class HomeScreen extends GetView<HomeController> {
       case 'library':
         currentIndex = 2;
         break;
-      case 'profile':
+      case 'settings':
         currentIndex = 3;
         break;
       default:
@@ -721,7 +1208,7 @@ class HomeScreen extends GetView<HomeController> {
           child: _buildLibraryView(),
         ),
         Container(
-          key: const ValueKey('profile'),
+          key: const ValueKey('settings'),
           child: _buildProfileView(),
         ),
       ],
@@ -780,8 +1267,8 @@ class HomeScreen extends GetView<HomeController> {
                     _buildNavItem(
                       Icons.settings,
                       'Settings',
-                      controller.currentView.value == 'profile',
-                      () => controller.changeView('profile'),
+                      controller.currentView.value == 'settings',
+                      () => controller.changeView('settings'),
                     ),
                   ],
                 )),

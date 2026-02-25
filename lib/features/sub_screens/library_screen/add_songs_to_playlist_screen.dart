@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sonus/core/constants/app_colors.dart';
+import 'package:sonus/core/constants/sizes.dart';
 import 'package:sonus/core/helper/loaders.dart';
+import 'package:sonus/core/constants/constants.dart';
 import 'package:sonus/core/models/playlist_model.dart';
 import 'package:sonus/core/models/song_model.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
@@ -56,137 +58,146 @@ class AddSongsToPlaylistScreen extends StatelessWidget {
           })
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(color: Colors.white.withOpacity(0.15)),
-            ),
-            child: TextField(
-              controller: addCtrl.searchController,
-              onChanged: (v) => addCtrl.searchQuery.value = v,
-              style: themeCtrl.activeTheme.textTheme.bodyMedium,
-              decoration: InputDecoration(
-                hintText: 'Search songs...'.tr,
-                hintStyle: themeCtrl.activeTheme.textTheme.bodySmall,
-                prefixIcon:
-                    Icon(Icons.search, color: Colors.white.withOpacity(0.7)),
-                suffixIcon: Obx(() => addCtrl.searchQuery.value.isNotEmpty
-                    ? IconButton(
-                        onPressed: () {
-                          addCtrl.searchController.clear();
-                          addCtrl.searchQuery.value = '';
-                        },
-                        icon: Icon(Icons.clear,
-                            color: Colors.white.withOpacity(0.7)),
-                      )
-                    : const SizedBox.shrink()),
-                border: InputBorder.none,
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveContext(context).isTabletLandscape
+                ? AppSizes.spaceBtwSections * 2
+                : 0),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.white.withOpacity(0.15)),
+              ),
+              child: TextField(
+                controller: addCtrl.searchController,
+                onChanged: (v) => addCtrl.searchQuery.value = v,
+                style: themeCtrl.activeTheme.textTheme.bodyMedium,
+                decoration: InputDecoration(
+                  hintText: 'Search songs...'.tr,
+                  hintStyle: themeCtrl.activeTheme.textTheme.bodySmall,
+                  prefixIcon:
+                      Icon(Icons.search, color: Colors.white.withOpacity(0.7)),
+                  suffixIcon: Obx(() => addCtrl.searchQuery.value.isNotEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            addCtrl.searchController.clear();
+                            addCtrl.searchQuery.value = '';
+                          },
+                          icon: Icon(Icons.clear,
+                              color: Colors.white.withOpacity(0.7)),
+                        )
+                      : const SizedBox.shrink()),
+                  border: InputBorder.none,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Obx(() {
-              final songs = addCtrl.filteredSongs;
-              if (songs.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.library_music,
-                          size: 64, color: Colors.white.withOpacity(0.5)),
-                      const SizedBox(height: 12),
-                      Text(
-                        'No songs to add'.tr,
-                        style: themeCtrl.activeTheme.textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              return ListView.builder(
-                padding:
-                    const EdgeInsets.only(left: 16, right: 16, bottom: 110),
-                itemCount: songs.length,
-                itemBuilder: (context, index) {
-                  final song = songs[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Colors.white.withOpacity(0.12),
-                          Colors.white.withOpacity(0.05),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+            Expanded(
+              child: Obx(() {
+                final songs = addCtrl.filteredSongs;
+                if (songs.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.library_music,
+                            size: 64, color: Colors.white.withOpacity(0.5)),
+                        const SizedBox(height: 12),
+                        Text(
+                          'No songs to add'.tr,
+                          style: themeCtrl.activeTheme.textTheme.bodyLarge,
+                        ),
+                      ],
                     ),
-                    child: Obx(() => CheckboxListTile(
-                          value: addCtrl.selectedSongIds.contains(song.id),
-                          onChanged: (_) => addCtrl.toggle(song.id),
-                          // splashRadius: 20,
-                          side: const BorderSide(color: Colors.white, width: 1),
-                          activeColor: AppColors.musicPrimary,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          title: Text(
-                            song.title,
-                            style: themeCtrl.activeTheme.textTheme.titleMedium,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: Text(
-                            '${song.artist} • ${song.album}',
-                            style: themeCtrl.activeTheme.textTheme.bodySmall!
-                                .copyWith(
-                              color: Colors.white.withOpacity(0.7),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          secondary: CachedAlbumArtwork(
-                            key: ValueKey(
-                                'add_songs_to_playlist_artwork_${song.id}'),
-                            songId: song.id,
-                            width: 48,
-                            height: 48,
-                            borderRadius: 12,
-                            highQuality: false,
-                          ),
-                          // SizedBox(
-                          //   width: 48,
-                          //   height: 48,
-                          //   child:
-                          //   FutureBuilder<Uint8List?>(
-                          //     future: controller.getAlbumArtwork(song.id),
-                          //     builder: (context, snapshot) {
-                          //       if (snapshot.hasData && snapshot.data != null) {
-                          //         return ClipRRect(
-                          //           borderRadius: BorderRadius.circular(8),
-                          //           child: Image.memory(snapshot.data!,
-                          //               fit: BoxFit.cover),
-                          //         );
-                          //       }
-                          //       return const Icon(Icons.music_note,
-                          //           color: Colors.white);
-                          //     },
-                          //   ),
-                          // ),
-                        )),
                   );
-                },
-              );
-            }),
-          ),
-        ],
+                }
+
+                return ListView.builder(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 110),
+                  itemCount: songs.length,
+                  itemBuilder: (context, index) {
+                    final song = songs[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.white.withOpacity(0.12),
+                            Colors.white.withOpacity(0.05),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border:
+                            Border.all(color: Colors.white.withOpacity(0.2)),
+                      ),
+                      child: Obx(() => CheckboxListTile(
+                            value: addCtrl.selectedSongIds.contains(song.id),
+                            onChanged: (_) => addCtrl.toggle(song.id),
+                            // splashRadius: 20,
+                            side:
+                                const BorderSide(color: Colors.white, width: 1),
+                            activeColor: AppColors.musicPrimary,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            title: Text(
+                              song.title,
+                              style:
+                                  themeCtrl.activeTheme.textTheme.titleMedium,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(
+                              '${song.artist} • ${song.album}',
+                              style: themeCtrl.activeTheme.textTheme.bodySmall!
+                                  .copyWith(
+                                color: Colors.white.withOpacity(0.7),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            secondary: CachedAlbumArtwork(
+                              key: ValueKey(
+                                  'add_songs_to_playlist_artwork_${song.id}'),
+                              songId: song.id,
+                              width: 48,
+                              height: 48,
+                              borderRadius: 12,
+                              highQuality: false,
+                            ),
+                            // SizedBox(
+                            //   width: 48,
+                            //   height: 48,
+                            //   child:
+                            //   FutureBuilder<Uint8List?>(
+                            //     future: controller.getAlbumArtwork(song.id),
+                            //     builder: (context, snapshot) {
+                            //       if (snapshot.hasData && snapshot.data != null) {
+                            //         return ClipRRect(
+                            //           borderRadius: BorderRadius.circular(8),
+                            //           child: Image.memory(snapshot.data!,
+                            //               fit: BoxFit.cover),
+                            //         );
+                            //       }
+                            //       return const Icon(Icons.music_note,
+                            //           color: Colors.white);
+                            //     },
+                            //   ),
+                            // ),
+                          )),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

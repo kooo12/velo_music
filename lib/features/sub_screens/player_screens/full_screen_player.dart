@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:sonus/core/constants/app_colors.dart';
+import 'package:sonus/core/constants/constants.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/features/home/home_controller.dart';
 import 'package:sonus/widgets/cached_album_artwork.dart';
@@ -82,7 +83,14 @@ class FullScreenPlayer extends StatelessWidget {
 
                   Expanded(
                     child: Center(
-                      child: _ArtworkGlass(controller: controller),
+                      child: SizedBox(
+                          height: ResponsiveContext(context).isTablet
+                              ? 500
+                              : Get.width,
+                          width: ResponsiveContext(context).isTablet
+                              ? 500
+                              : Get.width,
+                          child: _ArtworkGlass(controller: controller)),
                     ),
                   ),
 

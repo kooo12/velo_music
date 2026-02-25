@@ -33,7 +33,7 @@ class _CachedAlbumArtworkState extends State<CachedAlbumArtwork> {
   String? _artworkUrl;
 
   static const int _listImageSize = 120;
-  static const int _highQualitySize = 800;
+  static const int _highQualitySize = 1280;
 
   @override
   void initState() {

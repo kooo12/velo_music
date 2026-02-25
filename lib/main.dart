@@ -1,12 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:audio_service/audio_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sonus/core/bindings/app_binding.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
+import 'package:sonus/core/services/app_audio_handler.dart';
+import 'package:sonus/core/services/app_audio_session.dart';
+import 'package:sonus/core/services/app_lifecycle_manager.dart';
+import 'package:sonus/core/services/audio_service.dart' as svc;
 import 'package:sonus/core/translations/app_translations.dart';
 import 'package:sonus/features/splash/splash.dart';
 import 'package:sonus/routhing/app_pages.dart';
@@ -64,15 +70,51 @@ FutureOr<void> main() async {
       debugPrint(
           "=>Firebase initialized with default config on ${Platform.operatingSystem}");
     }
+
+    await _initializeCrashlytics();
   } catch (e, stackTrace) {
     debugPrint("=>Firebase initialization failed: $e");
     debugPrint("=>Stack trace: $stackTrace");
     try {
       await Firebase.initializeApp();
+      await _initializeCrashlytics();
       FirebaseCrashlytics.instance.recordError(e, stackTrace, fatal: false);
     } catch (_) {
       debugPrint("=>Could not initialize Firebase or Crashlytics");
     }
+  }
+
+  Get.put<svc.AudioPlayerService>(svc.AudioPlayerService(), permanent: true);
+  final appSession = AppAudioSession();
+  await appSession.configure();
+  Get.put<AppAudioSession>(appSession, permanent: true);
+
+  AppAudioHandler handler;
+  try {
+    handler = Get.find<AppAudioHandler>();
+    debugPrint('AppAudioHandler already exists in GetX, reusing...');
+  } catch (_) {
+    handler = await AudioService.init(
+      builder: () => AppAudioHandler(),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'media_playback',
+        androidNotificationChannelName: 'Media Playback',
+        androidNotificationChannelDescription: 'Music playback controls',
+        androidNotificationOngoing: false,
+        androidStopForegroundOnPause: false,
+        androidShowNotificationBadge: false,
+        androidNotificationClickStartsActivity: true,
+        androidResumeOnClick: true,
+        fastForwardInterval: Duration(seconds: 10),
+        rewindInterval: Duration(seconds: 10),
+      ),
+    );
+    Get.put<AppAudioHandler>(handler, permanent: true);
+    final lifecycleManager = AppLifecycleManager(
+      Get.find<svc.AudioPlayerService>(),
+      handler,
+    );
+    Get.put<AppLifecycleManager>(lifecycleManager, permanent: true);
   }
 
   runApp(const MyApp());
@@ -106,5 +148,30 @@ class MyApp extends StatelessWidget {
         translations: AppTranslation(),
       ),
     );
+  }
+}
+
+Future<void> _initializeCrashlytics() async {
+  try {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+      kReleaseMode,
+    );
+
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      if (kDebugMode) {
+        FlutterError.presentError(errorDetails);
+      }
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
+    debugPrint("=>Firebase Crashlytics initialized (enabled: $kReleaseMode)");
+  } catch (e, stackTrace) {
+    debugPrint("=>Firebase Crashlytics initialization failed: $e");
+    debugPrint("=>Stack trace: $stackTrace");
   }
 }

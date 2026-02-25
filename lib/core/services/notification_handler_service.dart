@@ -74,16 +74,6 @@ class NotificationHandlerService extends GetxService {
             playSound: _settingsService.notificationSound.value,
             enableVibration: _settingsService.notificationVibration.value,
           ),
-          NotificationChannel(
-            channelKey: 'in_app_messages',
-            channelName: 'In-App Messages',
-            channelDescription: 'Channel for in-app messages',
-            defaultColor: const Color(0xFF2196F3),
-            ledColor: Colors.blue,
-            importance: NotificationImportance.High,
-            playSound: _settingsService.notificationSound.value,
-            enableVibration: _settingsService.notificationVibration.value,
-          ),
         ],
         debug: kDebugMode,
       );

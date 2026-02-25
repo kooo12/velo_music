@@ -36,12 +36,12 @@ class FCMService extends GetxService {
 
   Future<void> initializeFCM() async {
     try {
-      final hasInternet =
-          networkManager.networkStatus.value == NetworkStatus.connected;
-      if (!hasInternet) {
-        debugPrint('FCM: No internet connection - skipping initialization');
-        return;
-      }
+      // final hasInternet =
+      //     networkManager.networkStatus.value == NetworkStatus.connected;
+      // if (!hasInternet) {
+      //   debugPrint('FCM: No internet connection - skipping initialization');
+      //   return;
+      // }
 
       await _getAndSaveToken();
 

@@ -34,6 +34,7 @@ class AddToPlaylistDialog extends StatelessWidget {
               backgroundColor: Colors.transparent,
               child: Container(
                 // margin: const EdgeInsets.all(0),
+                width: 500,
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height * 0.7,
                 ),

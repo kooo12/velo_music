@@ -5,6 +5,7 @@ import 'package:sonus/core/constants/app_colors.dart';
 import 'package:sonus/core/constants/sizes.dart';
 import 'package:sonus/core/controllers/theme_controller.dart';
 import 'package:sonus/features/notifications/notification_settings_controller.dart';
+import 'package:sonus/core/constants/constants.dart';
 
 class NotificationSettingsPage extends StatelessWidget {
   NotificationSettingsPage({super.key});
@@ -51,7 +52,11 @@ class NotificationSettingsPage extends StatelessWidget {
             // ),
             ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSizes.defaultSpace),
+          padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveContext(context).isTabletLandscape
+                  ? AppSizes.spaceBtwSections * 2
+                  : AppSizes.defaultSpace * 2,
+              vertical: AppSizes.defaultSpace),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -21,6 +21,7 @@ class SleepTimerDialog extends StatelessWidget {
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
+            width: 400,
             decoration: BoxDecoration(
               color: const Color(0x14FFFFFF),
               borderRadius: BorderRadius.circular(20),

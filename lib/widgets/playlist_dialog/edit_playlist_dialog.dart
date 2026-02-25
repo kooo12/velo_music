@@ -41,6 +41,7 @@ class EditPlaylistDialog extends StatelessWidget {
               backgroundColor: Colors.transparent,
               child: Container(
                 // margin: const EdgeInsets.all(20),
+                width: 400,
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height * 0.8,
                 ),
