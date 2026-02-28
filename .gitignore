@@ -45,3 +45,8 @@ app.*.map.json
 *.keystore
 **/google-services.json
 **/GoogleService-Info.plist
+
+# Private keys and environment variables
+.env
+veloks
+sonusks

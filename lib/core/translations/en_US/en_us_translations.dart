@@ -7,10 +7,10 @@ final Map<String, String> enUs = {
   'terms_last_updated': 'Last Updated: February 2026',
   'terms_acceptance_title': '1. Acceptance of Terms',
   'terms_acceptance_content':
-      'By accessing and using Sonus Music ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.',
+      'By accessing and using Velo Music ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.',
   'terms_description_title': '2. Description of Service',
   'terms_description_content':
-      'Sonus Music is a local offline music player that allows users to play audio files stored on their device. Our service includes:\n\n• Playing of local music content\n• Creating and managing local playlists\n• Offline listening capabilities\n\nWe do not provide music streaming, downloading, or cloud storage services.',
+      'Velo Music is a local offline music player that allows users to play audio files stored on their device. Our service includes:\n\n• Playing of local music content\n• Creating and managing local playlists\n• Offline listening capabilities\n\nWe do not provide music streaming, downloading, or cloud storage services.',
   'terms_user_accounts_title': '3. User Accounts',
   'terms_user_accounts_content':
       'This application does not require a user account to function. All data, including playlists and preferences, is stored locally on your device. You are responsible for backing up your own data.',
@@ -19,10 +19,10 @@ final Map<String, String> enUs = {
       'You agree not to:\n\n• Use the service for any unlawful purpose\n• Attempt to gain unauthorized access to our systems\n• Interfere with or disrupt the service\n• Reverse engineer or attempt to extract source code\n• Use automated means to access the service\n• Violate any applicable laws or regulations',
   'terms_intellectual_property_title': '5. Intellectual Property',
   'terms_intellectual_property_content':
-      'The service and its original content, features, and functionality are owned by Sonus Music. You retain all rights to the audio files stored on your device that you play using this application.',
+      'The service and its original content, features, and functionality are owned by Velo Music. You retain all rights to the audio files stored on your device that you play using this application.',
   'terms_download_content_title': '6. Content Ownership',
   'terms_download_content_content':
-      'Sonus Music is a tool for playing your own music files. We do not provide, host, or distribute any music content. You comply with all applicable copyright laws regarding the music files you store and play on your device.',
+      'Velo Music is a tool for playing your own music files. We do not provide, host, or distribute any music content. You comply with all applicable copyright laws regarding the music files you store and play on your device.',
   'terms_privacy_data_title': '7. Privacy and Data',
   'terms_privacy_data_content':
       'Your privacy is important to us. We do not collect any personal data or usage analytics. All your data remains on your device.',
@@ -82,4 +82,8 @@ final Map<String, String> enUs = {
   'Forest Mist': 'Forest Mist',
   'Royal Gold': 'Royal Gold',
   'Crimson Tide': 'Crimson Tide',
+  'Midnight Green': 'Midnight Green',
+  'Aurora Borealis': 'Aurora Borealis',
+  'Cherry Blossom': 'Cherry Blossom',
+  'Electric Violet': 'Electric Violet',
 };

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:sonus/core/services/notification_handler_service.dart';
-import 'package:sonus/core/services/notification_settings_service.dart';
-import 'package:sonus/features/notifications/notification_settings_controller.dart';
+import 'package:velo/features/notifications/service/notification_handler_service.dart';
+import 'package:velo/features/notifications/service/notification_settings_service.dart';
+import 'package:velo/features/notifications/controller/notification_settings_controller.dart';
 
 class MockNotificationHandlerService extends Mock
     implements NotificationHandlerService {}

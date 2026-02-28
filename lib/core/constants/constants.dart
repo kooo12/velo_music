@@ -3,7 +3,7 @@
 //App State
 import 'package:flutter/material.dart';
 
-const APPNAME = "Sonus Music Player";
+const APPNAME = "Velo Music Player";
 
 const USERKEY = 'userkey';
 

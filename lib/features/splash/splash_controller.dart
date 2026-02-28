@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/controllers/app_controller.dart';
-import 'package:sonus/core/helper/orientation_helper.dart';
-import 'package:sonus/core/services/audio_service.dart';
-import 'package:sonus/core/services/network_manager.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/routhing/app_routes.dart';
+import 'package:velo/core/controllers/app_controller.dart';
+import 'package:velo/core/helper/orientation_helper.dart';
+import 'package:velo/core/helper/update_dialog.dart';
+import 'package:velo/core/services/audio_service.dart';
+import 'package:velo/core/services/network_manager.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/core/services/version_control_service.dart';
+import 'package:velo/routhing/app_routes.dart';
 
 class SplashController extends GetxController {
   final _appCtrl = Get.find<AppController>();
@@ -61,6 +63,7 @@ class SplashController extends GetxController {
   Future<void> _startBackgroundTasks() async {
     Future.wait([
       _initializeNotifications(),
+      _checkAppVersion(),
     ]).catchError((e, stackTrace) {
       debugPrint('Background task error: $e');
       debugPrint('Stack trace: $stackTrace');
@@ -92,6 +95,44 @@ class SplashController extends GetxController {
       }
     } catch (e) {
       debugPrint('Error loading songs in background: $e');
+    }
+  }
+
+  Future<void> _checkAppVersion() async {
+    loadingText.value = 'Checking app version...';
+    try {
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (!Get.isRegistered<VersionControlService>()) {
+        debugPrint('VersionControlService not registered yet');
+        return;
+      }
+
+      final versionService = Get.find<VersionControlService>();
+      final updateStatus = await versionService.checkForUpdate();
+
+      if (updateStatus == UpdateStatus.forceUpdate ||
+          updateStatus == UpdateStatus.optionalUpdate) {
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        final isForceUpdate = updateStatus == UpdateStatus.forceUpdate;
+        final currentVersion = versionService.currentVersion;
+        final latestVersion = versionService.latestVersion;
+        final title = versionService.getUpdateTitle();
+        final message = versionService.getUpdateMessage();
+
+        await UpdateDialog.show(
+          isForceUpdate: isForceUpdate,
+          currentVersion: currentVersion,
+          latestVersion: latestVersion,
+          title: title,
+          message: message,
+        );
+      } else {
+        debugPrint('App is up to date');
+      }
+    } catch (e) {
+      debugPrint('Error checking app version: $e');
     }
   }
 

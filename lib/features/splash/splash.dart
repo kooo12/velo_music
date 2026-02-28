@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/controllers/app_controller.dart';
-import 'package:sonus/features/splash/splash_controller.dart';
-import 'package:sonus/widgets/loading_widget.dart';
+import 'package:velo/core/controllers/app_controller.dart';
+import 'package:velo/features/splash/splash_controller.dart';
+import 'package:velo/widgets/loading_widget.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -39,7 +39,7 @@ class SplashScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 30),
                       Text(
-                        'Sonus',
+                        'Velo',
                         style:
                             Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   color: Colors.white,

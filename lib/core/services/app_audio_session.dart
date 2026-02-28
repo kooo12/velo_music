@@ -1,7 +1,7 @@
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/services/audio_service.dart' as svc;
+import 'package:velo/core/services/audio_service.dart' as svc;
 
 class AppAudioSession extends GetxService {
   Future<void> configure() async {

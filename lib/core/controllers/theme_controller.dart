@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/constants/app_text_theme.dart';
-import 'package:sonus/core/constants/appbar_theme.dart';
-import 'package:sonus/core/constants/checkbox_theme.dart';
-import 'package:sonus/core/constants/chip_theme.dart';
-import 'package:sonus/core/constants/elevated_button_theme.dart';
-import 'package:sonus/core/constants/text_field_theme.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/app_text_theme.dart';
+import 'package:velo/core/constants/appbar_theme.dart';
+import 'package:velo/core/constants/checkbox_theme.dart';
+import 'package:velo/core/constants/chip_theme.dart';
+import 'package:velo/core/constants/elevated_button_theme.dart';
+import 'package:velo/core/constants/text_field_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/models/app_theme.dart';
+import 'package:velo/core/models/app_theme.dart';
 
 class ThemeController extends GetxController {
   static const String _themeKey = 'selected_theme_id';
@@ -166,6 +166,34 @@ class ThemeController extends GetxController {
         id: 'crimson_tide',
         name: 'Crimson Tide'.tr,
         gradientColors: AppColors.crimsonTideGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+      AppTheme(
+        id: 'midnight_green',
+        name: 'Midnight Green'.tr,
+        gradientColors: AppColors.midnightGreenGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+      AppTheme(
+        id: 'aurora_borealis',
+        name: 'Aurora Borealis'.tr,
+        gradientColors: AppColors.auroraBorealisGradient,
+        isDark: false,
+        themeData: appThemeData,
+      ),
+      AppTheme(
+        id: 'cherry_blossom',
+        name: 'Cherry Blossom'.tr,
+        gradientColors: AppColors.cherryBlossomGradient,
+        isDark: false,
+        themeData: appThemeData,
+      ),
+      AppTheme(
+        id: 'electric_violet',
+        name: 'Electric Violet'.tr,
+        gradientColors: AppColors.electricVioletGradient,
         isDark: true,
         themeData: darkTheme,
       ),

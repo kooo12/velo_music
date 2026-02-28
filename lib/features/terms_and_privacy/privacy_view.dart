@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/sizes.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
+import 'package:velo/core/constants/sizes.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PrivacyView extends StatelessWidget {

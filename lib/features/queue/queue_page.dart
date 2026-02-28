@@ -1,8 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/features/queue/queue_controller.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/features/queue/queue_controller.dart';
 
 class QueuePage extends GetView<QueueController> {
   const QueuePage({super.key});

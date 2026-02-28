@@ -108,6 +108,26 @@ class AppColors {
     crimsonTideEnd,
   ];
 
+  static const List<Color> midnightGreenGradient = [
+    Color(0xFF08332E),
+    Color(0xFF155E54),
+  ];
+
+  static const List<Color> auroraBorealisGradient = [
+    Color(0xFF3A7BD5),
+    Color(0xFF00D2FF),
+  ];
+
+  static const List<Color> cherryBlossomGradient = [
+    Color(0xFFE75480),
+    Color.fromARGB(255, 255, 157, 177),
+  ];
+
+  static const List<Color> electricVioletGradient = [
+    Color(0xFF4776E6),
+    Color(0xFF8E54E9),
+  ];
+
   static List<Color> primaryGradientColors = oceanBlueGradient;
   static List<Color> darkGradientColors = darkNightGradient;
 }

@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/services/notification_settings_service.dart';
+import 'package:velo/features/notifications/service/notification_settings_service.dart';
 
 class MockSharedPreferences extends Mock implements SharedPreferences {}
 

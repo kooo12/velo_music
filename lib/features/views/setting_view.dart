@@ -2,14 +2,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/controllers/app_controller.dart';
-import 'package:sonus/core/controllers/language_controller.dart';
-import 'package:sonus/core/helper/loaders.dart';
-import 'package:sonus/core/services/audio_service.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/features/home/home_controller.dart';
-import 'package:sonus/routhing/app_routes.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/controllers/app_controller.dart';
+import 'package:velo/core/controllers/language_controller.dart';
+import 'package:velo/core/helper/loaders.dart';
+import 'package:velo/core/services/audio_service.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/core/services/remote_config_service.dart';
+import 'package:velo/features/home/home_controller.dart';
+import 'package:velo/routhing/app_routes.dart';
 
 class ProfileView extends GetView<HomeController> {
   ProfileView({super.key});
@@ -353,15 +354,44 @@ class ProfileView extends GetView<HomeController> {
             Icons.description,
             onTap: () => Get.toNamed(Routes.TERMS),
           ),
-          _buildAboutItem(
-            'Feedback'.tr,
-            'Share your feedback and suggestions'.tr,
-            Icons.feedback,
-            onTap: () => controller.launchWeb(
-              Uri.parse(
-                  'https://docs.google.com/forms/d/e/1FAIpQLSeomxUmZBcReLAUMAv8SPDlzrpxUbJmD2fpDWl28vmzCNadfA/viewform?usp=dialog'),
-            ),
-          ),
+          _buildAboutItem('Feedback'.tr,
+              'Share your feedback and suggestions'.tr, Icons.feedback,
+              onTap: () => Get.toNamed(Routes.FEEDBACK)
+              // controller.launchWeb(
+              //   Uri.parse(
+              //       'https://docs.google.com/forms/d/e/1FAIpQLSeomxUmZBcReLAUMAv8SPDlzrpxUbJmD2fpDWl28vmzCNadfA/viewform?usp=dialog'),
+              // ),
+              ),
+          Obx(() {
+            if (!Get.isRegistered<RemoteConfigService>()) {
+              return const SizedBox.shrink();
+            }
+            final remoteConfigService = Get.find<RemoteConfigService>();
+            if (!remoteConfigService.isContactDeveloperEnabled) {
+              return const SizedBox.shrink();
+            }
+
+            final developerLink =
+                remoteConfigService.currentDeveloperProfileLink;
+            if (developerLink.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return _buildAboutItem(
+              'Meet the Developer'.tr,
+              'Connect with the creator and see more work'.tr,
+              Icons.contact_support,
+              onTap: () {
+                try {
+                  controller.launchWeb(Uri.parse(developerLink));
+                } catch (e) {
+                  AppLoader.customToast(
+                    message: 'Invalid developer profile link',
+                  );
+                }
+              },
+            );
+          }),
         ],
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:sonus/features/splash/splash_controller.dart';
+import 'package:velo/features/splash/splash_controller.dart';
 
 class SplashBinding implements Binding {
   @override

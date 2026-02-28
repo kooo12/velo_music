@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/constants/sizes.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/core/constants/constants.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/sizes.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/core/constants/constants.dart';
 
 class AppLoader {
   static void openSavingLoading(String text, {bool dismissible = false}) {

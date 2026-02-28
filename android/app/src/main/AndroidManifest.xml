@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ako.sonus">
+    package="com.ako.velo">
 
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -50,10 +50,9 @@
     </queries>
 
     <application
-        android:label="Sonus Music"
+        android:label="Velo Music"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:enableOnBackInvokedCallback="true"
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"

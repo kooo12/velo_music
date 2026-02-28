@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/services/storage_service.dart';
-import 'package:sonus/features/storage_manager/storage_controller.dart';
+import 'package:velo/features/storage_manager/service/storage_service.dart';
+import 'package:velo/features/storage_manager/controller/storage_controller.dart';
 
 class StorageManagerPage extends StatelessWidget {
   const StorageManagerPage({super.key});

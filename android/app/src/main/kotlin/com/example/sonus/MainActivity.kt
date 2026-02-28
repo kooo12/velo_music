@@ -1,4 +1,4 @@
-package com.ako.sonus
+package com.ako.velo
 
 import com.ryanheise.audioservice.AudioServiceActivity
 

@@ -1,6 +1,6 @@
 {
-    "name": "sonus",
-    "short_name": "sonus",
+    "name": "velo",
+    "short_name": "velo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/constants/constants.dart';
-import 'package:sonus/core/models/song_model.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/features/home/home_controller.dart';
-import 'package:sonus/features/sub_screens/player_screens/half_screen_player.dart';
-import 'package:sonus/widgets/cached_album_artwork.dart';
-import 'package:sonus/widgets/playlist_dialog/add_to_playlist_dialog.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/constants.dart';
+import 'package:velo/core/models/song_model.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/features/home/home_controller.dart';
+import 'package:velo/features/sub_screens/player_screens/half_screen_player.dart';
+import 'package:velo/widgets/cached_album_artwork.dart';
+import 'package:velo/widgets/playlist_dialog/add_to_playlist_dialog.dart';
 
 import '../player_screens/mini_player.dart';
 

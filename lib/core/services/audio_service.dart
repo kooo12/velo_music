@@ -7,8 +7,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:sonus/core/models/song_model.dart' as models;
-import 'package:sonus/core/services/storage_service.dart';
+import 'package:velo/core/models/song_model.dart' as models;
+import 'package:velo/features/storage_manager/service/storage_service.dart';
 
 enum RepeatModeAS { off, all, one }
 

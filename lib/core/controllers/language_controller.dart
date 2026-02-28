@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/translations/app_translations.dart';
+import 'package:velo/core/translations/app_translations.dart';
 
 class LanguageController extends GetxController {
   SharedPreferences? _prefs;

@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/constants/constants.dart';
+import 'package:velo/core/constants/constants.dart';
 
 class AppStateRepository {
   static const String PropertyKey = 'property';

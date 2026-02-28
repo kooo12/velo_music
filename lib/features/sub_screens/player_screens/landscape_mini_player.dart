@@ -1,11 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/constants/sizes.dart';
-import 'package:sonus/features/home/home_controller.dart';
-import 'package:sonus/widgets/cached_album_artwork.dart';
-import 'package:sonus/widgets/seekable_progress_bar.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/sizes.dart';
+import 'package:velo/features/home/home_controller.dart';
+import 'package:velo/widgets/cached_album_artwork.dart';
+import 'package:velo/widgets/seekable_progress_bar.dart';
 
 class LandscapeMiniPlayer extends StatelessWidget {
   const LandscapeMiniPlayer({

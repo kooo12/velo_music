@@ -6,20 +6,22 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/bindings/app_binding.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/core/services/app_audio_handler.dart';
-import 'package:sonus/core/services/app_audio_session.dart';
-import 'package:sonus/core/services/app_lifecycle_manager.dart';
-import 'package:sonus/core/services/audio_service.dart' as svc;
-import 'package:sonus/core/translations/app_translations.dart';
-import 'package:sonus/features/splash/splash.dart';
-import 'package:sonus/routhing/app_pages.dart';
-import 'package:sonus/routhing/app_routes.dart';
+import 'package:velo/core/bindings/app_binding.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/core/services/app_audio_handler.dart';
+import 'package:velo/core/services/app_audio_session.dart';
+import 'package:velo/core/services/app_lifecycle_manager.dart';
+import 'package:velo/core/services/audio_service.dart' as svc;
+import 'package:velo/core/translations/app_translations.dart';
+import 'package:velo/features/splash/splash.dart';
+import 'package:velo/routhing/app_pages.dart';
+import 'package:velo/routhing/app_routes.dart';
 
 FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   if (Platform.isAndroid) {
     SystemChrome.setEnabledSystemUIMode(
@@ -44,20 +46,20 @@ FutureOr<void> main() async {
 
     if (Platform.isAndroid) {
       firebaseOptions = const FirebaseOptions(
-        apiKey: "AIzaSyBbxyR0dQK3jJceq_dd4DIUOOTIQiJZRJo",
-        appId: '1:756997181231:android:bd65ae870d1537ca7b5bda',
-        messagingSenderId: '756997181231',
-        projectId: 'music-player-a4a63',
-        storageBucket: 'music-player-a4a63.firebasestorage.app',
+        apiKey: "AIzaSyA1p04lX1jOdHeARyi_SoyCdfkoWQ3QzqA",
+        appId: '1:615822783937:android:8a9e82f7ca58a01d112b40',
+        messagingSenderId: '615822783937',
+        projectId: 'velo-muisc',
+        storageBucket: 'velo-muisc.firebasestorage.app',
       );
     } else if (Platform.isIOS) {
       firebaseOptions = const FirebaseOptions(
-        apiKey: "AIzaSyAb3J8LZl-hHkaGE1-0uX8kLAC5PCx-5Ls",
-        appId: '1:756997181231:ios:ae511bb0eb49ca787b5bda',
-        messagingSenderId: '756997181231',
-        projectId: 'music-player-a4a63',
-        storageBucket: 'music-player-a4a63.firebasestorage.app',
-        iosBundleId: 'com.ako.sonus',
+        apiKey: "AIzaSyAgupPVPyRvPRqDoijHvhPaEymrMY_awcE",
+        appId: '1:615822783937:ios:934f16dc2541bccc112b40',
+        messagingSenderId: '615822783937',
+        projectId: 'velo-muisc',
+        storageBucket: 'velo-muisc.firebasestorage.app',
+        iosBundleId: 'com.ako.velo',
       );
     }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/constants/sizes.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/sizes.dart';
 
 /// Custom Class for Light & Dark Text Themes
 class AppCheckboxTheme {

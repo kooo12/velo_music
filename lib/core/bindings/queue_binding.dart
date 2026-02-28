@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:sonus/features/queue/queue_controller.dart';
+import 'package:velo/features/queue/queue_controller.dart';
 
 class QueueBinding implements Binding {
   @override

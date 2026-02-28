@@ -1,13 +1,17 @@
 import 'package:get/get.dart';
-import 'package:sonus/core/controllers/app_controller.dart';
-import 'package:sonus/core/controllers/language_controller.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/core/services/fcm_service.dart';
-import 'package:sonus/core/services/network_manager.dart';
-import 'package:sonus/core/services/notification_handler_service.dart';
-import 'package:sonus/core/services/notification_settings_service.dart';
-import 'package:sonus/core/services/storage_service.dart';
-import 'package:sonus/features/notifications/notification_settings_controller.dart';
+import 'package:velo/core/controllers/app_controller.dart';
+import 'package:velo/core/controllers/language_controller.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/core/services/fcm_service.dart';
+import 'package:velo/core/services/network_manager.dart';
+import 'package:velo/features/notifications/service/notification_handler_service.dart';
+import 'package:velo/features/notifications/service/notification_settings_service.dart';
+import 'package:velo/features/promoted_apps/service/promoted_apps_service.dart';
+import 'package:velo/core/services/remote_config_service.dart';
+import 'package:velo/features/storage_manager/service/storage_service.dart';
+import 'package:velo/core/services/version_control_service.dart';
+import 'package:velo/features/notifications/controller/notification_settings_controller.dart';
+import 'package:velo/features/promoted_apps/controller/promoted_apps_controller.dart';
 
 class AppBinding implements Binding {
   @override
@@ -22,6 +26,10 @@ class AppBinding implements Binding {
     Get.put(NotificationSettingsService(), permanent: true);
     Get.put(NotificationHandlerService(), permanent: true);
     Get.put(NotificationSettingsController(), permanent: true);
+    Get.put(RemoteConfigService(), permanent: true);
+    Get.put(VersionControlService(), permanent: true);
+    Get.put(PromotedAppsService(), permanent: true);
+    Get.put(PromotedAppsController(), permanent: true);
 
     return [];
   }

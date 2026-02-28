@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/models/playlist_model.dart';
+import 'package:velo/core/models/playlist_model.dart';
 import '../models/song_model.dart';
 import 'audio_service.dart';
 

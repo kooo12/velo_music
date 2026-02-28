@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/models/playlist_model.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/models/playlist_model.dart';
 
 class EditPlaylistController extends GetxController
     with GetSingleTickerProviderStateMixin {

@@ -1,11 +1,11 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/constants/sizes.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/features/notifications/notification_settings_controller.dart';
-import 'package:sonus/core/constants/constants.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/sizes.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/features/notifications/controller/notification_settings_controller.dart';
+import 'package:velo/core/constants/constants.dart';
 
 class NotificationSettingsPage extends StatelessWidget {
   NotificationSettingsPage({super.key});

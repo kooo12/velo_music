@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sonus/core/constants/app_colors.dart';
+import 'package:velo/core/constants/app_colors.dart';
 
 import 'sizes.dart';
 

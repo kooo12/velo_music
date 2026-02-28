@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sonus/core/services/network_manager.dart';
-import 'package:sonus/core/services/notification_settings_service.dart';
-import 'package:sonus/routhing/app_routes.dart';
+import 'package:velo/core/services/network_manager.dart';
+import 'package:velo/features/notifications/service/notification_settings_service.dart';
+import 'package:velo/routhing/app_routes.dart';
 
 class FCMService extends GetxService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;

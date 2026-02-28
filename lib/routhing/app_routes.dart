@@ -17,5 +17,6 @@ abstract class Routes {
 
   static const PRIVACY = '/privacy';
   static const TERMS = '/terms';
+  static const FEEDBACK = '/feedback';
   static const THEME = '/theme';
 }

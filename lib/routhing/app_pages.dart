@@ -1,25 +1,27 @@
 import 'package:get/get.dart';
-import 'package:sonus/core/bindings/home_binding.dart';
-import 'package:sonus/core/bindings/splash_binding.dart';
-import 'package:sonus/features/notifications/notification_request_page.dart';
-import 'package:sonus/core/models/playlist_model.dart';
-import 'package:sonus/core/models/song_model.dart';
-import 'package:sonus/features/home/home.dart';
-import 'package:sonus/features/home/home_controller.dart';
-import 'package:sonus/features/notifications/notification_settings_page.dart';
-import 'package:sonus/features/splash/splash.dart';
-import 'package:sonus/features/storage_manager/storage_manager_page.dart';
-import 'package:sonus/features/sub_screens/library_screen/add_songs_to_playlist_screen.dart';
-import 'package:sonus/features/sub_screens/library_screen/album_songs_screen.dart';
-import 'package:sonus/features/sub_screens/library_screen/artist_songs_screen.dart';
-import 'package:sonus/features/sub_screens/library_screen/playlist_songs_screen.dart';
-import 'package:sonus/features/terms_and_privacy/privacy_view.dart';
-import 'package:sonus/features/terms_and_privacy/terms_view.dart';
-import 'package:sonus/features/themes/theme_view.dart';
-import 'package:sonus/routhing/app_routes.dart';
-import 'package:sonus/features/sub_screens/player_screens/full_screen_player.dart';
-import 'package:sonus/features/sub_screens/player_screens/full_screen_player_landscape.dart';
-import 'package:sonus/features/queue/queue_page.dart';
+import 'package:velo/core/bindings/feedback_binding.dart';
+import 'package:velo/core/bindings/home_binding.dart';
+import 'package:velo/core/bindings/splash_binding.dart';
+import 'package:velo/features/feedbacks/feedback.dart';
+import 'package:velo/features/notifications/notification_request_page.dart';
+import 'package:velo/core/models/playlist_model.dart';
+import 'package:velo/core/models/song_model.dart';
+import 'package:velo/features/home/home.dart';
+import 'package:velo/features/home/home_controller.dart';
+import 'package:velo/features/notifications/notification_settings_page.dart';
+import 'package:velo/features/splash/splash.dart';
+import 'package:velo/features/storage_manager/storage_manager_page.dart';
+import 'package:velo/features/sub_screens/library_screen/add_songs_to_playlist_screen.dart';
+import 'package:velo/features/sub_screens/library_screen/album_songs_screen.dart';
+import 'package:velo/features/sub_screens/library_screen/artist_songs_screen.dart';
+import 'package:velo/features/sub_screens/library_screen/playlist_songs_screen.dart';
+import 'package:velo/features/terms_and_privacy/privacy_view.dart';
+import 'package:velo/features/terms_and_privacy/terms_view.dart';
+import 'package:velo/features/themes/theme_view.dart';
+import 'package:velo/routhing/app_routes.dart';
+import 'package:velo/features/sub_screens/player_screens/full_screen_player.dart';
+import 'package:velo/features/sub_screens/player_screens/full_screen_player_landscape.dart';
+import 'package:velo/features/queue/queue_page.dart';
 
 import '../core/bindings/queue_binding.dart';
 
@@ -156,6 +158,11 @@ class AppPages {
     GetPage(
         name: Routes.TERMS,
         page: () => const TermsView(),
+        transition: Transition.rightToLeft),
+    GetPage(
+        name: Routes.FEEDBACK,
+        page: () => FeedbackView(),
+        binding: FeedbackBinding(),
         transition: Transition.rightToLeft),
     GetPage(
         name: Routes.THEME,

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:sonus/features/home/home_controller.dart';
+import 'package:velo/features/home/home_controller.dart';
 
 class HomeBinding implements Binding {
   @override

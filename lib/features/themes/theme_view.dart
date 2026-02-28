@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/core/models/app_theme.dart';
-import 'package:sonus/core/constants/constants.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/core/models/app_theme.dart';
+import 'package:velo/core/constants/constants.dart';
 
 class ThemeView extends GetView<ThemeController> {
   const ThemeView({super.key});

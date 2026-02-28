@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/helper/loaders.dart';
-import 'package:sonus/widgets/playlist_dialog/playlist_controllers/create_playlist_controller.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/helper/loaders.dart';
+import 'package:velo/widgets/playlist_dialog/playlist_controllers/create_playlist_controller.dart';
 
 class CreatePlaylistDialog extends StatelessWidget {
   final Function(String name, String description, String color)

@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/features/home/home_controller.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/features/home/home_controller.dart';
 
 class CachedAlbumArtwork extends StatefulWidget {
   final int songId;

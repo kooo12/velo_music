@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/controllers/language_controller.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/core/translations/app_translations.dart';
+import 'package:velo/core/controllers/language_controller.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/core/translations/app_translations.dart';
 
 class MockThemeController extends Mock implements ThemeController {}
 

@@ -1,12 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/helper/loaders.dart';
-import 'package:sonus/core/models/playlist_model.dart';
-import 'package:sonus/core/models/song_model.dart';
-import 'package:sonus/features/home/home_controller.dart';
-import 'package:sonus/widgets/playlist_dialog/playlist_controllers/add_to_playlist_controller.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/helper/loaders.dart';
+import 'package:velo/core/models/playlist_model.dart';
+import 'package:velo/core/models/song_model.dart';
+import 'package:velo/features/home/home_controller.dart';
+import 'package:velo/widgets/playlist_dialog/playlist_controllers/add_to_playlist_controller.dart';
 
 class AddToPlaylistDialog extends StatelessWidget {
   final SongModel song;

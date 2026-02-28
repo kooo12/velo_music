@@ -3,8 +3,8 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sonus/core/services/audio_service.dart';
-import 'package:sonus/core/services/notification_settings_service.dart';
+import 'package:velo/core/services/audio_service.dart';
+import 'package:velo/features/notifications/service/notification_settings_service.dart';
 
 class SleepTimerService extends GetxService {
   final audioService = Get.find<AudioPlayerService>();

@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Sonus Music</string>
+	<string>Velo Music</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Sonus Music</string>
+	<string>Velo Music</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,7 +28,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.ako.sonus</string>
+			<string>com.ako.velo</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.756997181231-kp6mda48n8m9vi0khp6t1ju08gub7p45</string>
@@ -42,13 +42,13 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Sonus Music Player needs access to your music library to play your local tracks.</string>
+	<string>Velo Music Player needs access to your music library to play your local tracks.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Sonus Music Player uses Bluetooth to connect to external speakers.</string>
+	<string>Velo Music Player uses Bluetooth to connect to external speakers.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Sonus Music Player uses Bluetooth to connect to external speakers.</string>
+	<string>Velo Music Player uses Bluetooth to connect to external speakers.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Sonus Music Player needs access to your photo library to set album art.</string>
+	<string>Velo Music Player needs access to your photo library to set album art.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

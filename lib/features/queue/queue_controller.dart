@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:sonus/core/models/song_model.dart';
-import 'package:sonus/core/services/audio_service.dart';
+import 'package:velo/core/models/song_model.dart';
+import 'package:velo/core/services/audio_service.dart';
 
 class QueueController extends GetxController {
   final AudioPlayerService _audioService = Get.find<AudioPlayerService>();

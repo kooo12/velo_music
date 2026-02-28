@@ -3,26 +3,28 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:sonus/core/constants/app_colors.dart';
-import 'package:sonus/core/constants/constants.dart';
-import 'package:sonus/core/constants/sizes.dart';
-import 'package:sonus/core/helper/glass_dialog.dart';
-import 'package:sonus/core/helper/loaders.dart';
-import 'package:sonus/core/models/playlist_model.dart';
-import 'package:sonus/core/models/song_model.dart';
-import 'package:sonus/core/controllers/theme_controller.dart';
-import 'package:sonus/features/home/home_controller.dart';
-import 'package:sonus/features/home/widgets/music_discovery_widget.dart';
-import 'package:sonus/features/home/widgets/music_mood_widget.dart';
-import 'package:sonus/features/home/widgets/sleep_timer_card.dart';
-import 'package:sonus/features/home/widgets/smart_recommendations_widget.dart';
-import 'package:sonus/features/home/widgets/tablet_sleep_timer_card.dart';
-import 'package:sonus/features/sub_screens/player_screens/landscape_mini_player.dart';
-import 'package:sonus/features/views/library_view.dart';
-import 'package:sonus/features/views/setting_view.dart';
-import 'package:sonus/widgets/cached_album_artwork.dart';
-import 'package:sonus/widgets/loading_widget.dart';
-import 'package:sonus/widgets/playlist_dialog/edit_playlist_dialog.dart';
+import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/constants.dart';
+import 'package:velo/core/constants/sizes.dart';
+import 'package:velo/core/helper/glass_dialog.dart';
+import 'package:velo/core/helper/loaders.dart';
+import 'package:velo/core/models/playlist_model.dart';
+import 'package:velo/core/models/song_model.dart';
+import 'package:velo/core/controllers/theme_controller.dart';
+import 'package:velo/features/home/home_controller.dart';
+import 'package:velo/features/home/widgets/music_discovery_widget.dart';
+import 'package:velo/features/home/widgets/music_mood_widget.dart';
+import 'package:velo/features/home/widgets/sleep_timer_card.dart';
+import 'package:velo/features/home/widgets/smart_recommendations_widget.dart';
+import 'package:velo/features/home/widgets/tablet_sleep_timer_card.dart';
+import 'package:velo/features/promoted_apps/promoted_apps_bottom_sheet.dart';
+import 'package:velo/features/promoted_apps/controller/promoted_apps_controller.dart';
+import 'package:velo/features/sub_screens/player_screens/landscape_mini_player.dart';
+import 'package:velo/features/views/library_view.dart';
+import 'package:velo/features/views/setting_view.dart';
+import 'package:velo/widgets/cached_album_artwork.dart';
+import 'package:velo/widgets/loading_widget.dart';
+import 'package:velo/widgets/playlist_dialog/edit_playlist_dialog.dart';
 
 import '../sub_screens/player_screens/mini_player.dart';
 import '../views/search_view.dart';
@@ -176,6 +178,12 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildTabletLandscapeAppBar() {
+    final promotedAppsCtrl = Get.find<PromotedAppsController>();
+
+    final shouldShow = promotedAppsCtrl.shouldShowGiftboxRx.value;
+
+    final badgeCount = promotedAppsCtrl.badgeCount.value;
+    final isShaking = promotedAppsCtrl.isShaking;
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
@@ -183,19 +191,89 @@ class HomeScreen extends GetView<HomeController> {
           Image.asset('assets/app_icon.png',
               fit: BoxFit.cover, width: 60, height: 60),
           const SizedBox(width: 18),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Good ${_getGreeting()}',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 20,
+          Flexible(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Good ${_getGreeting()}',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 20,
+                  ),
                 ),
-              ),
-            ],
+                if (shouldShow)
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: isShaking ? 1.0 : 0.0),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    builder: (context, value, child) {
+                      return Transform.rotate(
+                        angle: isShaking
+                            ? value * 0.2 * (value < 0.5 ? 1 : -1)
+                            : 0,
+                        child: Transform.scale(
+                          scale: isShaking ? 1.0 + (value * 0.1) : 1.0,
+                          child: Stack(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  promotedAppsCtrl.openAppList();
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) =>
+                                        const PromotedAppsBottomSheet(),
+                                  );
+                                },
+                                icon: const Text(
+                                  '🎁',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              if (badgeCount > 0)
+                                Positioned(
+                                  right: 8,
+                                  top: 8,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.red.withOpacity(0.5),
+                                          blurRadius: 4,
+                                          spreadRadius: 1,
+                                        ),
+                                      ],
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 18,
+                                      minHeight: 18,
+                                    ),
+                                    child: Text(
+                                      badgeCount > 99
+                                          ? '99+'
+                                          : badgeCount.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+              ],
+            ),
           ),
         ],
       ),
@@ -268,6 +346,12 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildCustomAppBar() {
+    final promotedAppsCtrl = Get.find<PromotedAppsController>();
+
+    final shouldShow = promotedAppsCtrl.shouldShowGiftboxRx.value;
+
+    final badgeCount = promotedAppsCtrl.badgeCount.value;
+    final isShaking = promotedAppsCtrl.isShaking;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Padding(
@@ -275,17 +359,91 @@ class HomeScreen extends GetView<HomeController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Good ${_getGreeting()}'.tr,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 20,
-                  ),
-                ),
-              ],
+            Text(
+              'Good ${_getGreeting()}'.tr,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 20,
+              ),
+            ),
+            Flexible(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (shouldShow)
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0.0, end: isShaking ? 1.0 : 0.0),
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      builder: (context, value, child) {
+                        return Transform.rotate(
+                          angle: isShaking
+                              ? value * 0.2 * (value < 0.5 ? 1 : -1)
+                              : 0,
+                          child: Transform.scale(
+                            scale: isShaking ? 1.0 + (value * 0.1) : 1.0,
+                            child: Stack(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    promotedAppsCtrl.openAppList();
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (context) =>
+                                          const PromotedAppsBottomSheet(),
+                                    );
+                                  },
+                                  icon: const Text(
+                                    '🎁',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                                if (badgeCount > 0)
+                                  Positioned(
+                                    right: 8,
+                                    top: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.red.withOpacity(0.5),
+                                            blurRadius: 4,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      constraints: const BoxConstraints(
+                                        minWidth: 18,
+                                        minHeight: 18,
+                                      ),
+                                      child: Text(
+                                        badgeCount > 99
+                                            ? '99+'
+                                            : badgeCount.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  Image.asset('assets/app_icon.png',
+                      fit: BoxFit.cover, width: 40, height: 40)
+                ],
+              ),
             ),
           ],
         ),
