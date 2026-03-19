@@ -20,6 +20,7 @@ import 'package:velo/features/home/widgets/tablet_sleep_timer_card.dart';
 import 'package:velo/features/promoted_apps/promoted_apps_bottom_sheet.dart';
 import 'package:velo/features/promoted_apps/controller/promoted_apps_controller.dart';
 import 'package:velo/features/sub_screens/player_screens/landscape_mini_player.dart';
+import 'package:velo/routhing/app_routes.dart';
 import 'package:velo/features/views/library_view.dart';
 import 'package:velo/features/views/setting_view.dart';
 import 'package:velo/widgets/cached_album_artwork.dart';
@@ -187,10 +188,12 @@ class HomeScreen extends GetView<HomeController> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Image.asset('assets/app_icon.png',
               fit: BoxFit.cover, width: 60, height: 60),
-          const SizedBox(width: 18),
+          const SizedBox(width: 10),
           Flexible(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -341,6 +344,42 @@ class HomeScreen extends GetView<HomeController> {
             });
           },
         ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 23),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+              onTap: () => Get.toNamed(Routes.RADIO),
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Iconsax.radio_copy,
+                      color: Colors.white70,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        'Radio'.tr,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -466,7 +505,7 @@ class HomeScreen extends GetView<HomeController> {
       }
 
       return ResponsiveContext(context).isTablet
-          ? _tabletHomeView()
+          ? _tabletHomeView(context)
           : _mobileHomeView();
     });
   }
@@ -533,7 +572,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _tabletHomeView() {
+  Widget _tabletHomeView(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(left: AppSizes.defaultSpace * 2),
       child: Column(
@@ -544,7 +583,7 @@ class HomeScreen extends GetView<HomeController> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: buildTabletSleepTimerCard(controller)),
+              Expanded(child: buildTabletSleepTimerCard(controller, context)),
               const SizedBox(width: 10),
               const Expanded(
                 child: MusicMoodWidget(),
@@ -1216,12 +1255,29 @@ class HomeScreen extends GetView<HomeController> {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                gradient: const LinearGradient(
-                  colors: [AppColors.musicPrimary, AppColors.musicSecondary],
-                ),
+                borderRadius: BorderRadius.circular(8),
+                gradient: playlist.colorHex != null
+                    ? LinearGradient(
+                        colors: [
+                          Color(
+                              int.parse('FF${playlist.colorHex!}', radix: 16)),
+                          Color(int.parse('FF${playlist.colorHex!}', radix: 16))
+                              .withOpacity(0.7),
+                        ],
+                      )
+                    : const LinearGradient(
+                        colors: [
+                          AppColors.musicPrimary,
+                          AppColors.musicSecondary
+                        ],
+                      ),
               ),
-              child: const Icon(Icons.queue_music, color: Colors.white),
+              child: Icon(
+                playlist.isDefault
+                    ? Icons.music_note_outlined
+                    : Icons.queue_music,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: 15),
             Expanded(
@@ -1461,61 +1517,108 @@ class HomeScreen extends GetView<HomeController> {
     return Padding(
       padding:
           const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace * 2),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.dark.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.3),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.dark.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Obx(() => Row(
+                        children: [
+                          _buildNavItem(
+                            Icons.home,
+                            'Home',
+                            controller.currentView.value == 'home',
+                            () => controller.changeView('home'),
+                          ),
+                          _buildNavItem(
+                            Icons.search,
+                            'Search',
+                            controller.currentView.value == 'search',
+                            () => controller.changeView('search'),
+                          ),
+                          _buildNavItem(
+                            Icons.library_music,
+                            'Library',
+                            controller.currentView.value == 'library',
+                            () => controller.changeView('library'),
+                          ),
+                          _buildNavItem(
+                            Icons.settings,
+                            'Settings',
+                            controller.currentView.value == 'settings',
+                            () => controller.changeView('settings'),
+                          ),
+                        ],
+                      )),
+                ),
+              ),
             ),
-            BoxShadow(
-              color: Colors.white.withOpacity(0.05),
-              blurRadius: 6,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Obx(() => Row(
-                  children: [
-                    _buildNavItem(
-                      Icons.home,
-                      'Home',
-                      controller.currentView.value == 'home',
-                      () => controller.changeView('home'),
-                    ),
-                    _buildNavItem(
-                      Icons.search,
-                      'Search',
-                      controller.currentView.value == 'search',
-                      () => controller.changeView('search'),
-                    ),
-                    _buildNavItem(
-                      Icons.library_music,
-                      'Library',
-                      controller.currentView.value == 'library',
-                      () => controller.changeView('library'),
-                    ),
-                    _buildNavItem(
-                      Icons.settings,
-                      'Settings',
-                      controller.currentView.value == 'settings',
-                      () => controller.changeView('settings'),
-                    ),
-                  ],
-                )),
           ),
-        ),
+          const SizedBox(
+            width: AppSizes.spaceBtwItems,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.dark.withOpacity(0.1),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: IconButton(
+                  onPressed: () => Get.toNamed(Routes.RADIO),
+                  icon: const Icon(
+                    Iconsax.radio_copy,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

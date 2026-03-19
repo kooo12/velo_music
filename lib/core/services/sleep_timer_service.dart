@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velo/core/services/audio_service.dart';
 import 'package:velo/features/notifications/service/notification_settings_service.dart';
+import 'package:velo/features/radio/radio_controller.dart';
 
 class SleepTimerService extends GetxService {
   final audioService = Get.find<AudioPlayerService>();
@@ -97,6 +98,14 @@ class SleepTimerService extends GetxService {
     try {
       audioService.audioPlayer.pause();
       debugPrint('Music stopped by sleep timer');
+
+      if (Get.isRegistered<RadioController>()) {
+        final radioController = Get.find<RadioController>();
+        if (radioController.isPlaying.value) {
+          radioController.stop();
+          debugPrint('Radio stopped by sleep timer');
+        }
+      }
 
       if (settingsService.sleepTimerNotifications.value) {
         _showSleepTimerNotification();

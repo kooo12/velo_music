@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:velo/core/bindings/feedback_binding.dart';
 import 'package:velo/core/bindings/home_binding.dart';
+import 'package:velo/core/bindings/radio_binding.dart';
 import 'package:velo/core/bindings/splash_binding.dart';
 import 'package:velo/features/feedbacks/feedback.dart';
 import 'package:velo/features/notifications/notification_request_page.dart';
@@ -21,6 +22,7 @@ import 'package:velo/features/themes/theme_view.dart';
 import 'package:velo/routhing/app_routes.dart';
 import 'package:velo/features/sub_screens/player_screens/full_screen_player.dart';
 import 'package:velo/features/sub_screens/player_screens/full_screen_player_landscape.dart';
+import 'package:velo/features/radio/radio_page.dart';
 import 'package:velo/features/queue/queue_page.dart';
 
 import '../core/bindings/queue_binding.dart';
@@ -168,5 +170,10 @@ class AppPages {
         name: Routes.THEME,
         page: () => const ThemeView(),
         transition: Transition.rightToLeft),
+    GetPage(
+        name: Routes.RADIO,
+        page: () => const RadioPage(),
+        binding: RadioBinding(),
+        transition: Transition.downToUp),
   ];
 }

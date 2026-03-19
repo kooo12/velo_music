@@ -33,7 +33,7 @@ class EditPlaylistController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    playlist = Get.arguments as PlaylistModel?;
+    // playlist = Get.arguments as PlaylistModel?;
 
     if (playlist != null) {
       nameController.text = playlist!.name;
@@ -77,7 +77,7 @@ class EditPlaylistController extends GetxController
 
   void closeDialog() {
     animationController.reverse().then((_) {
-      Get.back();
+      Get.closeAllDialogs();
     });
     Navigator.of(Get.overlayContext!).pop();
     FocusManager.instance.primaryFocus?.unfocus();

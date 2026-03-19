@@ -233,6 +233,7 @@ final Map<String, String> mmMm = {
   'Feedback': "တုံ့ပြန်ချက်",
   'Share your feedback and suggestions':
       "သင်၏ တုံ့ပြန်ချက်များနှင့် အကြံပြုချက်များကို မျှဝေပါ",
+  'Radio': "ရေဒီယို",
 
   // Terms of Service
   'terms_title': 'ဝန်ဆောင်မှု စည်းမျဉ်းများ',

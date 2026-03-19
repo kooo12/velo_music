@@ -94,7 +94,7 @@ FutureOr<void> main() async {
 
   AppAudioHandler handler;
   try {
-    handler = Get.find<AppAudioHandler>();
+    handler = Get.put(AppAudioHandler());
     debugPrint('AppAudioHandler already exists in GetX, reusing...');
   } catch (_) {
     handler = await AudioService.init(

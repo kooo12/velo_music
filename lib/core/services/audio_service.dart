@@ -801,11 +801,15 @@ class AudioPlayerService extends GetxService {
       debugPrint(
           'AudioService.playAtIndex: Playing song: ${song.title} by ${song.artist} ${song.duration} (playlist index: $index)');
 
-      await _audioPlayer.setFilePath(song.data);
+      if (song.data.startsWith('http')) {
+        await _audioPlayer.setUrl(song.data);
+      } else {
+        await _audioPlayer.setFilePath(song.data);
+      }
 
       await Future.delayed(const Duration(milliseconds: 50));
 
-      await _audioPlayer.play();
+      _audioPlayer.play();
 
       debugPrint(
           'AudioService.playAtIndex: Successfully started playing ${song.title}');

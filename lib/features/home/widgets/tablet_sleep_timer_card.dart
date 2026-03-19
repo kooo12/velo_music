@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velo/core/constants/app_colors.dart';
+import 'package:velo/core/constants/constants.dart';
 import 'package:velo/core/constants/sizes.dart';
 import 'package:velo/core/controllers/theme_controller.dart';
 
 import '../home_controller.dart';
 
-Widget buildTabletSleepTimerCard(HomeController controller) {
+Widget buildTabletSleepTimerCard(
+    HomeController controller, BuildContext context) {
   final themeCtrl = Get.find<ThemeController>();
   return Obx(() {
     final isActive = controller.isSleepTimerActive;
@@ -16,7 +18,7 @@ Widget buildTabletSleepTimerCard(HomeController controller) {
     return GestureDetector(
       onTap: () => controller.showSleepTimerDialog(),
       child: Container(
-        // height: 200,
+        height: ResponsiveContext(context).isTabletLandscape ? 180 : 195,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isActive
