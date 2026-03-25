@@ -14,8 +14,9 @@ class TermsView extends StatelessWidget {
 
     return Obx(
       () => Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
+          // backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
           elevation: 0,
           // flexibleSpace: Container(
           //   decoration: BoxDecoration(
@@ -43,71 +44,73 @@ class TermsView extends StatelessWidget {
               colors: themeCtrl.currentAppTheme.value.gradientColors,
             ),
           ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.defaultSpace * 2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    'terms_last_updated'.tr,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 16,
-                        ),
-                  ),
-                  const SizedBox(height: 40),
-                  _TermsSection(
-                    title: 'terms_acceptance_title'.tr,
-                    content: 'terms_acceptance_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_description_title'.tr,
-                    content: 'terms_description_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_user_accounts_title'.tr,
-                    content: 'terms_user_accounts_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_acceptable_use_title'.tr,
-                    content: 'terms_acceptable_use_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_intellectual_property_title'.tr,
-                    content: 'terms_intellectual_property_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_download_content_title'.tr,
-                    content: 'terms_download_content_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_privacy_data_title'.tr,
-                    content: 'terms_privacy_data_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_disclaimers_title'.tr,
-                    content: 'terms_disclaimers_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_termination_title'.tr,
-                    content: 'terms_termination_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_changes_title'.tr,
-                    content: 'terms_changes_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_governing_law_title'.tr,
-                    content: 'terms_governing_law_content'.tr,
-                  ),
-                  _TermsSection(
-                    title: 'terms_contact_title'.tr,
-                    content: 'terms_contact_content'.tr,
-                    showSocialLinks: true,
-                  ),
-                ],
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.defaultSpace * 2),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    Text(
+                      'terms_last_updated'.tr,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 16,
+                          ),
+                    ),
+                    const SizedBox(height: 40),
+                    _TermsSection(
+                      title: 'terms_acceptance_title'.tr,
+                      content: 'terms_acceptance_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_description_title'.tr,
+                      content: 'terms_description_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_user_accounts_title'.tr,
+                      content: 'terms_user_accounts_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_acceptable_use_title'.tr,
+                      content: 'terms_acceptable_use_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_intellectual_property_title'.tr,
+                      content: 'terms_intellectual_property_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_download_content_title'.tr,
+                      content: 'terms_download_content_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_privacy_data_title'.tr,
+                      content: 'terms_privacy_data_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_disclaimers_title'.tr,
+                      content: 'terms_disclaimers_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_termination_title'.tr,
+                      content: 'terms_termination_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_changes_title'.tr,
+                      content: 'terms_changes_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_governing_law_title'.tr,
+                      content: 'terms_governing_law_content'.tr,
+                    ),
+                    _TermsSection(
+                      title: 'terms_contact_title'.tr,
+                      content: 'terms_contact_content'.tr,
+                      showSocialLinks: true,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -116,13 +116,13 @@ class AppLoader {
       ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar();
   static final themeController = Get.find<ThemeController>();
 
-  static customToast({required String message}) {
+  static customToast({required String message, int duration = 1600}) {
     final ctx = Get.context!;
     final themeCtrl = Get.find<ThemeController>();
     ScaffoldMessenger.of(ctx).showSnackBar(
       SnackBar(
         elevation: 0,
-        duration: const Duration(milliseconds: 1600),
+        duration: Duration(milliseconds: duration),
         backgroundColor: Colors.transparent,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(

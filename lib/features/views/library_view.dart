@@ -127,7 +127,7 @@ class LibraryView extends GetView<HomeController> {
           );
         }),
         const SliverToBoxAdapter(
-          child: SizedBox(height: 170),
+          child: SizedBox(height: 185),
         ),
       ],
     );

@@ -96,6 +96,7 @@ class NotificationHandlerService extends GetxService {
       debugPrint('Received foreground message: ${message.messageId}');
       debugPrint('Title: ${message.notification?.title}');
       debugPrint('Body: ${message.notification?.body}');
+      debugPrint('Image: ${message.notification?.android?.imageUrl}');
       debugPrint('Data: ${message.data}');
 
       if (!_settingsService.areNotificationsAllowed) {
@@ -103,12 +104,18 @@ class NotificationHandlerService extends GetxService {
         return;
       }
 
+      final imageUrl = message.notification?.android?.imageUrl ??
+          message.notification?.apple?.imageUrl ??
+          message.data['image'] as String? ??
+          message.data['imageUrl'] as String?;
+
+      debugPrint('Resolved imageUrl: $imageUrl');
+
       await _showPushNotification(
         title: message.notification?.title ?? 'New Message',
         body: message.notification?.body ?? '',
         data: message.data,
-        imageUrl: message.notification?.android?.imageUrl ??
-            message.notification?.apple?.imageUrl,
+        imageUrl: imageUrl,
       );
     } catch (e) {
       debugPrint('Error handling foreground message: $e');
@@ -141,6 +148,35 @@ class NotificationHandlerService extends GetxService {
     String? imageUrl,
   }) async {
     try {
+      final actionUrl = data?['action_url'] as String?;
+      final actionTitle = data?['action_title'] as String?;
+
+      final Map<String, String?> payload = data != null
+          ? Map<String, String?>.from(
+              data.map((k, v) => MapEntry(k, v?.toString())))
+          : {};
+
+      final List<NotificationActionButton>? actionButtons =
+          (actionUrl != null && actionUrl.isNotEmpty)
+              ? [
+                  NotificationActionButton(
+                    key: 'open_action',
+                    label: actionTitle ?? 'Open',
+                    actionType: ActionType.Default,
+                  ),
+                  NotificationActionButton(
+                    key: 'dismiss',
+                    label: 'Dismiss',
+                    actionType: ActionType.DismissAction,
+                    isDangerousOption: false,
+                  ),
+                ]
+              : null;
+
+      final notifLayout = imageUrl != null
+          ? NotificationLayout.BigPicture
+          : NotificationLayout.Default;
+
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
@@ -148,17 +184,14 @@ class NotificationHandlerService extends GetxService {
           title: title,
           body: body,
           bigPicture: imageUrl,
-          notificationLayout: imageUrl != null
-              ? NotificationLayout.BigPicture
-              : NotificationLayout.Default,
-          payload: data != null
-              ? Map<String, String?>.from(
-                  data.map((k, v) => MapEntry(k, v?.toString())))
-              : null,
+          largeIcon: imageUrl,
+          notificationLayout: notifLayout,
+          payload: payload,
         ),
+        actionButtons: actionButtons,
       );
     } catch (e) {
-      debugPrint('Error showing push notification: $e');
+      debugPrint('Error showing push notification: \$e');
     }
   }
 
@@ -196,8 +229,8 @@ class NotificationHandlerService extends GetxService {
 
       final payload = action.payload ?? {};
       final type = payload['type'];
-      final actionUrl = payload['actionUrl'];
-      final actionTitle = payload['actionTitle'];
+      final actionUrl = payload['action_url'];
+      final actionTitle = payload['action_title'];
       final actionKey = action.buttonKeyPressed;
 
       if (type == 'sleep_timer' || type == 'sleep_timer_countdown') {
@@ -258,7 +291,68 @@ class NotificationHandlerService extends GetxService {
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('Background message received: ${message.messageId}');
-  debugPrint('Title: ${message.notification?.title}');
-  debugPrint('Body: ${message.notification?.body}');
-  debugPrint('Data: ${message.data}');
+
+  final title = message.notification?.title ?? 'New Message';
+  final body = message.notification?.body ?? '';
+  final imageUrl = message.notification?.android?.imageUrl ??
+      message.notification?.apple?.imageUrl ??
+      message.data['image'] as String? ??
+      message.data['imageUrl'] as String?;
+  final data = message.data;
+  final actionUrl = data['action_url'];
+  final actionTitle = data['action_title'];
+
+  try {
+    await AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+          channelKey: 'push_notifications',
+          channelName: 'Push Notifications',
+          channelDescription: 'Channel for push notifications',
+          defaultColor: const Color(0xFF9D50DD),
+          ledColor: Colors.white,
+          importance: NotificationImportance.High,
+        ),
+      ],
+      debug: false,
+    );
+
+    final Map<String, String?> payload = Map<String, String?>.from(
+        data.map((k, v) => MapEntry(k, v.toString())));
+
+    final List<NotificationActionButton>? actionButtons =
+        (actionUrl != null && actionUrl.isNotEmpty)
+            ? [
+                NotificationActionButton(
+                  key: 'open_action',
+                  label: actionTitle ?? 'Open',
+                  actionType: ActionType.Default,
+                ),
+                NotificationActionButton(
+                  key: 'dismiss',
+                  label: 'Dismiss',
+                  actionType: ActionType.DismissAction,
+                ),
+              ]
+            : null;
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        channelKey: 'push_notifications',
+        title: title,
+        body: body,
+        bigPicture: imageUrl,
+        largeIcon: imageUrl,
+        notificationLayout: imageUrl != null
+            ? NotificationLayout.BigPicture
+            : NotificationLayout.Default,
+        payload: payload,
+      ),
+      actionButtons: actionButtons,
+    );
+  } catch (e) {
+    debugPrint('Error showing background notification: $e');
+  }
 }

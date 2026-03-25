@@ -128,4 +128,95 @@ class FCMService extends GetxService {
       debugPrint('FCM: Error saving token to database: $e');
     }
   }
+
+  Future<void> updateTokenForUser(String userId) async {
+    try {
+      if (fcmToken.value.isNotEmpty) {
+        final timestamp = FieldValue.serverTimestamp();
+
+        await _firestore.collection('users').doc(userId).update({
+          'fcmToken': fcmToken.value,
+          'fcmTokenUpdatedAt': timestamp,
+          'deviceType': defaultTargetPlatform.name,
+        });
+
+        debugPrint('FCM: Token updated for user $userId');
+      }
+    } catch (e) {
+      debugPrint('FCM: Error updating token for user: $e');
+    }
+  }
+
+  Future<void> removeTokenForUser(String userId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'fcmToken': FieldValue.delete(),
+        'fcmTokenUpdatedAt': FieldValue.delete(),
+      });
+
+      if (fcmToken.value.isNotEmpty) {
+        await _firestore.collection('fcm_tokens').doc(fcmToken.value).update({
+          'isActive': false,
+          'lastUsed': FieldValue.serverTimestamp(),
+        });
+      }
+
+      debugPrint('FCM: Token removed for user $userId');
+    } catch (e) {
+      debugPrint('FCM: Error removing token for user: $e');
+    }
+  }
+
+  Future<void> cleanupUserTokens(String userId) async {
+    try {
+      debugPrint('FCM: Cleaning up tokens for user $userId');
+
+      final userTokensSnapshot = await _firestore
+          .collection('fcm_tokens')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      for (final doc in userTokensSnapshot.docs) {
+        await doc.reference.update({
+          'isActive': false,
+          'cleanupReason': 'user_signout',
+          'cleanedAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      await _firestore.collection('users').doc(userId).update({
+        'fcmToken': FieldValue.delete(),
+        'fcmTokenUpdatedAt': FieldValue.delete(),
+      });
+
+      debugPrint(
+          'FCM: Cleaned up ${userTokensSnapshot.docs.length} tokens for user $userId');
+    } catch (e) {
+      debugPrint('FCM: Error cleaning up user tokens: $e');
+    }
+  }
+
+  Future<int> cleanupAllInactiveTokens() async {
+    try {
+      debugPrint('Starting cleanup of all inactive tokens...');
+
+      final firestore = FirebaseFirestore.instance;
+      final inactiveTokensSnapshot = await firestore
+          .collection('fcm_tokens')
+          .where('isActive', isEqualTo: false)
+          .get();
+
+      int cleanedCount = 0;
+      for (final doc in inactiveTokensSnapshot.docs) {
+        await doc.reference.delete();
+        cleanedCount++;
+      }
+
+      debugPrint('Cleaned up $cleanedCount inactive tokens');
+      return cleanedCount;
+    } catch (e) {
+      debugPrint('Error cleaning up inactive tokens: $e');
+      return 0;
+    }
+  }
 }

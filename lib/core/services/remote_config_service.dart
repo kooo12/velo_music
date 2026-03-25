@@ -37,6 +37,8 @@ class RemoteConfigService extends GetxService {
 
   static const String KEY_SHOW_GIFTBOX_ICON = 'show_giftbox_icon';
   static const String KEY_GIFTBOX_APPS_ENABLED = 'giftbox_apps_enabled';
+  static const String KEY_ADMIN_DASHBOARD_ENABLED = 'admin_dashboard_enabled';
+  static const String KEY_ADMIN_TAP_COUNT = 'admin_tap_count';
 
   static const String CONFIG_COLLECTION = 'app_config';
   static const String CONFIG_DOC_ID = 'giftbox_config';
@@ -198,6 +200,69 @@ class RemoteConfigService extends GetxService {
     }
   }
 
+  Future<bool> updateGiftboxEnabled(bool enabled) async {
+    try {
+      await _firestore
+          .collection(CONFIG_COLLECTION)
+          .doc(CONFIG_DOC_ID)
+          .set({'enabled': enabled}, SetOptions(merge: true));
+      debugPrint('Giftbox enabled state updated in Firestore: $enabled');
+      debugPrint(
+          'Note: Remote Config values (show_giftbox_icon, giftbox_apps_enabled) '
+          'must be updated separately via Firebase Console if needed.');
+      return true;
+    } catch (e) {
+      debugPrint('Error updating giftbox enabled state: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateContactDeveloperEnabled(bool enabled) async {
+    try {
+      await _firestore
+          .collection(CONFIG_COLLECTION)
+          .doc(CONTACT_DEVELOPER_CONFIG_DOC_ID)
+          .set({'enabled': enabled}, SetOptions(merge: true));
+      debugPrint(
+          'Contact developer enabled state updated in Firestore: $enabled');
+      return true;
+    } catch (e) {
+      debugPrint('Error updating contact developer enabled state: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateDeveloperProfileLink(String profileLink) async {
+    try {
+      final trimmedLink = profileLink.trim();
+
+      if (trimmedLink.isNotEmpty) {
+        try {
+          final uri = Uri.parse(trimmedLink);
+          if (!uri.hasScheme ||
+              (uri.scheme != 'http' && uri.scheme != 'https')) {
+            debugPrint(
+                'Invalid URL format: $trimmedLink (must start with http:// or https://)');
+            return false;
+          }
+        } catch (e) {
+          debugPrint('Invalid URL format: $trimmedLink');
+          return false;
+        }
+      }
+
+      await _firestore
+          .collection(CONFIG_COLLECTION)
+          .doc(CONTACT_DEVELOPER_CONFIG_DOC_ID)
+          .set({'profileLink': trimmedLink}, SetOptions(merge: true));
+      debugPrint('Developer profile link updated in Firestore: $trimmedLink');
+      return true;
+    } catch (e) {
+      debugPrint('Error updating developer profile link: $e');
+      return false;
+    }
+  }
+
   Future<void> initialize() async {
     try {
       _isLoading.value = true;
@@ -214,6 +279,8 @@ class RemoteConfigService extends GetxService {
         KEY_FORCE_UPDATE_ENABLED: 'false',
         KEY_SHOW_GIFTBOX_ICON: 'false',
         KEY_GIFTBOX_APPS_ENABLED: 'false',
+        KEY_ADMIN_DASHBOARD_ENABLED: false,
+        KEY_ADMIN_TAP_COUNT: 10,
       });
 
       await _remoteConfig.setConfigSettings(

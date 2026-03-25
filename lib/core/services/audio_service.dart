@@ -81,6 +81,10 @@ class AudioPlayerService extends GetxService {
   }
 
   Future<void> _initializePlugin() async {
+    if (kIsWeb) {
+      _isPluginInitialized = true;
+      return;
+    }
     try {
       await _audioQuery.permissionsStatus();
       _isPluginInitialized = true;
@@ -277,7 +281,9 @@ class AudioPlayerService extends GetxService {
 
       _hasPermission.value = hasPermission;
       if (hasPermission) {
-        if (Platform.isAndroid) {
+        if (kIsWeb) {
+          loadSongs();
+        } else if (Platform.isAndroid) {
           loadSongs();
         } else if (Platform.isIOS) {
           loadSongsForIOS();
@@ -379,12 +385,12 @@ class AudioPlayerService extends GetxService {
   // }
 
   Future<void> loadSongs({bool skipPermissionCheck = false}) async {
-    if (!skipPermissionCheck && !_hasPermission.value) {
+    if (!skipPermissionCheck && !_hasPermission.value && !kIsWeb) {
       await checkPermissions();
       return;
     }
 
-    if (skipPermissionCheck && !_hasPermission.value) {
+    if (skipPermissionCheck && !_hasPermission.value && !kIsWeb) {
       debugPrint('Cannot load songs: permission not granted');
       return;
     }
@@ -394,45 +400,119 @@ class AudioPlayerService extends GetxService {
       _hasAttemptedLoad.value = true;
       debugPrint('Loading music files...');
 
-      final allSongs = await _audioQuery.querySongs(
-        sortType: null,
-        orderType: OrderType.ASC_OR_SMALLER,
-        ignoreCase: true,
-      );
+      if (kIsWeb) {
+        var demoSongs = <models.SongModel>[
+          models.SongModel(
+            id: 1,
+            title: 'အ‌ငွေ့အသက်များ',
+            artist: 'Ah Boy, ချမ်းမြေ့မောင်ချို',
+            album: 'Demo Album',
+            duration: 180000,
+            data: 'assets/demo_songs/အ‌ငွေ့အသက်များ.mp3',
+            displayName: 'အ‌ငွေ့အသက်များ - Ah Boy, ချမ်းမြေ့မောင်ချို.mp3',
+            albumArtwork:
+                'https://images.unsplash.com/photo-1514525253361-b8748b43a24a?w=800&q=80',
+            genre: null,
+            track: null,
+            year: null,
+            size: 0,
+            isMusic: true,
+          ),
+          models.SongModel(
+            id: 2,
+            title: 'Myi Tho Pin So Say Kar Mu',
+            artist: 'Htet Thiri',
+            album: 'Demo Album',
+            duration: 180000,
+            data: 'assets/demo_songs/Myi Tho Pin So Say Kar Mu.mp3',
+            displayName: 'Myi Tho Pin So Say Kar Mu - Htet Thiri.mp3',
+            albumArtwork:
+                'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80',
+            genre: null,
+            track: null,
+            year: null,
+            size: 0,
+            isMusic: true,
+          ),
+          models.SongModel(
+            id: 3,
+            title: 'Loop (သံသရာ)',
+            artist: 'MAY',
+            album: 'Demo Album',
+            duration: 180000,
+            data: 'assets/demo_songs/MAY - Loop  သံသရာ.mp3',
+            displayName: 'MAY - Loop (သံသရာ).mp3',
+            albumArtwork:
+                'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=800&q=80',
+            genre: null,
+            track: null,
+            year: null,
+            size: 0,
+            isMusic: true,
+          ),
+          models.SongModel(
+            id: 4,
+            title: 'အသဲကွဲသီချင်းသစ်',
+            artist: 'May',
+            album: 'Demo Album',
+            duration: 180000,
+            data: 'assets/demo_songs/May - အသဲကွဲသီချင်းသစ်.mp3',
+            displayName: 'May - အသဲကွဲသီချင်းသစ်.mp3',
+            albumArtwork:
+                'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=800&q=80',
+            genre: null,
+            track: null,
+            year: null,
+            size: 0,
+            isMusic: true,
+          ),
+        ];
 
-      debugPrint('Found ${allSongs.length} total audio files');
+        _allSongs.value = demoSongs;
+        _currentPlaylist.value = List.from(demoSongs);
+        _playlistType.value = 'all';
+        debugPrint('Loaded ${demoSongs.length} demo music files');
+      } else {
+        final allSongs = await _audioQuery.querySongs(
+          sortType: null,
+          orderType: OrderType.ASC_OR_SMALLER,
+          ignoreCase: true,
+        );
 
-      final scanFolders = await Get.find<StorageService>().loadScanFolders();
-      bool filterByFolders = scanFolders.isNotEmpty;
+        debugPrint('Found ${allSongs.length} total audio files');
 
-      final musicSongs = allSongs
-          .where((song) => _isValidMusicFile(song))
-          .where((song) {
-            if (!filterByFolders) {
-              return true;
-            }
-            return scanFolders.any((f) => song.data.startsWith(f));
-          })
-          .map((song) => models.SongModel(
-                id: song.id,
-                title: song.title,
-                artist: song.artist ?? 'Unknown Artist',
-                album: song.album ?? 'Unknown Album',
-                duration: song.duration ?? 0,
-                data: song.data,
-                displayName: song.displayName,
-                genre: song.genre,
-                track: song.track,
-                year: null,
-                size: song.size,
-                isMusic: song.isMusic ?? true,
-              ))
-          .toList();
+        final scanFolders = await Get.find<StorageService>().loadScanFolders();
+        bool filterByFolders = scanFolders.isNotEmpty;
 
-      _allSongs.value = musicSongs;
-      _currentPlaylist.value = List.from(musicSongs);
-      _playlistType.value = 'all';
-      debugPrint('Loaded ${musicSongs.length} music files');
+        final musicSongs = allSongs
+            .where((song) => _isValidMusicFile(song))
+            .where((song) {
+              if (!filterByFolders) {
+                return true;
+              }
+              return scanFolders.any((f) => song.data.startsWith(f));
+            })
+            .map((song) => models.SongModel(
+                  id: song.id,
+                  title: song.title,
+                  artist: song.artist ?? 'Unknown Artist',
+                  album: song.album ?? 'Unknown Album',
+                  duration: song.duration ?? 0,
+                  data: song.data,
+                  displayName: song.displayName,
+                  genre: song.genre,
+                  track: song.track,
+                  year: null,
+                  size: song.size,
+                  isMusic: song.isMusic ?? true,
+                ))
+            .toList();
+
+        _allSongs.value = musicSongs;
+        _currentPlaylist.value = List.from(musicSongs);
+        _playlistType.value = 'all';
+        debugPrint('Loaded ${musicSongs.length} music files');
+      }
     } catch (e) {
       debugPrint('Error loading songs: $e');
       _allSongs.clear();
@@ -803,6 +883,8 @@ class AudioPlayerService extends GetxService {
 
       if (song.data.startsWith('http')) {
         await _audioPlayer.setUrl(song.data);
+      } else if (song.data.startsWith('assets/')) {
+        await _audioPlayer.setAsset(song.data);
       } else {
         await _audioPlayer.setFilePath(song.data);
       }
@@ -957,7 +1039,6 @@ class AudioPlayerService extends GetxService {
         debugPrint("Shuffle next => $nextIndex");
         await playAtIndex(_currentPlaylist, nextIndex);
       } else {
-        // Linear navigation
         if (_currentIndex.value < _currentPlaylist.length - 1) {
           debugPrint("Playing next song at index ${_currentIndex.value + 1}");
           await playAtIndex(_currentPlaylist, _currentIndex.value + 1);
@@ -1035,6 +1116,7 @@ class AudioPlayerService extends GetxService {
 
   Future<Uint8List?> getAlbumArtwork(int songId,
       {int size = 200, bool highQuality = false}) async {
+    if (kIsWeb) return null;
     try {
       final song = _allSongs.firstWhereOrNull((s) => s.id == songId);
 
@@ -1051,20 +1133,23 @@ class AudioPlayerService extends GetxService {
 
       if (song.albumArtwork != null && song.albumArtwork!.isNotEmpty) {
         try {
-          final artworkFile = File(song.albumArtwork!);
-          if (await artworkFile.exists()) {
-            debugPrint(
-                '[AudioService] Loading artwork from local file: ${song.albumArtwork}');
-            final bytes = await artworkFile.readAsBytes();
-            if (bytes.isNotEmpty) {
-              return bytes;
+          final isAsset = song.albumArtwork!.startsWith('assets/');
+          if (!kIsWeb && !isAsset) {
+            final artworkFile = File(song.albumArtwork!);
+            if (await artworkFile.exists()) {
+              debugPrint(
+                  '[AudioService] Loading artwork from local file: ${song.albumArtwork}');
+              final bytes = await artworkFile.readAsBytes();
+              if (bytes.isNotEmpty) {
+                return bytes;
+              } else {
+                debugPrint(
+                    '[AudioService] Artwork file is empty: ${song.albumArtwork}');
+              }
             } else {
               debugPrint(
-                  '[AudioService] Artwork file is empty: ${song.albumArtwork}');
+                  '[AudioService] Artwork file does not exist: ${song.albumArtwork}');
             }
-          } else {
-            debugPrint(
-                '[AudioService] Artwork file does not exist: ${song.albumArtwork}');
           }
         } catch (e) {
           debugPrint(
@@ -1105,6 +1190,7 @@ class AudioPlayerService extends GetxService {
   }
 
   Future<Uint8List?> _queryArtworkSafely(int songId, int size) async {
+    if (kIsWeb) return null;
     try {
       await Future.delayed(const Duration(milliseconds: 50));
 
@@ -1200,7 +1286,9 @@ class AudioPlayerService extends GetxService {
   }
 
   Future<void> reloadSongs() async {
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      await loadSongs();
+    } else if (Platform.isAndroid) {
       await loadSongs();
     } else if (Platform.isIOS) {
       loadSongsForIOS();

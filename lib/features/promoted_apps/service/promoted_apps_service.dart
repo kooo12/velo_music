@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,7 @@ class PromotedAppsService extends GetxService {
   static const String _keyLastViewedTimestamp = 'promoted_apps_last_viewed';
   static const String _keyBadgeCount = 'promoted_apps_badge_count';
   static const String _keyViewedAppIds = 'promoted_apps_viewed_ids';
+  static const String _keyDeviceId = 'promoted_apps_device_id';
 
   static const String clicksCollection = 'promoted_app_clicks';
   static const String analyticsCollection = 'promoted_app_analytics';
@@ -168,9 +170,23 @@ class PromotedAppsService extends GetxService {
     }
   }
 
+  Future<String> _getOrCreateDeviceId() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? deviceId = prefs.getString(_keyDeviceId);
+
+    if (deviceId == null) {
+      deviceId =
+          'anon_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(999999)}';
+      await prefs.setString(_keyDeviceId, deviceId);
+    }
+
+    return deviceId;
+  }
+
   Future<void> trackClick(String appId, String appName) async {
     try {
-      String userId = 'anonymous';
+      final String userId = await _getOrCreateDeviceId();
+
       final now = DateTime.now();
 
       final clickData = {

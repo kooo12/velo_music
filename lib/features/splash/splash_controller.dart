@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velo/core/controllers/app_controller.dart';
@@ -88,6 +89,8 @@ class SplashController extends GetxController {
           }
           debugPrint(
               'Songs loaded in background: ${audioService.allSongs.length} songs');
+        } else if (kIsWeb) {
+          await audioService.loadSongs(skipPermissionCheck: true);
         } else {
           debugPrint(
               'No audio permission granted yet, skipping song loading during startup');

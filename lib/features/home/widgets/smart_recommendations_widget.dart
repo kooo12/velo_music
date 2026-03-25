@@ -97,52 +97,67 @@ class SmartRecommendationsWidget extends GetView<HomeController> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: themeCtrl.currentAppTheme.value.gradientColors.first
-                .withOpacity(0.7),
+            color: Colors.black.withOpacity(0.4),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.lightbulb_outline,
-                  color: Colors.white,
-                  size: 24,
-                ),
+          Positioned(
+            right: -30,
+            top: -20,
+            child: Transform.rotate(
+              angle: 0.5,
+              child: Icon(
+                Icons.lightbulb_outline,
+                size: 200,
+                color: Colors.yellow.withOpacity(0.1),
               ),
-              const SizedBox(width: 12),
-              Text(
-                'Smart Recommendations'.tr,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Based on your listening habits'.tr,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
-              fontSize: 12,
             ),
           ),
-          const SizedBox(height: 16),
-          ...recommendations
-              .map((rec) => _buildFullRecommendationItem(rec, controller)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.lightbulb_outline,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Smart Recommendations'.tr,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Based on your listening habits'.tr,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 12,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...recommendations
+                  .map((rec) => _buildFullRecommendationItem(rec, controller)),
+            ],
+          ),
         ],
       ),
     );

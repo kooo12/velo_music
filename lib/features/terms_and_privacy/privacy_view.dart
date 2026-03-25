@@ -14,8 +14,9 @@ class PrivacyView extends StatelessWidget {
 
     return Obx(
       () => Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
+          // backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
           elevation: 0,
           // flexibleSpace: Container(
           //   decoration: BoxDecoration(
@@ -43,61 +44,63 @@ class PrivacyView extends StatelessWidget {
               colors: themeCtrl.currentAppTheme.value.gradientColors,
             ),
           ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.defaultSpace * 2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30),
-                    child: Text(
-                      'privacy_last_updated'.tr,
-                      style:
-                          themeCtrl.activeTheme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 16,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.defaultSpace * 2),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      child: Text(
+                        'privacy_last_updated'.tr,
+                        style: themeCtrl.activeTheme.textTheme.bodyMedium
+                            ?.copyWith(
+                          fontSize: 16,
+                        ),
                       ),
                     ),
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_info_collect_title'.tr,
-                    content: 'privacy_info_collect_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_how_use_title'.tr,
-                    content: 'privacy_how_use_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_sharing_title'.tr,
-                    content: 'privacy_sharing_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_security_title'.tr,
-                    content: 'privacy_security_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_rights_title'.tr,
-                    content: 'privacy_rights_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_cookies_title'.tr,
-                    content: 'privacy_cookies_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_children_title'.tr,
-                    content: 'privacy_children_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_changes_title'.tr,
-                    content: 'privacy_changes_content'.tr,
-                  ),
-                  _PrivacySection(
-                    title: 'privacy_contact_title'.tr,
-                    content: 'privacy_contact_content'.tr,
-                    showSocialLinks: true,
-                  ),
-                ],
+                    _PrivacySection(
+                      title: 'privacy_info_collect_title'.tr,
+                      content: 'privacy_info_collect_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_how_use_title'.tr,
+                      content: 'privacy_how_use_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_sharing_title'.tr,
+                      content: 'privacy_sharing_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_security_title'.tr,
+                      content: 'privacy_security_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_rights_title'.tr,
+                      content: 'privacy_rights_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_cookies_title'.tr,
+                      content: 'privacy_cookies_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_children_title'.tr,
+                      content: 'privacy_children_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_changes_title'.tr,
+                      content: 'privacy_changes_content'.tr,
+                    ),
+                    _PrivacySection(
+                      title: 'privacy_contact_title'.tr,
+                      content: 'privacy_contact_content'.tr,
+                      showSocialLinks: true,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

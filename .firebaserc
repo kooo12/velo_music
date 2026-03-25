@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "velo-muisc"
+  },
+  "targets": {
+    "velo-muisc": {
+      "hosting": {
+        "live": [
+          "velo-live-demo"
+        ]
+      }
+    }
+  }
+}

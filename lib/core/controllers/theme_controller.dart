@@ -121,6 +121,13 @@ class ThemeController extends GetxController {
   void _populateThemes() {
     appThemes.value = [
       AppTheme(
+        id: 'forest_mist',
+        name: 'Forest Mist'.tr,
+        gradientColors: AppColors.forestMistGradient,
+        isDark: true,
+        themeData: darkTheme,
+      ),
+      AppTheme(
         id: 'ocean_blue',
         name: 'Ocean Blue'.tr,
         gradientColors: AppColors.oceanBlueGradient,
@@ -147,13 +154,6 @@ class ThemeController extends GetxController {
         gradientColors: AppColors.sunsetVibesGradient,
         isDark: false,
         themeData: appThemeData,
-      ),
-      AppTheme(
-        id: 'forest_mist',
-        name: 'Forest Mist'.tr,
-        gradientColors: AppColors.forestMistGradient,
-        isDark: true,
-        themeData: darkTheme,
       ),
       AppTheme(
         id: 'royal_gold',

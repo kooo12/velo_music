@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -8,7 +9,6 @@ import 'package:velo/core/controllers/language_controller.dart';
 import 'package:velo/core/helper/loaders.dart';
 import 'package:velo/core/services/audio_service.dart';
 import 'package:velo/core/controllers/theme_controller.dart';
-import 'package:velo/core/services/remote_config_service.dart';
 import 'package:velo/features/home/home_controller.dart';
 import 'package:velo/routhing/app_routes.dart';
 
@@ -23,13 +23,15 @@ class ProfileView extends GetView<HomeController> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          if (Platform.isAndroid) _buildStatistics(),
-          if (Platform.isAndroid) const SizedBox(height: 15),
+          if (!kIsWeb && Platform.isAndroid) _buildStatistics(),
+          if (!kIsWeb && Platform.isAndroid) const SizedBox(height: 15),
+          if (kIsWeb) _buildStatistics(),
+          if (kIsWeb) const SizedBox(height: 15),
           _buildSettingsSection(),
           const SizedBox(height: 15),
           _buildAboutSection(),
           const SizedBox(
-            height: 160,
+            height: 170,
           )
         ],
       ),
@@ -259,7 +261,16 @@ class ProfileView extends GetView<HomeController> {
               Get.toNamed(Routes.THEME);
             },
           ),
-          if (Platform.isAndroid)
+          if (!kIsWeb && Platform.isAndroid)
+            _buildSettingItem(
+              'Storage'.tr,
+              'Manage music folder locations'.tr,
+              Icons.storage,
+              onTap: () {
+                Get.toNamed(Routes.STORAGEMANAGERPAGE);
+              },
+            ),
+          if (kIsWeb)
             _buildSettingItem(
               'Storage'.tr,
               'Manage music folder locations'.tr,
@@ -362,36 +373,34 @@ class ProfileView extends GetView<HomeController> {
               //       'https://docs.google.com/forms/d/e/1FAIpQLSeomxUmZBcReLAUMAv8SPDlzrpxUbJmD2fpDWl28vmzCNadfA/viewform?usp=dialog'),
               // ),
               ),
-          Obx(() {
-            if (!Get.isRegistered<RemoteConfigService>()) {
-              return const SizedBox.shrink();
-            }
-            final remoteConfigService = Get.find<RemoteConfigService>();
-            if (!remoteConfigService.isContactDeveloperEnabled) {
-              return const SizedBox.shrink();
-            }
 
-            final developerLink =
-                remoteConfigService.currentDeveloperProfileLink;
-            if (developerLink.isEmpty) {
-              return const SizedBox.shrink();
-            }
+          // Obx(() {
+          //   if (!Get.isRegistered<RemoteConfigService>()) {
+          //     return const SizedBox.shrink();
+          //   }
+          //   final remoteConfigService = Get.find<RemoteConfigService>();
 
-            return _buildAboutItem(
-              'Meet the Developer'.tr,
-              'Connect with the creator and see more work'.tr,
-              Icons.contact_support,
-              onTap: () {
-                try {
-                  controller.launchWeb(Uri.parse(developerLink));
-                } catch (e) {
-                  AppLoader.customToast(
-                    message: 'Invalid developer profile link',
-                  );
-                }
-              },
-            );
-          }),
+          //   final developerLink =
+          //       remoteConfigService.currentDeveloperProfileLink;
+          //   if (developerLink.isEmpty) {
+          //     return const SizedBox.shrink();
+          //   }
+
+          //   return _buildAboutItem(
+          //     'Meet the Developer'.tr,
+          //     'Connect with the creator and see more work'.tr,
+          //     Icons.contact_support,
+          //     onTap: () {
+          //       try {
+          //         controller.launchWeb(Uri.parse(developerLink));
+          //       } catch (e) {
+          //         AppLoader.customToast(
+          //           message: 'Invalid developer profile link',
+          //         );
+          //       }
+          //     },
+          //   );
+          // }),
         ],
       ),
     );

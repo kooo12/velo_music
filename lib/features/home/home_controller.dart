@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +40,8 @@ class HomeController extends GetxController
 
   final RxString currentView = 'home'.obs;
   final RxBool isLoading = false.obs;
+  final RxInt versionTapCount = 0.obs;
+  Timer? _adminTapResetTimer;
 
   final RxString searchQuery = ''.obs;
   final RxList<String> recentSearches = <String>[].obs;
@@ -100,6 +102,9 @@ class HomeController extends GetxController
     playlistsScrollController = ScrollController();
     searchTextController = TextEditingController();
     _loadRecentSearches();
+    if (kIsWeb) {
+      audioService.loadSongs(skipPermissionCheck: true);
+    }
 
     super.onInit();
   }
@@ -129,12 +134,13 @@ class HomeController extends GetxController
       debugPrint('HomeController: Created new SleepTimerService instance');
     }
 
-    Future.delayed(const Duration(seconds: 10), () {
-      fcmService.shouldShowNotiRequest();
-    });
+    if (!kIsWeb) {
+      Future.delayed(const Duration(seconds: 10), () {
+        fcmService.shouldShowNotiRequest();
+      });
+    }
   }
 
-  // Music player controls
   Future<void> playPause() async {
     await audioService.playPause();
   }
@@ -209,24 +215,27 @@ class HomeController extends GetxController
           'HomeController.playSong: Playing ${song.title} by ${song.artist}');
 
       if (song.data.isNotEmpty && !song.data.startsWith('http')) {
-        final file = File(song.data);
-        if (!file.existsSync()) {
-          debugPrint(
-              'HomeController.playSong: File does not exist: ${song.data}');
-
-          AppLoader.customToast(
-              message: 'Song file not found. Removed from recently played.');
-
-          final isInRecentlyPlayed =
-              _playlistService.recentlyPlayed.any((rp) => rp.id == song.id);
-
-          if (isInRecentlyPlayed) {
-            await _playlistService.removeFromRecentlyPlayed(song);
+        final isAsset = song.data.startsWith('assets/');
+        if (!kIsWeb && !isAsset) {
+          final file = File(song.data);
+          if (!file.existsSync()) {
             debugPrint(
-                'HomeController.playSong: Removed ${song.title} from recently played');
-          }
+                'HomeController.playSong: File does not exist: ${song.data}');
 
-          return;
+            AppLoader.customToast(
+                message: 'Song file not found. Removed from recently played.');
+
+            final isInRecentlyPlayed =
+                _playlistService.recentlyPlayed.any((rp) => rp.id == song.id);
+
+            if (isInRecentlyPlayed) {
+              await _playlistService.removeFromRecentlyPlayed(song);
+              debugPrint(
+                  'HomeController.playSong: Removed ${song.title} from recently played');
+            }
+
+            return;
+          }
         }
       }
 
@@ -269,7 +278,6 @@ class HomeController extends GetxController
     }
   }
 
-  // Navigation
   void changeView(String view) {
     currentView.value = view;
     if (searchQuery.value.isNotEmpty) {
@@ -305,7 +313,6 @@ class HomeController extends GetxController
     await audioService.checkPermissions();
   }
 
-  // Search functionality
   void updateSearchQuery(String query) {
     searchQuery.value = query;
   }
@@ -510,6 +517,22 @@ class HomeController extends GetxController
     albumsScrollController.dispose();
     playlistsScrollController.dispose();
     searchTextController.dispose();
+    _adminTapResetTimer?.cancel();
     super.onClose();
+  }
+
+  void resetVersionTapCountAfterDelay({int seconds = 3}) {
+    _adminTapResetTimer?.cancel();
+    _adminTapResetTimer = Timer(Duration(seconds: seconds), () {
+      if (versionTapCount.value > 0) {
+        versionTapCount.value = 0;
+        debugPrint('Admin tap count reset due to inactivity.');
+      }
+    });
+  }
+
+  void cancelAdminTapTimer() {
+    _adminTapResetTimer?.cancel();
+    _adminTapResetTimer = null;
   }
 }

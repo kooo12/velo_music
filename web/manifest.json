@@ -1,6 +1,6 @@
 {
-    "name": "velo",
-    "short_name": "velo",
+    "name": "Velo",
+    "short_name": "Velo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

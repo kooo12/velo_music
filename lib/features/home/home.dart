@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -39,36 +39,32 @@ class HomeScreen extends GetView<HomeController> {
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: SafeArea(
-        top: false,
-        bottom: Platform.isIOS ? false : true,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Stack(
-            children: [
-              Obx(
-                () => Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: themeCtrl.currentAppTheme.value.gradientColors,
-                    ),
-                  ),
-                  child: SafeArea(
-                    bottom: false,
-                    child: _buildResponsiveLayout(context),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        body: Stack(
+          children: [
+            Obx(
+              () => Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: themeCtrl.currentAppTheme.value.gradientColors,
                   ),
                 ),
+                child: SafeArea(
+                  bottom: false,
+                  child: _buildResponsiveLayout(context),
+                ),
               ),
-              if (!ResponsiveContext(context).isTabletLandscape)
-                Positioned(
-                    bottom: 10,
-                    child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: _buildBottomNavigation())),
-            ],
-          ),
+            ),
+            if (!ResponsiveContext(context).isTabletLandscape)
+              Positioned(
+                  bottom: 8 + MediaQuery.viewPaddingOf(context).bottom,
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: _buildBottomNavigation())),
+          ],
         ),
       ),
     );
@@ -94,7 +90,7 @@ class HomeScreen extends GetView<HomeController> {
           ],
         ),
         Positioned(
-          bottom: 58,
+          bottom: 58 + MediaQuery.viewPaddingOf(context).bottom,
           left: 0,
           right: 0,
           child: Obx(() {
@@ -385,12 +381,12 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildCustomAppBar() {
-    final promotedAppsCtrl = Get.find<PromotedAppsController>();
+    // final promotedAppsCtrl = Get.find<PromotedAppsController>();
 
-    final shouldShow = promotedAppsCtrl.shouldShowGiftboxRx.value;
+    // final shouldShow = promotedAppsCtrl.shouldShowGiftboxRx.value;
 
-    final badgeCount = promotedAppsCtrl.badgeCount.value;
-    final isShaking = promotedAppsCtrl.isShaking;
+    // final badgeCount = promotedAppsCtrl.badgeCount.value;
+    // final isShaking = promotedAppsCtrl.isShaking;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Padding(
@@ -409,76 +405,76 @@ class HomeScreen extends GetView<HomeController> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (shouldShow)
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0.0, end: isShaking ? 1.0 : 0.0),
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      builder: (context, value, child) {
-                        return Transform.rotate(
-                          angle: isShaking
-                              ? value * 0.2 * (value < 0.5 ? 1 : -1)
-                              : 0,
-                          child: Transform.scale(
-                            scale: isShaking ? 1.0 + (value * 0.1) : 1.0,
-                            child: Stack(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    promotedAppsCtrl.openAppList();
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (context) =>
-                                          const PromotedAppsBottomSheet(),
-                                    );
-                                  },
-                                  icon: const Text(
-                                    '🎁',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ),
-                                if (badgeCount > 0)
-                                  Positioned(
-                                    right: 8,
-                                    top: 8,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.red.withOpacity(0.5),
-                                            blurRadius: 4,
-                                            spreadRadius: 1,
-                                          ),
-                                        ],
-                                      ),
-                                      constraints: const BoxConstraints(
-                                        minWidth: 18,
-                                        minHeight: 18,
-                                      ),
-                                      child: Text(
-                                        badgeCount > 99
-                                            ? '99+'
-                                            : badgeCount.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                  // if (shouldShow)
+                  //   TweenAnimationBuilder<double>(
+                  //     tween: Tween(begin: 0.0, end: isShaking ? 1.0 : 0.0),
+                  //     duration: const Duration(milliseconds: 300),
+                  //     curve: Curves.easeInOut,
+                  //     builder: (context, value, child) {
+                  //       return Transform.rotate(
+                  //         angle: isShaking
+                  //             ? value * 0.2 * (value < 0.5 ? 1 : -1)
+                  //             : 0,
+                  //         child: Transform.scale(
+                  //           scale: isShaking ? 1.0 + (value * 0.1) : 1.0,
+                  //           child: Stack(
+                  //             children: [
+                  //               IconButton(
+                  //                 onPressed: () {
+                  //                   promotedAppsCtrl.openAppList();
+                  //                   showModalBottomSheet(
+                  //                     context: context,
+                  //                     isScrollControlled: true,
+                  //                     backgroundColor: Colors.transparent,
+                  //                     builder: (context) =>
+                  //                         const PromotedAppsBottomSheet(),
+                  //                   );
+                  //                 },
+                  //                 icon: const Text(
+                  //                   '🎁',
+                  //                   style: TextStyle(fontSize: 20),
+                  //                 ),
+                  //               ),
+                  //               if (badgeCount > 0)
+                  //                 Positioned(
+                  //                   right: 8,
+                  //                   top: 8,
+                  //                   child: Container(
+                  //                     padding: const EdgeInsets.all(4),
+                  //                     decoration: BoxDecoration(
+                  //                       color: Colors.red,
+                  //                       borderRadius: BorderRadius.circular(10),
+                  //                       boxShadow: [
+                  //                         BoxShadow(
+                  //                           color: Colors.red.withOpacity(0.5),
+                  //                           blurRadius: 4,
+                  //                           spreadRadius: 1,
+                  //                         ),
+                  //                       ],
+                  //                     ),
+                  //                     constraints: const BoxConstraints(
+                  //                       minWidth: 18,
+                  //                       minHeight: 18,
+                  //                     ),
+                  //                     child: Text(
+                  //                       badgeCount > 99
+                  //                           ? '99+'
+                  //                           : badgeCount.toString(),
+                  //                       style: const TextStyle(
+                  //                         color: Colors.white,
+                  //                         fontSize: 10,
+                  //                         fontWeight: FontWeight.bold,
+                  //                       ),
+                  //                       textAlign: TextAlign.center,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
                   Image.asset('assets/app_icon.png',
                       fit: BoxFit.cover, width: 40, height: 40)
                 ],
@@ -492,7 +488,7 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _buildHomeView(BuildContext context) {
     return Obx(() {
-      if (!controller.hasPermission) {
+      if (!controller.hasPermission && !kIsWeb) {
         return _buildPermissionView(controller);
       }
 
@@ -565,7 +561,7 @@ class HomeScreen extends GetView<HomeController> {
                 songlist: controller.allSongs),
             const SizedBox(height: 15),
             _buildAllSongsPreview(controller),
-            const SizedBox(height: 170),
+            const SizedBox(height: 180),
           ],
         ),
       ),
@@ -631,7 +627,7 @@ class HomeScreen extends GetView<HomeController> {
               songlist: controller.allSongs),
           const SizedBox(height: 15),
           _buildAllSongsPreview(controller),
-          const SizedBox(height: 170),
+          const SizedBox(height: 180),
         ],
       ),
     );

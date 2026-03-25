@@ -77,7 +77,20 @@ class FullScreenPlayerLandscape extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(width: 48),
+                      Obx(() {
+                        final song = controller.currentSong;
+                        if (song == null) return const SizedBox.shrink();
+                        final isLiked = controller.isSongLiked(song);
+                        return IconButton(
+                          onPressed: () => controller.toggleLikeSong(song),
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Iconsax.heart,
+                            color: isLiked ? Colors.red : Colors.white,
+                            size: 28,
+                          ),
+                        );
+                      }),
+                      // const SizedBox(width: 48),
                     ],
                   ),
                   const SizedBox(height: 8),

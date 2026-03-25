@@ -75,7 +75,20 @@ class FullScreenPlayer extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(width: 48),
+                      Obx(() {
+                        final song = controller.currentSong;
+                        if (song == null) return const SizedBox.shrink();
+                        final isLiked = controller.isSongLiked(song);
+                        return IconButton(
+                          onPressed: () => controller.toggleLikeSong(song),
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Iconsax.heart,
+                            color: isLiked ? Colors.red : Colors.white,
+                            size: 28,
+                          ),
+                        );
+                      }),
+                      // const SizedBox(width: 48),
                     ],
                   ),
 
@@ -189,14 +202,10 @@ class FullScreenPlayer extends StatelessWidget {
                   }),
 
                   const SizedBox(height: 16),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      //  _GlassPill(text: 'Equlizer'.tr, onTap: (){}),
-                      _GlassPill(text: 'Queue'.tr, onTap: controller.openQueue),
-                    ],
-                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    //  _GlassPill(text: 'Equlizer'.tr, onTap: (){}),
+                    _GlassPill(text: 'Queue'.tr, onTap: controller.openQueue),
+                  ]),
                 ],
               ),
             ),
