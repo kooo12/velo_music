@@ -19,6 +19,7 @@ import 'package:velo/features/sub_screens/library_screen/playlist_songs_screen.d
 import 'package:velo/features/terms_and_privacy/privacy_view.dart';
 import 'package:velo/features/terms_and_privacy/terms_view.dart';
 import 'package:velo/features/themes/theme_view.dart';
+import 'package:velo/features/views/search_view.dart';
 import 'package:velo/routhing/app_routes.dart';
 import 'package:velo/features/sub_screens/player_screens/full_screen_player.dart';
 import 'package:velo/features/sub_screens/player_screens/full_screen_player_landscape.dart';
@@ -26,6 +27,8 @@ import 'package:velo/features/radio/radio_page.dart';
 import 'package:velo/features/queue/queue_page.dart';
 
 import '../core/bindings/queue_binding.dart';
+import '../features/stream/jamendo_search_screen.dart';
+import 'package:velo/features/stream/jamendo_list_screen.dart';
 
 class AppPages {
   static final pages = [
@@ -37,6 +40,10 @@ class AppPages {
         name: Routes.HOME,
         page: () => const HomeScreen(),
         binding: HomeBinding()),
+    GetPage(
+        name: Routes.SEARCH,
+        page: () => const SearchView(),
+        transition: Transition.downToUp),
 
 // Players -----------------------
     GetPage(
@@ -175,5 +182,15 @@ class AppPages {
         page: () => const RadioPage(),
         binding: RadioBinding(),
         transition: Transition.downToUp),
+    GetPage(
+        name: Routes.JAMENDO_SEARCH,
+        page: () => const JamendoSearchScreen(),
+        transition: Transition.downToUp,
+        transitionDuration: const Duration(milliseconds: 250)),
+    GetPage(
+        name: Routes.JAMENDO_LIST,
+        page: () => const JamendoListScreen(),
+        transition: Transition.downToUp,
+        transitionDuration: const Duration(milliseconds: 250)),
   ];
 }

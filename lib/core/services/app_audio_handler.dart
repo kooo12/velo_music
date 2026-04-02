@@ -26,6 +26,8 @@ class AppAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
 
     _player = Get.find<svc.AudioPlayerService>();
+    debugPrint(
+        'AppAudioHandler: Initializing with player state: playing=${_player.isPlaying.value}');
     _isInitialized = true;
 
     _emitPlaybackState(
@@ -293,7 +295,6 @@ class AppAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await stop();
   }
 
-  // ================= Controls mapping =================
   @override
   Future<void> play() async {
     try {

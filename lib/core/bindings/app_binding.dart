@@ -34,7 +34,6 @@ class AppBinding implements Binding {
     Get.put(VersionControlService(), permanent: true);
     Get.put(PromotedAppsService(), permanent: true);
     Get.put(PromotedAppsController(), permanent: true);
-
     return [];
   }
 }

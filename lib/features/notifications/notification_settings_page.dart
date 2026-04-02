@@ -17,7 +17,7 @@ class NotificationSettingsPage extends StatelessWidget {
     final controller = Get.find<NotificationSettingsController>();
 
     return Scaffold(
-      backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -41,108 +41,109 @@ class NotificationSettingsPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Container(
-        decoration: const BoxDecoration(
-            // gradient: LinearGradient(
-            //   begin: Alignment.topLeft,
-            //   end: Alignment.bottomRight,
-            //   colors: [
-            //     AppColors.musicGradientStart,
-            //     AppColors.musicGradientEnd,
-            //   ],
-            // ),
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: themeCtrl.currentAppTheme.value.gradientColors,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveContext(context).isTabletLandscape
+                    ? AppSizes.spaceBtwSections * 2
+                    : AppSizes.defaultSpace * 2,
+                vertical: AppSizes.defaultSpace),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSectionCard(
+                  title: 'Push Notifications',
+                  icon: Icons.notifications,
+                  children: [
+                    _buildSwitchTile(
+                      title: 'Enable Push Notifications',
+                      subtitle: 'Receive notifications from the app',
+                      value: controller.isPushNotificationsEnabled,
+                      onChanged: controller.togglePushNotifications,
+                    ),
+                    _buildSwitchTile(
+                      title: 'Notification Sound',
+                      subtitle: 'Play sound when notifications arrive',
+                      value: controller.isNotificationSoundEnabled,
+                      onChanged: controller.toggleNotificationSound,
+                      enabled: controller.isPushNotificationsEnabled,
+                    ),
+                    _buildSwitchTile(
+                      title: 'Vibration',
+                      subtitle: 'Vibrate when notifications arrive',
+                      value: controller.isNotificationVibrationEnabled,
+                      onChanged: controller.toggleNotificationVibration,
+                      enabled: controller.isPushNotificationsEnabled,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                _buildSectionCard(
+                  title: 'Sleep Timer Notifications',
+                  icon: Icons.timer,
+                  children: [
+                    _buildSwitchTile(
+                      title: 'Sleep Timer Alerts',
+                      subtitle: 'Get notified when sleep timer ends',
+                      value: controller.isSleepTimerNotificationsEnabled,
+                      onChanged: controller.toggleSleepTimerNotifications,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                _buildSectionCard(
+                  title: 'Quiet Hours',
+                  icon: Icons.bedtime,
+                  children: [
+                    _buildSwitchTile(
+                      title: 'Enable Quiet Hours',
+                      subtitle: 'Disable notifications during specific times',
+                      value: controller.isQuietHoursEnabled,
+                      onChanged: controller.toggleQuietHours,
+                    ),
+                    Obx(() {
+                      if (controller.isQuietHoursEnabled.value) {
+                        return Column(
+                          children: [
+                            _buildTimeTile(
+                              title: 'Start Time',
+                              subtitle: 'When to start quiet hours',
+                              time: controller.quietStart.value,
+                              onTap: () => controller.selectTime(context, true),
+                            ),
+                            _buildTimeTile(
+                              title: 'End Time',
+                              subtitle: 'When to end quiet hours',
+                              time: controller.quietEnd.value,
+                              onTap: () =>
+                                  controller.selectTime(context, false),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }),
+                  ],
+                ),
+
+                const SizedBox(height: 40),
+
+                // Save Button
+                // _buildSaveButton(controller),
+              ],
             ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-              horizontal: ResponsiveContext(context).isTabletLandscape
-                  ? AppSizes.spaceBtwSections * 2
-                  : AppSizes.defaultSpace * 2,
-              vertical: AppSizes.defaultSpace),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSectionCard(
-                title: 'Push Notifications',
-                icon: Icons.notifications,
-                children: [
-                  _buildSwitchTile(
-                    title: 'Enable Push Notifications',
-                    subtitle: 'Receive notifications from the app',
-                    value: controller.isPushNotificationsEnabled,
-                    onChanged: controller.togglePushNotifications,
-                  ),
-                  _buildSwitchTile(
-                    title: 'Notification Sound',
-                    subtitle: 'Play sound when notifications arrive',
-                    value: controller.isNotificationSoundEnabled,
-                    onChanged: controller.toggleNotificationSound,
-                    enabled: controller.isPushNotificationsEnabled,
-                  ),
-                  _buildSwitchTile(
-                    title: 'Vibration',
-                    subtitle: 'Vibrate when notifications arrive',
-                    value: controller.isNotificationVibrationEnabled,
-                    onChanged: controller.toggleNotificationVibration,
-                    enabled: controller.isPushNotificationsEnabled,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              _buildSectionCard(
-                title: 'Sleep Timer Notifications',
-                icon: Icons.timer,
-                children: [
-                  _buildSwitchTile(
-                    title: 'Sleep Timer Alerts',
-                    subtitle: 'Get notified when sleep timer ends',
-                    value: controller.isSleepTimerNotificationsEnabled,
-                    onChanged: controller.toggleSleepTimerNotifications,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              _buildSectionCard(
-                title: 'Quiet Hours',
-                icon: Icons.bedtime,
-                children: [
-                  _buildSwitchTile(
-                    title: 'Enable Quiet Hours',
-                    subtitle: 'Disable notifications during specific times',
-                    value: controller.isQuietHoursEnabled,
-                    onChanged: controller.toggleQuietHours,
-                  ),
-                  Obx(() {
-                    if (controller.isQuietHoursEnabled.value) {
-                      return Column(
-                        children: [
-                          _buildTimeTile(
-                            title: 'Start Time',
-                            subtitle: 'When to start quiet hours',
-                            time: controller.quietStart.value,
-                            onTap: () => controller.selectTime(context, true),
-                          ),
-                          _buildTimeTile(
-                            title: 'End Time',
-                            subtitle: 'When to end quiet hours',
-                            time: controller.quietEnd.value,
-                            onTap: () => controller.selectTime(context, false),
-                          ),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
-                ],
-              ),
-
-              const SizedBox(height: 40),
-
-              // Save Button
-              // _buildSaveButton(controller),
-            ],
           ),
         ),
       ),
@@ -240,9 +241,10 @@ class NotificationSettingsPage extends StatelessWidget {
             Switch(
               value: isEnabled ? value.value : false,
               onChanged: isEnabled ? onChanged : null,
-              activeColor: themeCtrl.currentAppTheme.value.gradientColors.last,
-              inactiveThumbColor: Colors.white54,
-              inactiveTrackColor: Colors.white24,
+              activeColor: themeCtrl.currentAppTheme.value.gradientColors.first,
+              inactiveThumbColor: Colors.white,
+              activeTrackColor: Colors.white.withOpacity(0.2),
+              inactiveTrackColor: Colors.white.withOpacity(0.3),
             ),
           ],
         ),

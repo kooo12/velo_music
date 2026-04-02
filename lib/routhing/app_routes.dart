@@ -3,6 +3,7 @@
 abstract class Routes {
   static const SPLASH = '/splash';
   static const HOME = '/home';
+  static const SEARCH = '/search';
   static const FULLSCREENPLAYER = '/fullscreenplayer';
   static const FULLSCREENPLAYERLANDSCAPE = '/fullscreenplayerlandscape';
   static const QUEUE = '/queue';
@@ -20,4 +21,6 @@ abstract class Routes {
   static const FEEDBACK = '/feedback';
   static const THEME = '/theme';
   static const RADIO = '/radio';
+  static const JAMENDO_SEARCH = '/jamendo-search';
+  static const JAMENDO_LIST = '/jamendo-list';
 }

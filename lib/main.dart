@@ -109,31 +109,22 @@ FutureOr<void> main() async {
 
   AppAudioHandler handler;
   try {
-    handler = Get.put(AppAudioHandler());
-    debugPrint('AppAudioHandler already exists in GetX, reusing...');
-  } catch (_) {
-    handler = await AudioService.init(
-      builder: () => AppAudioHandler(),
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'media_playback',
-        androidNotificationChannelName: 'Media Playback',
-        androidNotificationChannelDescription: 'Music playback controls',
-        androidNotificationOngoing: false,
-        androidStopForegroundOnPause: false,
-        androidShowNotificationBadge: false,
-        androidNotificationClickStartsActivity: true,
-        androidResumeOnClick: true,
-        fastForwardInterval: Duration(seconds: 10),
-        rewindInterval: Duration(seconds: 10),
-      ),
-    );
-    Get.put<AppAudioHandler>(handler, permanent: true);
-    final lifecycleManager = AppLifecycleManager(
-      Get.find<svc.AudioPlayerService>(),
-      handler,
-    );
-    Get.put<AppLifecycleManager>(lifecycleManager, permanent: true);
+    handler = await _initAudioService();
+    debugPrint('AudioService initialized successfully');
+  } catch (e) {
+    debugPrint('AudioService initialization failed: $e');
+    handler = AppAudioHandler();
   }
+
+  if (!Get.isRegistered<AppAudioHandler>()) {
+    Get.put<AppAudioHandler>(handler, permanent: true);
+  }
+
+  final lifecycleManager = AppLifecycleManager(
+    Get.find<svc.AudioPlayerService>(),
+    handler,
+  );
+  Get.put<AppLifecycleManager>(lifecycleManager, permanent: true);
 
   runApp(
     DevicePreview(
@@ -145,6 +136,25 @@ FutureOr<void> main() async {
     ),
   );
 }
+
+Future<AppAudioHandler> _initAudioService() async {
+  return await AudioService.init(
+    builder: () => AppAudioHandler(),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.ako.sonus.audio',
+      androidNotificationChannelName: 'Velo Music Playback',
+      androidNotificationChannelDescription: 'Velo music playback controls',
+      androidNotificationOngoing: true,
+      androidStopForegroundOnPause: true,
+      androidShowNotificationBadge: true,
+      androidNotificationClickStartsActivity: true,
+      androidResumeOnClick: true,
+      fastForwardInterval: Duration(seconds: 10),
+      rewindInterval: Duration(seconds: 10),
+    ),
+  );
+}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

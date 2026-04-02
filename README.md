@@ -1,7 +1,7 @@
 # Velo - Smart Music Player (Flutter)
 
-Velo is a modern Flutter music player focused on local audio playback, smooth UX, and production-grade app infrastructure.  
-It combines smart playlist generation, rich player interactions, personalized discovery, and an admin-enabled backend control layer powered by Firebase.
+Velo is a modern Flutter music player that blends high-performance local playback with a massive online streaming library powered by Jamendo.  
+It combines legal Creative Commons downloads, real-time lyrics, smart playlist generation, and a production-grade admin control layer.
 
 ## Why This Project Matters
 
@@ -11,11 +11,13 @@ It combines smart playlist generation, rich player interactions, personalized di
 
 ## Core Features
 
-- Local music playback with queue management and mini/full-screen player.
-- Dynamic "Made for You" recommendations (Daily Mix, Discover Weekly, Release Radar style flows).
-- Playlist creation, editing, deletion, and add-song workflows.
-- Search and music library browsing by artist, album, and playlist.
-- Sleep timer and music discovery widgets.
+- High-fidelity music streaming of 600,000+ tracks via Jamendo Music.
+- Legal MP3 downloads with real-time progress tracking and public folder storage.
+- Smart Lyrics integration featuring high-quality backdrop blur and intelligent metadata filtering.
+- Dynamic "Made for You" recommendations (Personalized Daily Mix, Discover Weekly style flows).
+- Horizontally scrollable Quick Filters for instant genre-based discovery.
+- Advanced queue management and mini/full-screen player with integrated lyrics view.
+- Offline-first resilience with a dedicated "No Internet" handling and offline status banners.
 - Responsive layouts for mobile and tablet/landscape.
 - Radio entry flow and settings/privacy/terms/feedback sections.
 - In-app promoted apps experience with analytics hooks.
@@ -51,11 +53,12 @@ It combines smart playlist generation, rich player interactions, personalized di
 - Firebase Crashlytics
 
 ### Audio & Media
-- `just_audio`
-- `audio_service`
-- `audio_session`
-- `on_audio_query`
-- `audio_waveforms`
+- `just_audio` & `audio_service` (Media session control)
+- `Jamendo Music API` (High-quality CC streaming)
+- `Genius API` (Real-time dynamic lyrics)
+- `on_audio_query` (Local library indexing)
+- `audio_waveforms` (Modern player visualization)
+- `dio` (Robust file downloads with progress monitoring)
 
 ### Utilities & UX
 - `shared_preferences`

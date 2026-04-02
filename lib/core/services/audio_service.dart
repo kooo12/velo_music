@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:velo/core/models/song_model.dart' as models;
 import 'package:velo/features/storage_manager/service/storage_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 enum RepeatModeAS { off, all, one }
 
@@ -24,6 +25,7 @@ class AudioPlayerService extends GetxService {
   final RxDouble _currentPosition = 0.0.obs;
   final RxDouble _totalDuration = 0.0.obs;
   final RxBool _hasPermission = false.obs;
+  final RxBool _isBuffering = false.obs;
 
   final RxList<models.SongModel> _currentPlaylist = <models.SongModel>[].obs;
   final RxString _playlistType = 'all'.obs;
@@ -49,6 +51,7 @@ class AudioPlayerService extends GetxService {
   RxList<models.SongModel> get allSongs => _allSongs;
   RxBool get isPlaying => _isPlaying;
   RxBool get isLoading => _isLoading;
+  RxBool get isBuffering => _isBuffering;
   RxBool get hasAttemptedLoad => _hasAttemptedLoad;
   models.SongModel? get currentSong => _currentSong.value;
   RxInt get currentIndex => _currentIndex;
@@ -175,6 +178,8 @@ class AudioPlayerService extends GetxService {
 
     _processingStateSubscription =
         _audioPlayer.processingStateStream.listen((state) async {
+      _isBuffering.value = state == ProcessingState.buffering ||
+          state == ProcessingState.loading;
       if (state == ProcessingState.completed) {
         await _handleTrackCompleted();
       }
@@ -249,6 +254,13 @@ class AudioPlayerService extends GetxService {
 
           try {
             hasPermission = await _audioQuery.permissionsRequest();
+
+            if (Platform.isAndroid) {
+              final status = await Permission.notification.status;
+              if (!status.isGranted) {
+                await Permission.notification.request();
+              }
+            }
           } on PlatformException catch (e) {
             if (e.code == 'UninitializedPluginProviderException' ||
                 e.message?.contains('UninitializedPluginProvider') == true) {
@@ -757,7 +769,7 @@ class AudioPlayerService extends GetxService {
       'shutter'
     ];
 
-    if (duration < 10000) return true;
+    if (duration > 0 && duration < 10000) return true;
 
     for (final notifPath in notificationPaths) {
       if (path.contains(notifPath)) return true;
@@ -1339,6 +1351,22 @@ class AudioPlayerService extends GetxService {
     } else if (oldIndex > _currentIndex.value &&
         newIndex <= _currentIndex.value) {
       _currentIndex.value += 1;
+    }
+  }
+
+  void addSongToLibrary(models.SongModel song) {
+    // Check if it already exists by data (file path) or id
+    final existingIndex =
+        _allSongs.indexWhere((s) => s.id == song.id || s.data == song.data);
+    if (existingIndex == -1) {
+      _allSongs.add(song);
+      debugPrint(
+          '[AudioService] Manually added song to library: ${song.title}');
+
+      // If we are currently in "all" playlist, update it
+      if (_playlistType.value == 'all') {
+        _currentPlaylist.add(song);
+      }
     }
   }
 }

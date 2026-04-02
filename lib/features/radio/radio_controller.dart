@@ -11,13 +11,22 @@ class RadioController extends GetxController {
   final AudioPlayer _radioPlayer = AudioPlayer();
 
   final RxList<RadioStation> stations = <RadioStation>[].obs;
+  final RxList<RadioStation> filteredStations = <RadioStation>[].obs;
+  final RxList<RadioStation> featuredStations = <RadioStation>[].obs;
+
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingMore = false.obs;
   final RxString error = ''.obs;
 
   final RxInt currentIndex = 0.obs;
   final RxBool isPlaying = false.obs;
+  final RxBool isOverlayVisible = false.obs;
+  final RxBool isOverlayExpanded = false.obs;
+  final RxString searchQuery = ''.obs;
 
   final RxString selectedCountry = 'Myanmar'.obs;
+  int _currentOffset = 0;
+  final int _limit = 40;
 
   final List<Map<String, String>> availableCountries = [
     {'name': 'Myanmar', 'flag': '🇲🇲'},
@@ -26,7 +35,6 @@ class RadioController extends GetxController {
     {'name': 'Thailand', 'flag': '🇹🇭'},
     {'name': 'Singapore', 'flag': '🇸🇬'},
     {'name': 'Japan', 'flag': '🇯🇵'},
-    // {'name': 'South Korea', 'flag': '🇰🇷'},
   ];
 
   @override
@@ -69,101 +77,101 @@ class RadioController extends GetxController {
 
   Future<void> fetchStations({bool fromCache = true}) async {
     debugPrint('RadioController: Fetching stations... (fromCache: $fromCache)');
+    _currentOffset = 0;
 
     if (fromCache) {
       final cached = await _radioService.getCachedStations();
       if (cached.isNotEmpty) {
-        debugPrint(
-            'RadioController: Loaded ${cached.length} stations from cache');
         stations.assignAll(cached);
+        _updateFeaturedAndFiltered();
         isLoading.value = false;
-        if (currentIndex.value == 0 && !isPlaying.value) {
-          await _setRadioUrl(stations[0].urlResolved ?? stations[0].url);
-        }
-      } else {
-        debugPrint('RadioController: Cache is empty, showing loader');
-        isLoading.value = true;
+        return;
       }
-    } else {
-      isLoading.value = true;
     }
 
+    isLoading.value = true;
     error.value = '';
     try {
-      debugPrint('RadioController: Starting background API fetch...');
-      List<RadioStation> fetchedStations = [];
+      List<RadioStation> fetched;
       if (selectedCountry.value == 'Myanmar') {
-        fetchedStations = await _radioService.getMyanmarStations();
+        fetched =
+            await _radioService.getMyanmarStations(limit: _limit, offset: 0);
       } else {
-        fetchedStations =
-            await _radioService.getStationsByCountry(selectedCountry.value);
+        fetched = await _radioService.getStationsByCountry(
+            selectedCountry.value,
+            limit: _limit,
+            offset: 0);
       }
-      if (fetchedStations.isNotEmpty) {
-        debugPrint(
-            'RadioController: API fetch successful, found ${fetchedStations.length} stations');
 
-        stations.assignAll(fetchedStations);
-        // print(stations.map((s) => s.toJson()));
-        stations.refresh();
+      stations.assignAll(fetched);
+      _updateFeaturedAndFiltered();
 
-        await _radioService.cacheStations(fetchedStations);
-        debugPrint('RadioController: Cache updated with fresh API data');
-
-        if (currentIndex.value == 0 && !isPlaying.value) {
-          await _setRadioUrl(stations[0].urlResolved ?? stations[0].url);
-        }
-      } else {
-        debugPrint('RadioController: API returned empty list');
+      if (fetched.isNotEmpty) {
+        await _radioService.cacheStations(fetched);
       }
     } catch (e) {
-      if (stations.isEmpty) {
-        error.value = e.toString();
-      }
-      debugPrint('RadioController: Background API sync failed: $e');
+      error.value = e.toString();
     } finally {
       isLoading.value = false;
-      debugPrint('RadioController: Fetch process finished');
     }
   }
 
-  void onStationSwiped(int index) async {
-    if (index >= 0 && index < stations.length) {
-      currentIndex.value = index;
-      final station = stations[index];
-      final primaryUrl = station.url;
-      final fallbackUrl = station.urlResolved ?? station.url;
+  Future<void> fetchMoreStations() async {
+    if (isLoadingMore.value) return;
+    isLoadingMore.value = true;
+    _currentOffset += _limit;
+
+    try {
+      List<RadioStation> fetched;
+      if (selectedCountry.value == 'Myanmar') {
+        fetched = await _radioService.getMyanmarStations(
+            limit: _limit, offset: _currentOffset);
+      } else {
+        fetched = await _radioService.getStationsByCountry(
+            selectedCountry.value,
+            limit: _limit,
+            offset: _currentOffset);
+      }
+
+      if (fetched.isNotEmpty) {
+        stations.addAll(fetched);
+        _applySearchFilter();
+      }
+    } catch (e) {
+      debugPrint('Error fetching more stations: $e');
+    } finally {
+      isLoadingMore.value = false;
+    }
+  }
+
+  void _updateFeaturedAndFiltered() {
+    // Sort by votes for featured section (top 10)
+    final sortedByVotes = List<RadioStation>.from(stations)
+      ..sort((a, b) => (b.votes ?? 0).compareTo(a.votes ?? 0));
+    featuredStations.assignAll(sortedByVotes.take(10).toList());
+
+    _applySearchFilter();
+  }
+
+  void onStationSelected(int index, {bool fromFeatured = false}) async {
+    final list = fromFeatured ? featuredStations : filteredStations;
+    if (index >= 0 && index < list.length) {
+      final station = list[index];
+      final mainIndex = stations.indexOf(station);
+      if (mainIndex != -1) {
+        currentIndex.value = mainIndex;
+      }
+
+      isOverlayVisible.value = true;
+      isOverlayExpanded.value = true;
 
       try {
         await _radioPlayer.stop();
-        await _setRadioUrl(primaryUrl);
-        if (isPlaying.value) {
-          _radioPlayer.play();
-        }
+        await _setRadioUrl(station.urlResolved ?? station.url);
+        _pauseMainMusic();
+        _radioPlayer.play();
       } catch (e) {
-        // if (fallbackUrl != null) {
-        debugPrint('Primary URL failed, trying fallback: $fallbackUrl');
-        try {
-          await _setRadioUrl(fallbackUrl);
-          if (isPlaying.value) {
-            _radioPlayer.play();
-          }
-          return;
-        } catch (e2) {
-          debugPrint('Fallback URL also failed: $e2');
-          debugPrint('Radio playback error: $e');
-          // AppLoader.customToast(
-          //     message:
-          //         'This station is currently unreachable. Please try another one.');
-
-          // Get.snackbar(
-          //   'Stream Unavailable',
-          //   'This station is currently unreachable. Please try another one.',
-          //   snackPosition: SnackPosition.bottom,
-          //   backgroundColor: Colors.redAccent.withOpacity(0.8),
-          //   colorText: Colors.white,
-          // );
-        }
-        // }
+        debugPrint('Radio playback error: $e');
       }
     }
   }
@@ -189,17 +197,29 @@ class RadioController extends GetxController {
   Future<void> stop() async {
     await _radioPlayer.pause();
     isPlaying.value = false;
+    isOverlayVisible.value = false;
+    isOverlayExpanded.value = false;
   }
 
   Future<void> nextStation() async {
     if (currentIndex.value < stations.length - 1) {
-      onStationSwiped(currentIndex.value + 1);
+      final nextIdx = currentIndex.value + 1;
+      currentIndex.value = nextIdx;
+      final station = stations[nextIdx];
+      await _radioPlayer.stop();
+      await _setRadioUrl(station.urlResolved ?? station.url);
+      _radioPlayer.play();
     }
   }
 
   Future<void> prevStation() async {
     if (currentIndex.value > 0) {
-      onStationSwiped(currentIndex.value - 1);
+      final prevIdx = currentIndex.value - 1;
+      currentIndex.value = prevIdx;
+      final station = stations[prevIdx];
+      await _radioPlayer.stop();
+      await _setRadioUrl(station.urlResolved ?? station.url);
+      _radioPlayer.play();
     }
   }
 
@@ -214,12 +234,30 @@ class RadioController extends GetxController {
     selectedCountry.value = countryName;
 
     await stop();
+    stations.clear();
+    fetchStations(fromCache: false);
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('last_radio_country', countryName);
+  }
 
-    stations.clear();
-    currentIndex.value = 0;
-    fetchStations(fromCache: false);
+  void setSearchQuery(String query) {
+    searchQuery.value = query;
+    _applySearchFilter();
+  }
+
+  void _applySearchFilter() {
+    if (searchQuery.isEmpty) {
+      filteredStations.assignAll(stations);
+    } else {
+      final q = searchQuery.toLowerCase();
+      filteredStations.assignAll(stations.where((s) =>
+          s.name.toLowerCase().contains(q) ||
+          (s.tags?.toLowerCase().contains(q) ?? false)));
+    }
+  }
+
+  void toggleOverlay() {
+    isOverlayExpanded.value = !isOverlayExpanded.value;
   }
 }

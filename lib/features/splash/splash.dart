@@ -35,7 +35,7 @@ class SplashScreen extends StatelessWidget {
                         'assets/app_icon.png',
                         fit: BoxFit.fill,
                         height: 120,
-                        width: 120,
+                        width: 140,
                       ),
                       const SizedBox(height: 30),
                       Text(

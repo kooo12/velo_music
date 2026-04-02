@@ -25,7 +25,7 @@ class ThemeController extends GetxController {
     elevatedButtonTheme: AppElevatedButtonTheme.darkElevatedButtonTheme,
     inputDecorationTheme: AppTextFormFieldTheme.darkInputDecorationTheme,
     checkboxTheme: AppCheckboxTheme.darkCheckboxTheme,
-    chipTheme: AppChipTheme.darkChipTheme,
+    chipTheme: AppChipTheme.lightChipTheme,
     cardColor: Colors.black,
     cardTheme: const CardTheme(color: Colors.white),
     dropdownMenuTheme: DropdownMenuThemeData(

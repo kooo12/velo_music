@@ -217,7 +217,7 @@ class _PrivacySection extends StatelessWidget {
                 _SocialLinkButton(
                   icon: FontAwesomeIcons.facebook,
                   label: 'Facebook',
-                  onTap: () => _launchUrl('htApp://www.facebook.com/kooo1210'),
+                  onTap: () => _launchUrl('https://www.facebook.com/kooo1210'),
                   color: Colors.white,
                 ),
                 const SizedBox(width: 8),
@@ -225,14 +225,14 @@ class _PrivacySection extends StatelessWidget {
                   icon: FontAwesomeIcons.linkedin,
                   label: 'LinkedIn',
                   onTap: () => _launchUrl(
-                      'htApp://www.linkedin.com/in/aung-ko-oo-042342242/'),
+                      'https://www.linkedin.com/in/aung-ko-oo-042342242/'),
                   color: Colors.white,
                 ),
                 const SizedBox(width: 8),
                 _SocialLinkButton(
                   icon: FontAwesomeIcons.telegram,
                   label: 'Telegram',
-                  onTap: () => _launchUrl('htApp://t.me/kooo2109'),
+                  onTap: () => _launchUrl('https://t.me/kooo2109'),
                   color: Colors.white,
                 ),
               ],

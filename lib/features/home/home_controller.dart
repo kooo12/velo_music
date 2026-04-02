@@ -61,6 +61,7 @@ class HomeController extends GetxController
   bool get isSeeking => _isSeeking.value;
   bool get isPlaying => audioService.isPlaying.value;
   bool get isAudioLoading => audioService.isLoading.value;
+  bool get isBuffering => audioService.isBuffering.value;
   bool get hasAttemptedLoad => audioService.hasAttemptedLoad.value;
   int get currentSongIndex => audioService.currentIndex.value;
   double get currentPosition => _isSeeking.value

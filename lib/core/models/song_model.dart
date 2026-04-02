@@ -12,6 +12,7 @@ class SongModel {
   final int? year;
   final int size;
   final bool isMusic;
+  final List<int>? jamendoWaveform;
 
   SongModel({
     required this.id,
@@ -27,6 +28,7 @@ class SongModel {
     this.year,
     required this.size,
     this.isMusic = true,
+    this.jamendoWaveform,
   });
 
   factory SongModel.fromAudioQuery(SongModel audioSong) {
@@ -43,6 +45,7 @@ class SongModel {
       year: audioSong.year,
       size: audioSong.size,
       isMusic: audioSong.isMusic,
+      jamendoWaveform: audioSong.jamendoWaveform,
     );
   }
 
@@ -61,6 +64,7 @@ class SongModel {
       'year': year,
       'size': size,
       'isMusic': isMusic,
+      'jamendoWaveform': jamendoWaveform,
     };
   }
 
@@ -79,6 +83,9 @@ class SongModel {
       year: json['year'],
       size: json['size'] ?? 0,
       isMusic: json['isMusic'] ?? true,
+      jamendoWaveform: (json['jamendoWaveform'] as List<dynamic>?)
+          ?.map((e) => e as int)
+          .toList(),
     );
   }
 
@@ -95,6 +102,40 @@ class SongModel {
   String get formattedSize {
     final sizeInMB = size / (1024 * 1024);
     return '${sizeInMB.toStringAsFixed(1)} MB';
+  }
+
+  SongModel copyWith({
+    int? id,
+    String? title,
+    String? artist,
+    String? album,
+    int? duration,
+    String? albumArtwork,
+    String? data,
+    String? displayName,
+    String? genre,
+    int? track,
+    int? year,
+    int? size,
+    bool? isMusic,
+    List<int>? jamendoWaveform,
+  }) {
+    return SongModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      artist: artist ?? this.artist,
+      album: album ?? this.album,
+      duration: duration ?? this.duration,
+      albumArtwork: albumArtwork ?? this.albumArtwork,
+      data: data ?? this.data,
+      displayName: displayName ?? this.displayName,
+      genre: genre ?? this.genre,
+      track: track ?? this.track,
+      year: year ?? this.year,
+      size: size ?? this.size,
+      isMusic: isMusic ?? this.isMusic,
+      jamendoWaveform: jamendoWaveform ?? this.jamendoWaveform,
+    );
   }
 
   @override

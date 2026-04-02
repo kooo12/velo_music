@@ -17,9 +17,10 @@ import 'package:velo/features/home/widgets/music_mood_widget.dart';
 import 'package:velo/features/home/widgets/sleep_timer_card.dart';
 import 'package:velo/features/home/widgets/smart_recommendations_widget.dart';
 import 'package:velo/features/home/widgets/tablet_sleep_timer_card.dart';
-import 'package:velo/features/promoted_apps/promoted_apps_bottom_sheet.dart';
-import 'package:velo/features/promoted_apps/controller/promoted_apps_controller.dart';
+import 'package:velo/features/stream/jamendo_search_screen.dart';
 import 'package:velo/features/sub_screens/player_screens/landscape_mini_player.dart';
+import 'package:velo/features/stream/stream_music_view.dart';
+import 'package:velo/features/views/landscape_search_view.dart';
 import 'package:velo/routhing/app_routes.dart';
 import 'package:velo/features/views/library_view.dart';
 import 'package:velo/features/views/setting_view.dart';
@@ -28,7 +29,6 @@ import 'package:velo/widgets/loading_widget.dart';
 import 'package:velo/widgets/playlist_dialog/edit_playlist_dialog.dart';
 
 import '../sub_screens/player_screens/mini_player.dart';
-import '../views/search_view.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -175,12 +175,12 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildTabletLandscapeAppBar() {
-    final promotedAppsCtrl = Get.find<PromotedAppsController>();
+    // final promotedAppsCtrl = Get.find<PromotedAppsController>();
 
-    final shouldShow = promotedAppsCtrl.shouldShowGiftboxRx.value;
+    // final shouldShow = promotedAppsCtrl.shouldShowGiftboxRx.value;
 
-    final badgeCount = promotedAppsCtrl.badgeCount.value;
-    final isShaking = promotedAppsCtrl.isShaking;
+    // final badgeCount = promotedAppsCtrl.badgeCount.value;
+    // final isShaking = promotedAppsCtrl.isShaking;
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
@@ -201,76 +201,81 @@ class HomeScreen extends GetView<HomeController> {
                     fontSize: 20,
                   ),
                 ),
-                if (shouldShow)
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: isShaking ? 1.0 : 0.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Transform.rotate(
-                        angle: isShaking
-                            ? value * 0.2 * (value < 0.5 ? 1 : -1)
-                            : 0,
-                        child: Transform.scale(
-                          scale: isShaking ? 1.0 + (value * 0.1) : 1.0,
-                          child: Stack(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  promotedAppsCtrl.openAppList();
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (context) =>
-                                        const PromotedAppsBottomSheet(),
-                                  );
-                                },
-                                icon: const Text(
-                                  '🎁',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ),
-                              if (badgeCount > 0)
-                                Positioned(
-                                  right: 8,
-                                  top: 8,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.red.withOpacity(0.5),
-                                          blurRadius: 4,
-                                          spreadRadius: 1,
-                                        ),
-                                      ],
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 18,
-                                      minHeight: 18,
-                                    ),
-                                    child: Text(
-                                      badgeCount > 99
-                                          ? '99+'
-                                          : badgeCount.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                IconButton(
+                    onPressed: () => controller.currentView.value == 'stream'
+                        ? controller.changeView('stream_search')
+                        : controller.changeView('search'),
+                    icon: const Icon(Icons.search))
+                // if (shouldShow)
+                //   TweenAnimationBuilder<double>(
+                //     tween: Tween(begin: 0.0, end: isShaking ? 1.0 : 0.0),
+                //     duration: const Duration(milliseconds: 300),
+                //     curve: Curves.easeInOut,
+                //     builder: (context, value, child) {
+                //       return Transform.rotate(
+                //         angle: isShaking
+                //             ? value * 0.2 * (value < 0.5 ? 1 : -1)
+                //             : 0,
+                //         child: Transform.scale(
+                //           scale: isShaking ? 1.0 + (value * 0.1) : 1.0,
+                //           child: Stack(
+                //             children: [
+                //               IconButton(
+                //                 onPressed: () {
+                //                   promotedAppsCtrl.openAppList();
+                //                   showModalBottomSheet(
+                //                     context: context,
+                //                     isScrollControlled: true,
+                //                     backgroundColor: Colors.transparent,
+                //                     builder: (context) =>
+                //                         const PromotedAppsBottomSheet(),
+                //                   );
+                //                 },
+                //                 icon: const Text(
+                //                   '🎁',
+                //                   style: TextStyle(fontSize: 20),
+                //                 ),
+                //               ),
+                //               if (badgeCount > 0)
+                //                 Positioned(
+                //                   right: 8,
+                //                   top: 8,
+                //                   child: Container(
+                //                     padding: const EdgeInsets.all(4),
+                //                     decoration: BoxDecoration(
+                //                       color: Colors.red,
+                //                       borderRadius: BorderRadius.circular(10),
+                //                       boxShadow: [
+                //                         BoxShadow(
+                //                           color: Colors.red.withOpacity(0.5),
+                //                           blurRadius: 4,
+                //                           spreadRadius: 1,
+                //                         ),
+                //                       ],
+                //                     ),
+                //                     constraints: const BoxConstraints(
+                //                       minWidth: 18,
+                //                       minHeight: 18,
+                //                     ),
+                //                     child: Text(
+                //                       badgeCount > 99
+                //                           ? '99+'
+                //                           : badgeCount.toString(),
+                //                       style: const TextStyle(
+                //                         color: Colors.white,
+                //                         fontSize: 10,
+                //                         fontWeight: FontWeight.bold,
+                //                       ),
+                //                       textAlign: TextAlign.center,
+                //                     ),
+                //                   ),
+                //                 ),
+                //             ],
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //   ),
               ],
             ),
           ),
@@ -282,7 +287,7 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildTabletLandscapeNavigation() {
     final navItems = [
       {'icon': Iconsax.home, 'label': 'Home', 'view': 'home'},
-      {'icon': Iconsax.search_normal, 'label': 'Search', 'view': 'search'},
+      {'icon': Iconsax.musicnote, 'label': 'Discover', 'view': 'stream'},
       {'icon': Iconsax.music_library_2, 'label': 'Library', 'view': 'library'},
       {'icon': Iconsax.setting, 'label': 'Settings', 'view': 'settings'},
     ];
@@ -475,6 +480,11 @@ class HomeScreen extends GetView<HomeController> {
                   //       );
                   //     },
                   //   ),
+                  IconButton(
+                      onPressed: () => controller.currentView.value == 'stream'
+                          ? Get.toNamed(Routes.JAMENDO_SEARCH)
+                          : Get.toNamed(Routes.SEARCH),
+                      icon: const Icon(Icons.search)),
                   Image.asset('assets/app_icon.png',
                       fit: BoxFit.cover, width: 40, height: 40)
                 ],
@@ -1457,8 +1467,20 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _buildLibrarySearchView() {
-    return const SearchView(
+  Widget _buildLibraryStreamMusicView() {
+    return StreamMusicView(
+      key: const Key('LibraeyView'),
+    );
+  }
+
+  Widget _buildLibrarySearchMusicView() {
+    return const LandscapeSearchView(
+      key: Key('LibraeyView'),
+    );
+  }
+
+  Widget _buildStreamSearchMusicView() {
+    return const JamendoSearchScreen(
       key: Key('LibraeyView'),
     );
   }
@@ -1474,14 +1496,21 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildCurrentView(BuildContext context) {
     int currentIndex = 0;
     switch (controller.currentView.value) {
-      case 'search':
+      case 'stream':
         currentIndex = 1;
         break;
+
       case 'library':
         currentIndex = 2;
         break;
       case 'settings':
         currentIndex = 3;
+        break;
+      case 'search':
+        currentIndex = 4;
+        break;
+      case 'stream_search':
+        currentIndex = 5;
         break;
       default:
         currentIndex = 0;
@@ -1496,7 +1525,8 @@ class HomeScreen extends GetView<HomeController> {
           child: _buildHomeView(context),
         ),
         Container(
-            key: const ValueKey('search'), child: _buildLibrarySearchView()),
+            key: const ValueKey('stream'),
+            child: _buildLibraryStreamMusicView()),
         Container(
           key: const ValueKey('library'),
           child: _buildLibraryView(),
@@ -1504,6 +1534,14 @@ class HomeScreen extends GetView<HomeController> {
         Container(
           key: const ValueKey('settings'),
           child: _buildProfileView(),
+        ),
+        Container(
+          key: const ValueKey('search'),
+          child: _buildLibrarySearchMusicView(),
+        ),
+        Container(
+          key: const ValueKey('stream_search'),
+          child: _buildStreamSearchMusicView(),
         ),
       ],
     );
@@ -1552,10 +1590,10 @@ class HomeScreen extends GetView<HomeController> {
                             () => controller.changeView('home'),
                           ),
                           _buildNavItem(
-                            Icons.search,
-                            'Search',
-                            controller.currentView.value == 'search',
-                            () => controller.changeView('search'),
+                            Icons.music_note_outlined,
+                            'Discover',
+                            controller.currentView.value == 'stream',
+                            () => controller.changeView('stream'),
                           ),
                           _buildNavItem(
                             Icons.library_music,

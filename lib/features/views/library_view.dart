@@ -237,8 +237,8 @@ class LibraryView extends GetView<HomeController> {
               child: CachedAlbumArtwork(
                 key: ValueKey('library_artwork_${song.id}'),
                 songId: song.id,
-                // width: double.infinity,
-                // height: double.infinity,
+                width: double.infinity,
+                height: double.infinity,
                 borderRadius: 8,
                 highQuality: true,
               ),

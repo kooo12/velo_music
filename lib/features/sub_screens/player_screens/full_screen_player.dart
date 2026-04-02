@@ -8,11 +8,30 @@ import 'package:velo/core/controllers/theme_controller.dart';
 import 'package:velo/features/home/home_controller.dart';
 import 'package:velo/widgets/cached_album_artwork.dart';
 import 'package:velo/widgets/seekable_progress_bar.dart';
+import 'package:velo/features/stream/stream_controller.dart';
+import 'package:velo/widgets/loading_widget.dart';
+import 'package:velo/core/models/lyric_model.dart';
+import 'package:velo/core/models/song_model.dart';
 
 class FullScreenPlayer extends StatelessWidget {
   final HomeController controller;
 
   const FullScreenPlayer({super.key, required this.controller});
+
+  void _showLyricsSheet(BuildContext context) {
+    final streamCtrl = Get.find<StreamMusicController>();
+    final song = controller.currentSong;
+    if (song == null) return;
+
+    streamCtrl.fetchLyrics(song.artist, song.title);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _LyricsBottomSheet(ctrl: streamCtrl, song: song),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +107,9 @@ class FullScreenPlayer extends StatelessWidget {
                           ),
                         );
                       }),
-                      // const SizedBox(width: 48),
                     ],
                   ),
-
                   const SizedBox(height: 8),
-
                   Expanded(
                     child: Center(
                       child: SizedBox(
@@ -106,31 +122,25 @@ class FullScreenPlayer extends StatelessWidget {
                           child: _ArtworkGlass(controller: controller)),
                     ),
                   ),
-
-                  // Obx(() {
-                  //   final song = controller.currentSong;
-                  //   return AnimatedSwitcher(
-                  //     duration: const Duration(milliseconds: 250),
-                  //     child: song == null
-                  //         ? const SizedBox(
-                  //             key: ValueKey('empty-wave'), height: 80)
-                  //         : Container(
-                  //             key: ValueKey(song.id),
-                  //             height: 84,
-                  //             margin:
-                  //                 const EdgeInsets.symmetric(horizontal: 20),
-                  //             child: WaveformWidget(
-                  //               audioPath: song.data,
-                  //               activeColor: AppColors.musicPrimary,
-                  //               inactiveColor: Colors.white.withOpacity(0.25),
-                  //               height: 84,
-                  //             ),
-                  //           ),
-                  //   );
-                  // }),
-
                   const SizedBox(height: 16),
-
+                  Obx(() {
+                    final song = controller.currentSong;
+                    if (song == null ||
+                        song.jamendoWaveform == null ||
+                        song.jamendoWaveform!.isEmpty) {
+                      return const SizedBox(height: 16);
+                    }
+                    return Container(
+                      height: 60,
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
+                      child: JamendoWaveformWidget(
+                        peaks: song.jamendoWaveform!,
+                        currentPosition: controller.currentPosition,
+                        totalDuration: controller.totalDuration,
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 16),
                   Obx(() {
                     final song = controller.currentSong;
                     return Column(
@@ -162,13 +172,9 @@ class FullScreenPlayer extends StatelessWidget {
                       ],
                     );
                   }),
-
                   const SizedBox(height: 14),
-
                   const SeekableProgressBar(style: ProgressBarStyle.full),
-
                   const SizedBox(height: 10),
-
                   Obx(() {
                     final isPlaying = controller.isPlaying;
                     final repeat = controller.repeatMode.value;
@@ -200,10 +206,12 @@ class FullScreenPlayer extends StatelessWidget {
                       ],
                     );
                   }),
-
                   const SizedBox(height: 16),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    //  _GlassPill(text: 'Equlizer'.tr, onTap: (){}),
+                    _GlassPill(
+                        text: 'Lyrics'.tr,
+                        onTap: () => _showLyricsSheet(context)),
+                    const SizedBox(width: 12),
                     _GlassPill(text: 'Queue'.tr, onTap: controller.openQueue),
                   ]),
                 ],
@@ -292,10 +300,11 @@ class _GlassIconButton extends StatelessWidget {
             border: Border.all(color: Colors.white.withOpacity(0.18), width: 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 10,
-                offset: const Offset(0, 6),
-              ),
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                  spreadRadius: 20,
+                  blurStyle: BlurStyle.outer),
             ],
           ),
           child: Icon(icon, color: Colors.white, size: size * 0.55),
@@ -381,10 +390,11 @@ class _RepeatButton extends StatelessWidget {
             boxShadow: [
               if (active)
                 BoxShadow(
-                  color: AppColors.musicPrimary.withOpacity(0.35),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
+                    color: AppColors.musicPrimary.withOpacity(0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                    spreadRadius: 20,
+                    blurStyle: BlurStyle.outer),
             ],
           ),
           child: Icon(icon, color: Colors.white, size: 22),
@@ -455,13 +465,221 @@ class _ShuffleButton extends StatelessWidget {
             boxShadow: [
               if (active)
                 BoxShadow(
-                  color: AppColors.musicPrimary.withOpacity(0.35),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
+                    color: AppColors.musicPrimary.withOpacity(0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                    spreadRadius: 20,
+                    blurStyle: BlurStyle.outer),
             ],
           ),
           child: const Icon(Iconsax.shuffle, color: Colors.white, size: 22),
+        ),
+      ),
+    );
+  }
+}
+
+class JamendoWaveformWidget extends StatelessWidget {
+  final List<int> peaks;
+  final double currentPosition;
+  final double totalDuration;
+
+  const JamendoWaveformWidget({
+    super.key,
+    required this.peaks,
+    required this.currentPosition,
+    required this.totalDuration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ratio = totalDuration > 0 ? currentPosition / totalDuration : 0.0;
+
+    return CustomPaint(
+      size: const Size(double.infinity, 60),
+      painter: _WaveformPainter(
+        peaks: peaks,
+        progressRatio: ratio.clamp(0.0, 1.0),
+        activeColor: Colors.white,
+        inactiveColor: Colors.white.withOpacity(0.2),
+      ),
+    );
+  }
+}
+
+class _WaveformPainter extends CustomPainter {
+  final List<int> peaks;
+  final double progressRatio;
+  final Color activeColor;
+  final Color inactiveColor;
+
+  _WaveformPainter({
+    required this.peaks,
+    required this.progressRatio,
+    required this.activeColor,
+    required this.inactiveColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (peaks.isEmpty) return;
+
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..strokeCap = StrokeCap.round;
+
+    final barWidth = size.width / peaks.length;
+    final maxPeak = 100.0; // Jamendo peaks are typically 0-100
+
+    for (int i = 0; i < peaks.length; i++) {
+      final peak = peaks[i].toDouble();
+      final barHeight = (peak / maxPeak) * size.height;
+
+      final isPast = (i / peaks.length) <= progressRatio;
+      paint.color = isPast ? activeColor : inactiveColor;
+
+      final x = i * barWidth;
+      final y = (size.height - barHeight) / 2;
+
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(x + 1, y, barWidth - 1, barHeight),
+          const Radius.circular(2),
+        ),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _WaveformPainter oldDelegate) {
+    return oldDelegate.progressRatio != progressRatio ||
+        oldDelegate.peaks != peaks;
+  }
+}
+
+class _LyricsBottomSheet extends StatelessWidget {
+  final StreamMusicController ctrl;
+  final SongModel song;
+
+  const _LyricsBottomSheet({required this.ctrl, required this.song});
+
+  @override
+  Widget build(BuildContext context) {
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+      child: Container(
+        height: Get.height * 0.75,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.6),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          song.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          song.artist,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.white.withOpacity(0.6),
+                              fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.white54),
+                  ),
+                ],
+              ),
+            ),
+
+            const Divider(color: Colors.white10, height: 24),
+
+            // Body
+            Expanded(
+              child: Obx(() {
+                if (ctrl.isLoadingLyrics.value) {
+                  return const Center(
+                      child: LoadingWidget(color: Colors.white54));
+                }
+
+                if (ctrl.lyricsUnavailable.value) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.music_off_rounded,
+                            size: 48, color: Colors.white.withOpacity(0.2)),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Lyrics Unavailable'.tr,
+                          style: const TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                final String? plain = ctrl.lyrics.value;
+                final List<LyricLine> synced = ctrl.syncedLyrics;
+                final String display = synced.isNotEmpty
+                    ? synced
+                        .map((l) => l.text)
+                        .where((t) => t.isNotEmpty)
+                        .join('\n\n')
+                    : plain ?? "";
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
+                  child: SelectionArea(
+                    child: Text(
+                      display,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 16,
+                        height: 1.8,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

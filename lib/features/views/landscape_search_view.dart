@@ -11,49 +11,34 @@ import 'package:velo/routhing/app_routes.dart';
 import 'package:velo/widgets/cached_album_artwork.dart';
 import 'package:velo/widgets/playlist_dialog/add_to_playlist_dialog.dart';
 
-import '../../core/controllers/theme_controller.dart';
-
-class SearchView extends GetView<HomeController> {
-  const SearchView({super.key});
+class LandscapeSearchView extends GetView<HomeController> {
+  const LandscapeSearchView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final themeCtrl = Get.find<ThemeController>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace),
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Column(
+          children: [
+            _buildSearchBar(),
+            const SizedBox(height: AppSizes.sm),
+            Expanded(
+              child: Obx(() {
+                if (controller.searchQuery.value.isEmpty) {
+                  return _buildSearchSuggestions(context);
+                }
 
-    return Scaffold(
-      backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Search',
-          style: themeCtrl.activeTheme.textTheme.headlineMedium
-              ?.copyWith(color: Colors.white),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace),
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Column(
-            children: [
-              _buildSearchBar(),
-              const SizedBox(height: AppSizes.sm),
-              Expanded(
-                child: Obx(() {
-                  if (controller.searchQuery.value.isEmpty) {
-                    return _buildSearchSuggestions(context);
-                  }
+                final results = controller.searchResults;
+                if (results.isEmpty) {
+                  return _buildNoResults();
+                }
 
-                  final results = controller.searchResults;
-                  if (results.isEmpty) {
-                    return _buildNoResults();
-                  }
-
-                  return _buildSearchResults(results);
-                }),
-              ),
-            ],
-          ),
+                return _buildSearchResults(results);
+              }),
+            ),
+          ],
         ),
       ),
     );
@@ -134,17 +119,10 @@ class SearchView extends GetView<HomeController> {
           Obx(() {
             final items = controller.recentSearches;
             if (items.isEmpty) {
-              return Column(
-                children: [
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  _buildEmptyState(
-                    'No recent searches'.tr,
-                    'Start typing to search for music'.tr,
-                    Icons.search,
-                  ),
-                ],
+              return _buildEmptyState(
+                'No recent searches'.tr,
+                'Start typing to search for music'.tr,
+                Icons.search,
               );
             }
             return ListView.separated(
@@ -187,7 +165,7 @@ class SearchView extends GetView<HomeController> {
               },
             );
           }),
-          const SizedBox(height: 100),
+          const SizedBox(height: 30),
           Text(
             'Browse Categories'.tr,
             style: const TextStyle(
@@ -351,7 +329,7 @@ class SearchView extends GetView<HomeController> {
         ],
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CachedAlbumArtwork(
           key: ValueKey('search_song_artwork_${song.id}'),
           songId: song.id,

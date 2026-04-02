@@ -11,6 +11,7 @@ class RadioStation {
   final String stationuuid;
   final String? codec;
   final int? bitrate;
+  final int? votes;
 
   RadioStation({
     required this.name,
@@ -23,6 +24,7 @@ class RadioStation {
     required this.stationuuid,
     this.codec,
     this.bitrate,
+    this.votes,
   });
 
   SongModel toSongModel() {
@@ -53,6 +55,7 @@ class RadioStation {
       stationuuid: json['stationuuid'] ?? '',
       codec: json['codec'],
       bitrate: json['bitrate'],
+      votes: json['votes'],
     );
   }
 
@@ -68,6 +71,7 @@ class RadioStation {
       'stationuuid': stationuuid,
       'codec': codec,
       'bitrate': bitrate,
+      'votes': votes,
     };
   }
 }
