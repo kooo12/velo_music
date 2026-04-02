@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velo/core/constants/app_colors.dart';
@@ -21,38 +23,50 @@ class SearchView extends GetView<HomeController> {
     final themeCtrl = Get.find<ThemeController>();
 
     return Scaffold(
-      backgroundColor: themeCtrl.currentAppTheme.value.gradientColors.first,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Search',
-          style: themeCtrl.activeTheme.textTheme.headlineMedium
-              ?.copyWith(color: Colors.white),
+      extendBodyBehindAppBar: true,
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   title: Text(
+      //     'Search',
+      //     style: themeCtrl.activeTheme.textTheme.headlineMedium
+      //         ?.copyWith(color: Colors.white),
+      //   ),
+      // ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: themeCtrl.currentAppTheme.value.gradientColors,
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace),
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Column(
-            children: [
-              _buildSearchBar(),
-              const SizedBox(height: AppSizes.sm),
-              Expanded(
-                child: Obx(() {
-                  if (controller.searchQuery.value.isEmpty) {
-                    return _buildSearchSuggestions(context);
-                  }
+        child: SafeArea(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace),
+            child: GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: Column(
+                children: [
+                  _buildSearchBar(),
+                  const SizedBox(height: AppSizes.sm),
+                  Expanded(
+                    child: Obx(() {
+                      if (controller.searchQuery.value.isEmpty) {
+                        return _buildSearchSuggestions(context);
+                      }
 
-                  final results = controller.searchResults;
-                  if (results.isEmpty) {
-                    return _buildNoResults();
-                  }
+                      final results = controller.searchResults;
+                      if (results.isEmpty) {
+                        return _buildNoResults();
+                      }
 
-                  return _buildSearchResults(results);
-                }),
+                      return _buildSearchResults(results);
+                    }),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -60,45 +74,133 @@ class SearchView extends GetView<HomeController> {
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace),
-      // padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
-      ),
-      child: TextField(
-        controller: controller.searchTextController,
-        onChanged: controller.updateSearchQuery,
-        onSubmitted: (value) {
-          controller.addRecentSearch(value);
-        },
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: 'Search songs, artists, albums...'.tr,
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-          border: InputBorder.none,
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.white.withOpacity(0.7),
-          ),
-          suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
-              ? IconButton(
-                  onPressed: () {
-                    controller.updateSearchQuery('');
-                    controller.searchTextController.clear();
-                  },
-                  icon: Icon(
-                    Icons.clear,
-                    color: Colors.white.withOpacity(0.7),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
                   ),
-                )
-              : const SizedBox.shrink()),
-        ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.search,
+                          color: Colors.white.withOpacity(0.6), size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: controller.searchTextController,
+                          onChanged: controller.updateSearchQuery,
+                          onSubmitted: (value) {
+                            controller.addRecentSearch(value);
+                          },
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 14),
+                          cursorColor: Colors.white,
+                          decoration: InputDecoration(
+                            hintText: 'Artists, tracks, or vibes…',
+                            hintStyle: TextStyle(
+                                color: Colors.white.withOpacity(0.5),
+                                fontSize: 14),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 12),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
+                            disabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
+                          ),
+                        ),
+                      ),
+                      Obx(() => controller.searchQuery.value.isNotEmpty
+                          ? IconButton(
+                              onPressed: () {
+                                controller.updateSearchQuery('');
+                                controller.searchTextController.clear();
+                              },
+                              icon: Icon(
+                                Icons.clear,
+                                color: Colors.white.withOpacity(0.7),
+                              ),
+                            )
+                          : const SizedBox.shrink()),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: () => Get.back(),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
+              child: const Icon(Icons.close, color: Colors.white, size: 20),
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  // Widget _buildSearchBar() {
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace),
+  //     // padding: const EdgeInsets.symmetric(horizontal: 20),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white.withOpacity(0.1),
+  //       borderRadius: BorderRadius.circular(30),
+  //       border: Border.all(color: Colors.white.withOpacity(0.2)),
+  //     ),
+  //     child: TextField(
+  //       controller: controller.searchTextController,
+  //       onChanged: controller.updateSearchQuery,
+  //       onSubmitted: (value) {
+  //         controller.addRecentSearch(value);
+  //       },
+  //       style: const TextStyle(color: Colors.white),
+  //       decoration: InputDecoration(
+  //         hintText: 'Search songs, artists, albums...'.tr,
+  //         hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+  //         border: InputBorder.none,
+  //         prefixIcon: Icon(
+  //           Icons.search,
+  //           color: Colors.white.withOpacity(0.7),
+  //         ),
+  //         suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
+  //             ? IconButton(
+  //                 onPressed: () {
+  //                   controller.updateSearchQuery('');
+  //                   controller.searchTextController.clear();
+  //                 },
+  //                 icon: Icon(
+  //                   Icons.clear,
+  //                   color: Colors.white.withOpacity(0.7),
+  //                 ),
+  //               )
+  //             : const SizedBox.shrink()),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildSearchSuggestions(BuildContext context) {
     return SingleChildScrollView(
