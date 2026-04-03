@@ -49,6 +49,8 @@ app.*.map.json
 # Private keys and environment variables
 .env
 veloks
+config.json
+key.properties
 
 # Firebase Rules
 firebase.rules
@@ -56,3 +58,4 @@ firestore.rules
 
 INSTRUCTIONS/
 TEMPO/
+

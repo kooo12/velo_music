@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:velo/core/config/app_config.dart';
 
 class LastFmArtist {
   final String name;
@@ -15,13 +15,13 @@ class LastFmArtist {
 }
 
 class LastFmRepository {
-  static const _baseUrl = 'https://ws.audioscrobbler.com/2.0/';
+  static const _baseUrl = AppConfig.lastFmApiBaseUrl;
 
   late final Dio _dio;
   late final String _apiKey;
 
   LastFmRepository() {
-    _apiKey = dotenv.env['LASTFM_API_KEY'] ?? '';
+    _apiKey = AppConfig.lastFmApiKey;
     _dio = Dio(BaseOptions(
       baseUrl: _baseUrl,
       connectTimeout: const Duration(seconds: 15),
@@ -47,7 +47,6 @@ class LastFmRepository {
       final rawList = resp.data['similarartists']?['artist'] as List? ?? [];
       return rawList.map((e) {
         final images = e['image'] as List? ?? [];
-        // Last.fm returns images smallest → largest, pick last (extralarge)
         final imageUrl =
             images.isNotEmpty ? (images.last['#text'] as String? ?? '') : '';
         return LastFmArtist(

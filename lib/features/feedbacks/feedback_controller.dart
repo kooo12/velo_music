@@ -1,19 +1,17 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:velo/core/config/app_config.dart';
 import 'package:velo/core/controllers/theme_controller.dart';
 import 'package:velo/core/helper/loaders.dart';
 
 class FeedbackController extends GetxController {
   final themeCtrl = Get.find<ThemeController>();
 
-  static String get formspreeId => dotenv.get('FORMSPREE_ID', fallback: '');
-  static String get apiEndpoint =>
-      dotenv.get('APIENDPOINT', fallback: 'https://formspree.io/f/');
+  static String get formspreeId => AppConfig.formspreeId;
+  static String get apiEndpoint => AppConfig.formspreeApiEndpoint;
 
   final feedbackTextController = TextEditingController();
   final RxInt selectedRating = 0.obs;

@@ -1,20 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:velo/core/config/app_config.dart';
 import 'package:velo/core/models/jamendo/jamendo_album_model.dart';
 import 'package:velo/core/models/jamendo/jamendo_artist_model.dart';
 import 'package:velo/core/models/jamendo/jamendo_genre_model.dart';
 import 'package:velo/core/models/jamendo/jamendo_track_model.dart';
 
 class JamendoRepository {
-  static const _baseUrl = 'https://api.jamendo.com/v3.0';
+  static const _baseUrl = AppConfig.jamendoApiBaseUrl;
   static const _imageSize = '300';
 
   late final Dio _dio;
   late final String _clientId;
 
   JamendoRepository() {
-    _clientId = dotenv.env['JAMENDO_CLIENT_ID'] ?? '';
+    _clientId = AppConfig.jamendoClientId;
     _dio = Dio(BaseOptions(
       baseUrl: _baseUrl,
       connectTimeout: const Duration(seconds: 15),
@@ -132,10 +132,9 @@ class JamendoRepository {
         'order': 'releasedate_desc',
         'datebetween': _lastNMonths(6),
       };
-      final String endpoint = (tags != null && tags.isNotEmpty) 
-          ? '/albums/musicinfo' 
-          : '/albums';
-          
+      final String endpoint =
+          (tags != null && tags.isNotEmpty) ? '/albums/musicinfo' : '/albums';
+
       if (tags != null && tags.isNotEmpty) {
         queryParams['tag'] = tags;
       }

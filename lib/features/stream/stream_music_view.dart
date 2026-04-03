@@ -50,7 +50,6 @@ class StreamMusicView extends GetView<StreamMusicController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
-                  // ── Top Charts ─────────────────────────────────
                   _SectionHeader(
                     title: 'Top Charts',
                     subtitle: 'Global pulse of the indie scene',
@@ -61,7 +60,6 @@ class StreamMusicView extends GetView<StreamMusicController> {
                   const SizedBox(height: 14),
                   _buildTopChartsHero(context),
                   const SizedBox(height: 24),
-                  // ── New Releases ────────────────────────────────
                   _SectionHeader(
                     title: 'New Releases',
                     actionLabel: 'SEE ALL',
@@ -74,7 +72,6 @@ class StreamMusicView extends GetView<StreamMusicController> {
                   const SizedBox(height: 14),
                   _buildNewReleases(),
                   const SizedBox(height: 24),
-                  // ── Your Daily Mix ─────────────────────────────
                   const _SectionHeader(
                     title: 'Your Daily Mix',
                     subtitle: 'Curated just for you',
@@ -82,7 +79,6 @@ class StreamMusicView extends GetView<StreamMusicController> {
                   const SizedBox(height: 14),
                   _buildDailyMix(context),
                   const SizedBox(height: 24),
-                  // ── Recommended ─────────────────────────────────
                   _SectionHeader(
                     title: 'Recommended',
                     actionLabel: 'SEE ALL',

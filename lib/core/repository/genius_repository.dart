@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
+import 'package:velo/core/config/app_config.dart';
 import 'package:velo/core/models/lyric_model.dart';
 
 class GeniusRepository {
@@ -14,7 +14,7 @@ class GeniusRepository {
   late final String _accessToken;
 
   GeniusRepository() {
-    _accessToken = dotenv.env['GENIUS_ACCESS_TOKEN'] ?? '';
+    _accessToken = AppConfig.geniusAccessToken;
     _apiDio = Dio(BaseOptions(
       baseUrl: _baseUrl,
       connectTimeout: const Duration(seconds: 15),
@@ -71,7 +71,7 @@ class GeniusRepository {
           .replaceAll(RegExp(r'\(.*?\)'), '')
           .replaceAll(RegExp(r'\[.*?\]'), '')
           .trim();
-          
+
       final resp = await _webDio.get(
         'https://lrclib.net/api/get',
         queryParameters: {

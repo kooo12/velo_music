@@ -31,7 +31,6 @@ When reporting, include:
 
 This repository must never contain:
 
-- `.env` values with live keys
 - service account credentials
 - private signing keys/keystores
 - production tokens

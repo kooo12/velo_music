@@ -6,10 +6,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:velo/core/bindings/app_binding.dart';
 import 'package:device_preview_plus/device_preview_plus.dart';
+import 'package:velo/core/config/app_config.dart';
 import 'package:velo/core/controllers/theme_controller.dart';
 import 'package:velo/core/services/app_audio_handler.dart';
 import 'package:velo/core/services/app_audio_session.dart';
@@ -22,7 +22,6 @@ import 'package:velo/routhing/app_routes.dart';
 
 FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
 
   if (!kIsWeb && Platform.isAndroid) {
     SystemChrome.setEnabledSystemUIMode(
@@ -43,48 +42,10 @@ FutureOr<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   try {
-    FirebaseOptions? firebaseOptions;
-    if (!kIsWeb) {
-      if (Platform.isAndroid) {
-        firebaseOptions = FirebaseOptions(
-          apiKey: dotenv.env['FIREBASE_ANDROID_API_KEY'] ?? '',
-          appId: dotenv.env['FIREBASE_ANDROID_APP_ID'] ?? '',
-          messagingSenderId:
-              dotenv.env['FIREBASE_ANDROID_MESSAGING_SENDER_ID'] ?? '',
-          projectId: dotenv.env['FIREBASE_ANDROID_PROJECT_ID'] ?? '',
-          storageBucket: dotenv.env['FIREBASE_ANDROID_STORAGE_BUCKET'] ?? '',
-        );
-      } else if (Platform.isIOS) {
-        firebaseOptions = FirebaseOptions(
-          apiKey: dotenv.env['FIREBASE_IOS_API_KEY'] ?? '',
-          appId: dotenv.env['FIREBASE_IOS_APP_ID'] ?? '',
-          messagingSenderId:
-              dotenv.env['FIREBASE_IOS_MESSAGING_SENDER_ID'] ?? '',
-          projectId: dotenv.env['FIREBASE_IOS_PROJECT_ID'] ?? '',
-          storageBucket: dotenv.env['FIREBASE_IOS_STORAGE_BUCKET'] ?? '',
-          iosBundleId: dotenv.env['FIREBASE_IOS_BUNDLE_ID'] ?? '',
-        );
-      }
-    } else {
-      firebaseOptions = const FirebaseOptions(
-          apiKey: "AIzaSyCjUazTSlA_FH1qno8zBlOPrTPBD7YKAOM",
-          authDomain: "velo-muisc.firebaseapp.com",
-          appId: "1:615822783937:web:0b1427831b194bb0112b40",
-          messagingSenderId: "615822783937",
-          projectId: "velo-muisc",
-          storageBucket: "velo-muisc.firebasestorage.app",
-          measurementId: "G-E2MC6TC700");
-    }
+    await Firebase.initializeApp(options: _getFirebaseOptions());
+    debugPrint(
+        "=>Firebase initialized successfully on ${!kIsWeb ? Platform.operatingSystem : 'web'}");
 
-    if (firebaseOptions != null) {
-      await Firebase.initializeApp(options: firebaseOptions);
-      debugPrint(
-          "=>Firebase initialized successfully on ${!kIsWeb ? Platform.operatingSystem : 'web'}");
-    } else {
-      await Firebase.initializeApp();
-      debugPrint(
-          "=>Firebase initialized with default config on ${Platform.operatingSystem}");
-    }
     if (!kIsWeb) {
       await _initializeCrashlytics();
     }
@@ -137,6 +98,42 @@ FutureOr<void> main() async {
   );
 }
 
+FirebaseOptions _getFirebaseOptions() {
+  if (kIsWeb) {
+    return const FirebaseOptions(
+      apiKey: AppConfig.firebaseWebApiKey,
+      appId: AppConfig.firebaseWebAppId,
+      messagingSenderId: AppConfig.firebaseMessagingSenderId,
+      projectId: AppConfig.firebaseProjectId,
+      storageBucket: AppConfig.firebaseStorageBucket,
+      measurementId: AppConfig.firebaseWebMeasurementId,
+      authDomain: AppConfig.firebaseWebAuthDomain,
+    );
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      return const FirebaseOptions(
+        apiKey: AppConfig.firebaseAndroidApiKey,
+        appId: AppConfig.firebaseAndroidAppId,
+        messagingSenderId: AppConfig.firebaseMessagingSenderId,
+        projectId: AppConfig.firebaseProjectId,
+        storageBucket: AppConfig.firebaseStorageBucket,
+      );
+    case TargetPlatform.iOS:
+      return const FirebaseOptions(
+        apiKey: AppConfig.firebaseIosApiKey,
+        appId: AppConfig.firebaseIosAppId,
+        messagingSenderId: AppConfig.firebaseMessagingSenderId,
+        projectId: AppConfig.firebaseProjectId,
+        storageBucket: AppConfig.firebaseStorageBucket,
+        iosBundleId: AppConfig.firebaseIosBundleId,
+      );
+    default:
+      throw UnsupportedError('Platform not supported');
+  }
+}
+
 Future<AppAudioHandler> _initAudioService() async {
   return await AudioService.init(
     builder: () => AppAudioHandler(),
@@ -154,7 +151,6 @@ Future<AppAudioHandler> _initAudioService() async {
     ),
   );
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
