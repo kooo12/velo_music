@@ -21,7 +21,7 @@ class JamendoRepository {
       receiveTimeout: const Duration(seconds: 15),
     ));
     if (kDebugMode) {
-      _dio.interceptors.add(LogInterceptor(responseBody: true));
+      _dio.interceptors.add(LogInterceptor(responseBody: false));
     }
   }
 

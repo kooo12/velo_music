@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:app_links/app_links.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -87,6 +88,8 @@ FutureOr<void> main() async {
   );
   Get.put<AppLifecycleManager>(lifecycleManager, permanent: true);
 
+  _initAppLinks();
+
   runApp(
     DevicePreview(
       enabled: kIsWeb,
@@ -96,6 +99,28 @@ FutureOr<void> main() async {
       builder: (context) => const MyApp(),
     ),
   );
+}
+
+void _initAppLinks() {
+  final appLinks = AppLinks();
+
+  appLinks.uriLinkStream.listen((uri) {
+    debugPrint('==> AppLinks Received URI (bg/fg): $uri');
+    if (uri.path.isNotEmpty) {
+      debugPrint('==> AppLinks Path: ${uri.path}');
+    }
+  });
+
+  appLinks.getInitialLink().then((uri) {
+    if (uri != null) {
+      debugPrint('==> AppLinks Received URI (cold start): $uri');
+      if (uri.path.isNotEmpty) {
+        debugPrint('==> AppLinks Path: ${uri.path}');
+      }
+    }
+  }).catchError((e) {
+    debugPrint('==> AppLinks Failed to get initial link: $e');
+  });
 }
 
 FirebaseOptions _getFirebaseOptions() {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'audio_service.dart' as svc;
@@ -40,7 +41,7 @@ class AppLifecycleManager extends GetxService with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
 
     switch (state) {
       case AppLifecycleState.inactive:
@@ -143,10 +144,14 @@ class AppLifecycleManager extends GetxService with WidgetsBindingObserver {
 
       debugPrint('[AppLifecycleManager] Terminating app to save battery...');
 
-      exit(0);
+      if (!kIsWeb) {
+        exit(0);
+      }
     } catch (e) {
       debugPrint('[AppLifecycleManager] Error during app termination: $e');
-      exit(0);
+      if (!kIsWeb) {
+        exit(0);
+      }
     }
   }
 

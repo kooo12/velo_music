@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -82,9 +82,11 @@ class SplashController extends GetxController {
         if (hasPermission) {
           debugPrint(
               'Permission already granted, loading songs in background...');
-          if (Platform.isAndroid) {
+          if (!kIsWeb &&
+              defaultTargetPlatform == TargetPlatform.android) {
             await audioService.loadSongs(skipPermissionCheck: true);
-          } else if (Platform.isIOS) {
+          } else if (!kIsWeb &&
+              defaultTargetPlatform == TargetPlatform.iOS) {
             await audioService.loadSongsForIOS(skipPermissionCheck: true);
           }
           debugPrint(
@@ -200,6 +202,13 @@ class SplashController extends GetxController {
   }
 
   Future<void> _navigateToHome() async {
-    Get.offAllNamed(Routes.HOME);
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+    if (!hasSeenOnboarding) {
+      Get.offAllNamed(Routes.ONBOARDING);
+    } else {
+      Get.offAllNamed(Routes.HOME);
+    }
   }
 }
+

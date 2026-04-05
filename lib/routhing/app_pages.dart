@@ -11,6 +11,7 @@ import 'package:velo/features/home/home.dart';
 import 'package:velo/features/home/home_controller.dart';
 import 'package:velo/features/notifications/notification_settings_page.dart';
 import 'package:velo/features/splash/splash.dart';
+import 'package:velo/features/onboarding/onboarding_page.dart';
 import 'package:velo/features/storage_manager/storage_manager_page.dart';
 import 'package:velo/features/sub_screens/library_screen/add_songs_to_playlist_screen.dart';
 import 'package:velo/features/sub_screens/library_screen/album_songs_screen.dart';
@@ -40,6 +41,10 @@ class AppPages {
         name: Routes.HOME,
         page: () => const HomeScreen(),
         binding: HomeBinding()),
+    GetPage(
+        name: Routes.ONBOARDING,
+        page: () => const OnboardingPage(),
+        transition: Transition.rightToLeft),
     GetPage(
         name: Routes.SEARCH,
         page: () => const SearchView(),

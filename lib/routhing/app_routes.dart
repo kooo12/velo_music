@@ -3,6 +3,7 @@
 abstract class Routes {
   static const SPLASH = '/splash';
   static const HOME = '/home';
+  static const ONBOARDING = '/onboarding';
   static const SEARCH = '/search';
   static const FULLSCREENPLAYER = '/fullscreenplayer';
   static const FULLSCREENPLAYERLANDSCAPE = '/fullscreenplayerlandscape';

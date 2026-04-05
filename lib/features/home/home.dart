@@ -646,7 +646,7 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildPermissionView(HomeController controller) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

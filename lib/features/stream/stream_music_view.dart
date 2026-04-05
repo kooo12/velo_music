@@ -171,9 +171,10 @@ class StreamMusicView extends GetView<StreamMusicController> {
 
     return Column(
       children: [
-        GestureDetector(
-          onTap: () => JamendoTrackDetailSheet.show(context, featured),
-          child: Container(
+        RepaintBoundary(
+          child: GestureDetector(
+            onTap: () => JamendoTrackDetailSheet.show(context, featured),
+            child: Container(
             margin: const EdgeInsets.only(right: AppSizes.defaultSpace),
             height: 280,
             clipBehavior: Clip.hardEdge,
@@ -265,7 +266,8 @@ class StreamMusicView extends GetView<StreamMusicController> {
                     return _PlayPillButton(
                       isPlaying: playing,
                       isLoading: loading,
-                      onTap: () => controller.playPreview(featured),
+                      onTap: () => controller.playPreview(featured,
+                          contextList: controller.topTracks),
                     );
                   }),
                 ),
@@ -273,7 +275,8 @@ class StreamMusicView extends GetView<StreamMusicController> {
             ),
           ),
         ),
-        const SizedBox(height: 12),
+      ),
+      const SizedBox(height: 12),
         SizedBox(
           height: 72,
           child: NotificationListener<ScrollNotification>(
@@ -288,11 +291,13 @@ class StreamMusicView extends GetView<StreamMusicController> {
               itemCount: controller.topTracks.length - 1,
               itemBuilder: (ctx, i) {
                 final t = controller.topTracks[i + 1];
-                return _TopTrackListItem(
-                  rank: i + 2,
-                  track: t,
-                  onTap: () => JamendoTrackDetailSheet.show(ctx, t),
-                  ctrl: controller,
+                return RepaintBoundary(
+                  child: _TopTrackListItem(
+                    rank: i + 2,
+                    track: t,
+                    onTap: () => JamendoTrackDetailSheet.show(ctx, t),
+                    ctrl: controller,
+                  ),
                 );
               },
             ),
@@ -331,7 +336,9 @@ class StreamMusicView extends GetView<StreamMusicController> {
                   if (i == controller.newReleases.length) {
                     return const _LoadingCard();
                   }
-                  return _AlbumCard(album: controller.newReleases[i]);
+                  return RepaintBoundary(
+                    child: _AlbumCard(album: controller.newReleases[i]),
+                  );
                 },
               ),
             ),
@@ -401,7 +408,9 @@ class StreamMusicView extends GetView<StreamMusicController> {
         padEnds: false,
         itemBuilder: (ctx, i) {
           final track = controller.dailyMix[i];
-          return _MixCard(track: track, ctrl: controller);
+          return RepaintBoundary(
+            child: _MixCard(track: track, ctrl: controller),
+          );
         },
       ),
     );
@@ -435,10 +444,12 @@ class StreamMusicView extends GetView<StreamMusicController> {
               return const _LoadingCard();
             }
             final t = controller.recommended[i];
-            return _RecommendedCard(
-              track: t,
-              onTap: () => JamendoTrackDetailSheet.show(ctx, t),
-              ctrl: controller,
+            return RepaintBoundary(
+              child: _RecommendedCard(
+                track: t,
+                onTap: () => JamendoTrackDetailSheet.show(ctx, t),
+                ctrl: controller,
+              ),
             );
           },
         ),
@@ -649,7 +660,8 @@ class _TopTrackListItem extends StatelessWidget {
               final playing = isCurrent && ctrl.isPlaying;
               final loading = isCurrent && ctrl.isLoadingPreview;
               return GestureDetector(
-                onTap: () => ctrl.playPreview(track),
+                onTap: () =>
+                    ctrl.playPreview(track, contextList: ctrl.topTracks),
                 child: loading
                     ? const SizedBox(
                         width: 28,
@@ -758,7 +770,6 @@ class _AlbumCard extends StatelessWidget {
   }
 }
 
-// ─── Recommended Card ─────────────────────────────────────────────────────────
 
 class _RecommendedCard extends StatelessWidget {
   final JamendoTrack track;
@@ -814,7 +825,8 @@ class _RecommendedCard extends StatelessWidget {
                     final playing = isCurrent && ctrl.isPlaying;
                     final loading = isCurrent && ctrl.isLoadingPreview;
                     return GestureDetector(
-                      onTap: () => ctrl.playPreview(track),
+                      onTap: () => ctrl.playPreview(track,
+                          contextList: ctrl.recommended),
                       child: Container(
                         width: 34,
                         height: 34,
@@ -868,7 +880,6 @@ class _RecommendedCard extends StatelessWidget {
   }
 }
 
-// ─── Play Pill Button ─────────────────────────────────────────────────────────
 
 class _PlayPillButton extends StatelessWidget {
   final bool isPlaying;
@@ -930,7 +941,6 @@ class _PlayPillButton extends StatelessWidget {
   }
 }
 
-// ─── Loading Card ─────────────────────────────────────────────────────────────
 
 class _LoadingCard extends StatelessWidget {
   const _LoadingCard();
@@ -946,7 +956,6 @@ class _LoadingCard extends StatelessWidget {
     );
   }
 }
-// ─── Mix Card (Daily Mix) ───────────────────────────────────────────────────
 
 class _MixCard extends StatelessWidget {
   final JamendoTrack track;
@@ -980,7 +989,6 @@ class _MixCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorWidget: (_, __, ___) => Container(color: Colors.white10),
               ),
-              // Gradient Overlay
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -994,7 +1002,6 @@ class _MixCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // Content
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -1023,7 +1030,6 @@ class _MixCard extends StatelessWidget {
                   ],
                 ),
               ),
-              // Play Button
               Positioned(
                 right: 12,
                 bottom: 12,
@@ -1039,7 +1045,8 @@ class _MixCard extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: GestureDetector(
-                      onTap: () => ctrl.playPreview(track),
+                      onTap: () =>
+                          ctrl.playPreview(track, contextList: ctrl.dailyMix),
                       child: loading
                           ? const SizedBox(
                               width: 24,

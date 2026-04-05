@@ -105,8 +105,18 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
                     android:scheme="https"
-                    android:host="music-player-a4a63.firebaseapp.com"
+                    android:host="velo-music.firebaseapp.com"
                     android:pathPrefix="/__/auth/action"/>
+            </intent-filter>
+            <!-- Intent filter to handle opening audio files from File Managers -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
             </intent-filter>
         </activity>
         <!-- Media playback service required by audio_service -->

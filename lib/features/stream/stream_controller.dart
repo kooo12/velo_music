@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -432,7 +432,7 @@ class StreamMusicController extends GetxController {
   }
 
   Future<Directory> _getMusicOutputDir() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       try {
         final externalStorage = await getExternalStorageDirectory();
         if (externalStorage == null) {
@@ -488,6 +488,20 @@ class StreamMusicController extends GetxController {
     try {
       currentTrack.value = track;
 
+      // On web, File/Directory operations are not supported — play the stream URL directly.
+      if (kIsWeb) {
+        final playlist = contextList ?? [track];
+        final songList = playlist.map(_mapTrackToSong).toList();
+        final currentSong = _mapTrackToSong(track);
+
+        if (_homeCtrl.currentSong?.data == track.audioUrl) {
+          await _homeCtrl.playPause();
+          return;
+        }
+        await _homeCtrl.playSong(songList, currentSong);
+        return;
+      }
+
       final musicDir = await _getMusicOutputDir();
       final musicPath = musicDir.path;
       final fileName =
@@ -534,6 +548,11 @@ class StreamMusicController extends GetxController {
   final RxnString downloadingTrackId = RxnString();
 
   Future<void> downloadTrack(JamendoTrack track) async {
+    if (kIsWeb) {
+      AppLoader.customToast(message: 'Download is not supported on web.');
+      return;
+    }
+
     if (isDownloading.value) return;
 
     final url = track.audioDownloadUrl.isNotEmpty
@@ -598,6 +617,7 @@ class StreamMusicController extends GetxController {
   }
 
   Future<void> refreshDownloadStatus(JamendoTrack track) async {
+    if (kIsWeb) return;
     try {
       final musicDir = await _getMusicOutputDir();
       final musicPath = musicDir.path;
