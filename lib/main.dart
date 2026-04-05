@@ -163,7 +163,7 @@ Future<AppAudioHandler> _initAudioService() async {
   return await AudioService.init(
     builder: () => AppAudioHandler(),
     config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.ako.sonus.audio',
+      androidNotificationChannelId: 'com.ako.velo.audio',
       androidNotificationChannelName: 'Velo Music Playback',
       androidNotificationChannelDescription: 'Velo music playback controls',
       androidNotificationOngoing: true,

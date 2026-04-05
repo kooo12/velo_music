@@ -188,21 +188,18 @@ class AudioPlayerService extends GetxService {
 
   Future<bool> checkPermissionStatusOnly() async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      if (kIsWeb) {
+        _hasPermission.value = true;
+        return true;
+      }
 
       bool hasPermission = false;
-      try {
+      if (Platform.isAndroid) {
+        final statusAudio = await Permission.audio.status;
+        final statusStorage = await Permission.storage.status;
+        hasPermission = statusAudio.isGranted || statusStorage.isGranted;
+      } else {
         hasPermission = await _audioQuery.permissionsStatus();
-      } catch (e) {
-        debugPrint('Error checking permission status: $e');
-        await Future.delayed(const Duration(milliseconds: 500));
-        try {
-          hasPermission = await _audioQuery.permissionsStatus();
-        } catch (e2) {
-          debugPrint('Second permission check failed: $e2');
-          _hasPermission.value = false;
-          return false;
-        }
       }
 
       _hasPermission.value = hasPermission;
@@ -215,73 +212,44 @@ class AudioPlayerService extends GetxService {
   }
 
   Future<void> checkPermissions() async {
+    if (kIsWeb) {
+      _hasPermission.value = true;
+      loadSongs();
+      return;
+    }
+
     if (_isRequestingPermissions) {
       debugPrint('Permission request already in progress, skipping...');
       return;
     }
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-
       bool hasPermission = false;
-      try {
+
+      if (Platform.isAndroid) {
+        final statusAudio = await Permission.audio.status;
+        final statusStorage = await Permission.storage.status;
+        hasPermission = statusAudio.isGranted || statusStorage.isGranted;
+      } else {
         hasPermission = await _audioQuery.permissionsStatus();
-      } catch (e) {
-        debugPrint('Error checking permission status: $e');
-        await Future.delayed(const Duration(milliseconds: 500));
-        try {
-          hasPermission = await _audioQuery.permissionsStatus();
-        } catch (e2) {
-          debugPrint('Second permission check failed: $e2');
-          _hasPermission.value = false;
-          return;
-        }
       }
 
       if (!hasPermission) {
-        if (_isRequestingPermissions) {
-          return;
-        }
-
         _isRequestingPermissions = true;
         try {
-          await Future.delayed(const Duration(milliseconds: 500));
+          if (Platform.isAndroid) {
+            final statusAudio = await Permission.audio.request();
+            hasPermission = statusAudio.isGranted;
 
-          if (!_isPluginInitialized) {
-            await _initializePlugin();
-            await Future.delayed(const Duration(milliseconds: 300));
-          }
-
-          try {
+            if (!hasPermission) {
+              final statusStorage = await Permission.storage.request();
+              hasPermission = statusStorage.isGranted;
+            }
+          } else {
             hasPermission = await _audioQuery.permissionsRequest();
-
-            if (Platform.isAndroid) {
-              final status = await Permission.notification.status;
-              if (!status.isGranted) {
-                await Permission.notification.request();
-              }
-            }
-          } on PlatformException catch (e) {
-            if (e.code == 'UninitializedPluginProviderException' ||
-                e.message?.contains('UninitializedPluginProvider') == true) {
-              debugPrint(
-                  '[AudioService] Plugin not initialized during permission request, initializing...');
-              await _initializePlugin();
-              await Future.delayed(const Duration(milliseconds: 500));
-              try {
-                hasPermission = await _audioQuery.permissionsRequest();
-              } catch (e2) {
-                debugPrint(
-                    '[AudioService] Permission request failed after initialization: $e2');
-                hasPermission = false;
-              }
-            } else {
-              debugPrint('[AudioService] Permission request failed: $e');
-              hasPermission = false;
-            }
           }
 
-          await Future.delayed(const Duration(milliseconds: 1000));
+          await Future.delayed(const Duration(milliseconds: 500));
         } catch (e) {
           debugPrint('Error requesting permissions: $e');
           _hasPermission.value = false;
@@ -293,9 +261,7 @@ class AudioPlayerService extends GetxService {
 
       _hasPermission.value = hasPermission;
       if (hasPermission) {
-        if (kIsWeb) {
-          loadSongs();
-        } else if (Platform.isAndroid) {
+        if (Platform.isAndroid) {
           loadSongs();
         } else if (Platform.isIOS) {
           loadSongsForIOS();
